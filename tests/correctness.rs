@@ -10,7 +10,7 @@ use std::io::Write;
 use xiangting::calculate_replacement_number;
 use xiangting::common::HandEnumerator;
 
-fn test_correctness(length: usize) -> bool {
+fn verify_correctness(length: usize) -> bool {
     let enumerator = HandEnumerator::new(length).unwrap();
     let mut all_match = true;
     let file_name = format!("mismatches_{}.txt", length);
@@ -47,12 +47,12 @@ fn test_correctness(length: usize) -> bool {
 
 #[test]
 #[ignore]
-fn test_correctness_1() {
-    assert!(test_correctness(1));
+fn verify_correctness_1() {
+    assert!(verify_correctness(1));
 }
 
 #[test]
 #[ignore]
-fn test_correctness_2() {
-    assert!(test_correctness(2));
+fn verify_correctness_2() {
+    assert!(verify_correctness(2));
 }
