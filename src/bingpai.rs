@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Apricot S.
+// SPDX-License-Identifier: MIT
+// This file is part of https://github.com/Apricot-S/xiangting
+
 use crate::constants::{MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
 use thiserror::Error;
 

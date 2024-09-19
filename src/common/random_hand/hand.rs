@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Apricot S.
+// SPDX-License-Identifier: MIT
+// This file is part of https://github.com/Apricot-S/xiangting
+
 use rand::seq::SliceRandom;
 use rand::Rng;
 

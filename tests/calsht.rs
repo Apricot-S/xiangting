@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Apricot S. All rights reserved.
+// SPDX-FileCopyrightText: 2024 Apricot S.
 // SPDX-License-Identifier: GPL-3.0-or-later
 // This file is part of https://github.com/Apricot-S/xiangting
 

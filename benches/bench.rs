@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Apricot S.
+// SPDX-License-Identifier: MIT
+// This file is part of https://github.com/Apricot-S/xiangting
+
 use criterion::{criterion_group, criterion_main, Criterion};
 use xiangting::calculate_replacement_number;
 use xiangting::common::{

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Apricot S.
+// SPDX-License-Identifier: MIT
+// This file is part of https://github.com/Apricot-S/xiangting
+
 use super::bingpai::{count_bingpai, count_bingpai_3_player, Bingpai, InvalidBingpaiError};
 use super::constants::MAX_NUM_FULU_MIANZI;
 use super::mianzi::Mianzi;

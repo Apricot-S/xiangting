@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Apricot S.
+// SPDX-License-Identifier: MIT
+// This file is part of https://github.com/Apricot-S/xiangting
+
 const MAX_NUM_SAME_TILE: u8 = 4;
 const NUM_TILE_INDEX: usize = 3 * 9 + 4 + 3;
 const MAX_NUM_HAND: usize = 14;

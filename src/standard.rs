@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Apricot S.
+// SPDX-License-Identifier: MIT
+// This file is part of https://github.com/Apricot-S/xiangting
+
 use super::bingpai::Bingpai;
 use super::constants::{MAX_NUM_FULU_MIANZI, NUM_TILE_INDEX};
 use super::mianzi::Mianzi;
