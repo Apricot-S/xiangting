@@ -5,18 +5,31 @@
 mod calsht;
 
 use crate::calsht::Calsht;
+use std::env;
 use std::fs::OpenOptions;
 use std::io::Write;
 use xiangting::calculate_replacement_number;
 use xiangting::common::HandEnumerator;
 
 fn verify_correctness(length: usize) -> bool {
+    let result = env::var("SHANTEN_NUMBER_ROOT");
+    assert!(result.is_ok(), "SHANTEN_NUMBER_ROOT is not set.");
+    let shanten_number_path = result.unwrap();
+
+    if !std::fs::metadata(&shanten_number_path)
+        .map(|m| m.is_dir())
+        .unwrap_or(false)
+    {
+        eprintln!("{:?}: Not a directory.", shanten_number_path);
+        assert!(false, "Path is not a directory");
+    }
+
     let enumerator = HandEnumerator::new(length).unwrap();
     let mut all_match = true;
-    let file_name = format!("mismatches_{}.txt", length);
+    let file_name = format!("./mismatches_{}.txt", length);
 
     let mut calculator0 = Calsht::new();
-    calculator0.initialize("/workspaces/shanten-number");
+    calculator0.initialize(&shanten_number_path);
 
     enumerator.into_iter().for_each(|hand| {
         let hand_i32: Vec<i32> = hand.iter().map(|&t| t as i32).collect();

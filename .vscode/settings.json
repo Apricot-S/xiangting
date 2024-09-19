@@ -1,4 +1,7 @@
 {
+    "terminal.integrated.env.linux": {
+        "SHANTEN_NUMBER_ROOT": "${workspaceFolder}/../shanten-number"
+    },
     "rust-analyzer.cargo.features": [
         "common"
     ]
