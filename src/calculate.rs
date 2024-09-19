@@ -86,6 +86,7 @@ pub fn calculate_replacement_number(
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
 /// This function is for 3-player mahjong. Tiles from 2m to 8m cannot be used.
+/// Additionally, melded sequences cannot be used.
 ///
 /// # Arguments
 ///
