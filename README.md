@@ -81,7 +81,7 @@ fn main() {
 }
 ```
 
-In the case of three-player mahjong, the tiles from 2m to 8m do not exist. Additionally, melded sequences (明順子) cannot be used.
+In three-player mahjong, the tiles from 2m to 8m do not exist. Additionally, melded sequences (明順子) cannot be used.
 
 ```rust
 use xiangting::{calculate_replacement_number, calculate_replacement_number_3_player};
