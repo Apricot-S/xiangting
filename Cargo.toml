@@ -1,0 +1,32 @@
+[package]
+name = "xiangting"
+description = "A library for calculation of deficiency number (a.k.a. xiangting number, 向聴数)."
+version = "0.1.0"
+authors = ["Apricot S."]
+edition = "2021"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/Apricot-S/xiangting"
+keywords = ["mahjong"]
+
+[lib]
+name = "xiangting"
+path = "src/lib.rs"
+
+[dependencies]
+bitvec = "1.0.1"
+mt19937 = { version = "2.0.1", optional = true }
+rand = { version = "0.8.5", optional = true }
+thiserror = "1.0.63"
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[features]
+bench = ["dep:mt19937", "dep:rand"]
+test = []
+common = ["bench", "test"]
+
+[[bench]]
+name = "bench"
+harness = false
