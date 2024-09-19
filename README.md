@@ -107,4 +107,11 @@ fn main() {
 
 Copyright (c) Apricot S. All rights reserved.
 
-Licensed under the [MIT license](LICENSE).
+The library interface is available under the MIT License.
+
+Please note that some test code files are provided under the GPLv3 or later:
+
+- xiangting/tests/calsht.rs
+- xiangting/tests/correctness.rs
+
+For more details, please see the [LICENSE](LICENSE) file.
