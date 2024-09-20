@@ -456,12 +456,12 @@ fn calculate_replacement_number_inner(
                     }
                 }
 
-                if temp < min {
-                    min = temp;
+                if temp == 0 {
+                    return 0;
                 }
 
-                if min == 0 {
-                    return 0;
+                if temp < min {
+                    min = temp;
                 }
             }
         }
@@ -514,12 +514,12 @@ fn calculate_replacement_number_inner_3_player(
                 }
             }
 
-            if temp < min {
-                min = temp;
+            if temp == 0 {
+                return 0;
             }
 
-            if min == 0 {
-                return 0;
+            if temp < min {
+                min = temp;
             }
         }
     }
