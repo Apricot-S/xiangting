@@ -344,7 +344,7 @@ fn count_zipai_tile_group(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> Tile
             num_dazi: 0,
             num_duizi: 0,
             num_gulipai: 0,
-            gulipai: BitArray::ZERO,
+            gulipai: SingleColorTileFlag::ZERO,
         },
         |mut acc, (i, &n)| {
             match n {
@@ -377,7 +377,7 @@ fn count_19m_tile_group(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> TileGr
             num_dazi: 0,
             num_duizi: 0,
             num_gulipai: 0,
-            gulipai: BitArray::ZERO,
+            gulipai: SingleColorTileFlag::ZERO,
         },
         |mut acc, (i, &n)| {
             if i == 0 || i == 8 {
