@@ -93,7 +93,7 @@ pub enum InvalidMianziError {
 }
 
 impl Mianzi {
-    pub fn validate(&self) -> Result<(), InvalidMianziError> {
+    pub(crate) fn validate(&self) -> Result<(), InvalidMianziError> {
         match self {
             Mianzi::Shunzi(tile, position) => {
                 if *tile > MAX_SHUPAI_INDEX {
