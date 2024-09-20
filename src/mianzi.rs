@@ -15,10 +15,68 @@ pub enum ClaimedTilePosition {
     High,
 }
 
+/// 面子: Meld.
+///
+/// # Examples
+///
+/// ```
+/// # use xiangting::{ClaimedTilePosition, Mianzi};
+/// // 4-56p (Chii 4m Low)
+/// let shunzi = Mianzi::Shunzi(12, ClaimedTilePosition::Low);
+///
+/// // 1-11z (Pon 1z)
+/// let kezi = Mianzi::Kezi(27);
+///
+/// // 7-777s (Kan 7s)
+/// let gangzi = Mianzi::Gangzi(24);
+/// ```
 #[derive(Clone)]
 pub enum Mianzi {
+    /// 順子: Sequence.
+    ///
+    /// The first argument represents the index of the tile.
+    /// The second argument represents the position of the claimed tile in the meld.
+    /// The correspondence between the index and the tile is the same as [Bingpai](crate::Bingpai).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use xiangting::{ClaimedTilePosition, Mianzi};
+    /// // 1-23m
+    /// let shunzi_low = Mianzi::Shunzi(0, ClaimedTilePosition::Low);
+    ///
+    /// // 2-13m
+    /// let shunzi_middle = Mianzi::Shunzi(1, ClaimedTilePosition::Middle);
+    ///
+    /// // 3-12m
+    /// let shunzi_high = Mianzi::Shunzi(2, ClaimedTilePosition::High);
+    /// ```
     Shunzi(Tile, ClaimedTilePosition),
+    /// 刻子: Triplet.
+    ///
+    /// The argument represents the index of the tile.
+    /// The correspondence between the index and the tile is the same as [Bingpai](crate::Bingpai).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use xiangting::Mianzi;
+    /// // 1-11m
+    /// let kezi = Mianzi::Kezi(0);
+    /// ```
     Kezi(Tile),
+    /// 槓子: Quad.
+    ///
+    /// The argument represents the index of the tile.
+    /// The correspondence between the index and the tile is the same as [Bingpai](crate::Bingpai).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use xiangting::Mianzi;
+    /// // 1-111m (Kan 1m)
+    /// let gangzi = Mianzi::Gangzi(0);
+    /// ```
     Gangzi(Tile),
 }
 
