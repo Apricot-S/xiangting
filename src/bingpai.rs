@@ -5,6 +5,47 @@
 use crate::constants::{MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
 use thiserror::Error;
 
+/// 兵牌: Tiles in hand excluding melds (a.k.a. pure hand, 純手牌).
+///
+/// A element of array indicates the number of each tile in the hand.
+/// The correspondence between the index and the tile is shown in the table below.
+///
+/// | Index | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   |
+/// | ----- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+/// | Tile  | 1m  | 2m  | 3m  | 4m  | 5m  | 6m  | 7m  | 8m  | 9m  |
+///
+/// | Index | 9   | 10  | 11  | 12  | 13  | 14  | 15  | 16  | 17  |
+/// | ----- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+/// | Tile  | 1p  | 2p  | 3p  | 4p  | 5p  | 6p  | 7p  | 8p  | 9p  |
+///
+/// | Index | 18  | 19  | 20  | 21  | 22  | 23  | 24  | 25  | 26  |
+/// | ----- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+/// | Tile  | 1s  | 2s  | 3s  | 4s  | 5s  | 6s  | 7s  | 8s  | 9s  |
+///
+/// | Index | 27   | 28    | 29   | 30    | 31    | 32    | 33  |
+/// | ----- | ---- | ----- | ---- | ----- | ----- | ----- | --- |
+/// | Tile  | East | South | West | North | White | Green | Red |
+///
+/// # Examples
+///
+/// ```
+/// # use xiangting::Bingpai;
+/// // 111m456p789s11222z
+/// let hand_14: Bingpai = [
+///     3, 0, 0, 0, 0, 0, 0, 0, 0, // m
+///     0, 0, 0, 1, 1, 1, 0, 0, 0, // p
+///     0, 0, 0, 0, 0, 0, 1, 1, 1, // s
+///     2, 3, 0, 0, 0, 0, 0, // z
+/// ];
+///
+/// // 111m1z (3 melds)
+/// let hand_4: Bingpai = [
+///     3, 0, 0, 0, 0, 0, 0, 0, 0, // m
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+///     1, 0, 0, 0, 0, 0, 0, // z
+/// ];
+/// ```
 pub type Bingpai = [u8; NUM_TILE_INDEX];
 
 #[derive(Debug, Error)]
