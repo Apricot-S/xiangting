@@ -8,10 +8,18 @@ use thiserror::Error;
 
 type Tile = u8;
 
+/// Position of the claimed tile in the melded sequence.
+/// Used in [Mianzi::Shunzi](self::Mianzi::Shunzi).
 #[derive(Debug, Clone)]
 pub enum ClaimedTilePosition {
+    /// The claimed tile is the lowest in the sequence.
+    /// For example, claiming a 3 to form a sequence of 3-4-5.
     Low,
+    /// The claimed tile is the middle in the sequence.
+    /// For example, claiming a 4 to form a sequence of 3-4-5.
     Middle,
+    /// The claimed tile is the highest in the sequence.
+    /// For example, claiming a 5 to form a sequence of 3-4-5.
     High,
 }
 
