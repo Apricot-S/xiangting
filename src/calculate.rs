@@ -3,11 +3,11 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use super::bingpai::{count_bingpai, count_bingpai_3_player, Bingpai, InvalidBingpaiError};
-use super::constants::MAX_NUM_FULU_MIANZI;
-use super::mianzi::Mianzi;
 use super::qiduizi;
 use super::shisanyao;
-use super::shoupai::{validate_shoupai, validate_shoupai_3_player, InvalidShoupaiError};
+use super::shoupai::{
+    validate_shoupai, validate_shoupai_3_player, FuluMianzi, InvalidShoupaiError,
+};
 use super::standard;
 use thiserror::Error;
 
@@ -70,7 +70,7 @@ pub enum XiangtingError {
 /// ```
 pub fn calculate_replacement_number(
     bingpai: &Bingpai,
-    fulu_mianzi: &Option<[Option<Mianzi>; MAX_NUM_FULU_MIANZI]>,
+    fulu_mianzi: &Option<FuluMianzi>,
 ) -> Result<u8, XiangtingError> {
     let num_bingpai = count_bingpai(bingpai)?;
 
@@ -136,7 +136,7 @@ pub fn calculate_replacement_number(
 /// ```
 pub fn calculate_replacement_number_3_player(
     bingpai: &Bingpai,
-    fulu_mianzi: &Option<[Option<Mianzi>; MAX_NUM_FULU_MIANZI]>,
+    fulu_mianzi: &Option<FuluMianzi>,
 ) -> Result<u8, XiangtingError> {
     let num_bingpai = count_bingpai_3_player(bingpai)?;
 

@@ -3,9 +3,8 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use super::bingpai::Bingpai;
-use super::constants::{MAX_NUM_FULU_MIANZI, NUM_TILE_INDEX};
-use super::mianzi::Mianzi;
-use super::shoupai::count_fulupai;
+use super::constants::NUM_TILE_INDEX;
+use super::shoupai::{count_fulupai, FuluMianzi};
 use bitvec::prelude::*;
 
 trait BingpaiExt {
@@ -145,10 +144,7 @@ fn merge_flags(
     all_tiles
 }
 
-fn count_4_tiles_in_shoupai(
-    bingpai: &Bingpai,
-    fulu_mianzi: &Option<[Option<Mianzi>; MAX_NUM_FULU_MIANZI]>,
-) -> AllTileFlag {
+fn count_4_tiles_in_shoupai(bingpai: &Bingpai, fulu_mianzi: &Option<FuluMianzi>) -> AllTileFlag {
     match fulu_mianzi {
         None => {
             bingpai
@@ -530,10 +526,7 @@ fn calculate_replacement_number_inner_3_player(
 }
 
 #[inline]
-fn calculate_num_fulu(
-    num_bingpai: u8,
-    fulu_mianzi: &Option<[Option<Mianzi>; MAX_NUM_FULU_MIANZI]>,
-) -> u8 {
+fn calculate_num_fulu(num_bingpai: u8, fulu_mianzi: &Option<FuluMianzi>) -> u8 {
     match fulu_mianzi {
         None => match num_bingpai {
             12..=14 => 0,
@@ -549,7 +542,7 @@ fn calculate_num_fulu(
 
 pub(crate) fn calculate_replacement_number(
     mut bingpai: Bingpai,
-    fulu_mianzi: &Option<[Option<Mianzi>; MAX_NUM_FULU_MIANZI]>,
+    fulu_mianzi: &Option<FuluMianzi>,
     num_bingpai: u8,
 ) -> u8 {
     let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi);
@@ -584,7 +577,7 @@ pub(crate) fn calculate_replacement_number(
 
 pub(crate) fn calculate_replacement_number_3_player(
     mut bingpai: Bingpai,
-    fulu_mianzi: &Option<[Option<Mianzi>; MAX_NUM_FULU_MIANZI]>,
+    fulu_mianzi: &Option<FuluMianzi>,
     num_bingpai: u8,
 ) -> u8 {
     let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi);
@@ -625,7 +618,7 @@ pub(crate) fn calculate_replacement_number_3_player(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ClaimedTilePosition;
+    use crate::{ClaimedTilePosition, Mianzi};
 
     #[test]
     fn calculate_replacement_number_formula_works() {

@@ -7,7 +7,9 @@ use super::constants::{MAX_NUM_FULU_MIANZI, MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, 
 use super::mianzi::{ClaimedTilePosition, InvalidMianziError, Mianzi};
 use thiserror::Error;
 
-pub(super) fn count_fulupai(fulu_mianzi: &[Option<Mianzi>; MAX_NUM_FULU_MIANZI]) -> Bingpai {
+pub type FuluMianzi = [Option<Mianzi>; MAX_NUM_FULU_MIANZI];
+
+pub(super) fn count_fulupai(fulu_mianzi: &FuluMianzi) -> Bingpai {
     fulu_mianzi
         .iter()
         .fold([0; NUM_TILE_INDEX], |mut fulupai, m| {
@@ -57,7 +59,7 @@ pub enum InvalidShoupaiError {
 
 pub(super) fn validate_shoupai(
     bingpai: &Bingpai,
-    fulu_mianzi: &[Option<Mianzi>; MAX_NUM_FULU_MIANZI],
+    fulu_mianzi: &FuluMianzi,
 ) -> Result<(), InvalidShoupaiError> {
     fulu_mianzi
         .iter()
@@ -96,7 +98,7 @@ pub(super) fn validate_shoupai(
 
 pub(super) fn validate_shoupai_3_player(
     bingpai: &Bingpai,
-    fulu_mianzi: &[Option<Mianzi>; MAX_NUM_FULU_MIANZI],
+    fulu_mianzi: &FuluMianzi,
 ) -> Result<(), InvalidShoupaiError> {
     fulu_mianzi.iter().flatten().try_for_each(|m| match m {
         Mianzi::Shunzi(_, _) => Err(InvalidShoupaiError::InvalidMianziFor3Player(m.clone())),
