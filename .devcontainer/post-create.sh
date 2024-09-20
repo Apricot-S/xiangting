@@ -11,10 +11,7 @@ sudo chown vscode:vscode /workspaces
 
 cargo install --force cargo-make
 
-# Clone `shanten-number`.
+# Clone `nyanten`.
 pushd /workspaces
-git clone https://github.com/tomohxx/shanten-number
-pushd shanten-number
-tar -xzf data.tar.gz
-popd
+git clone https://github.com/Cryolite/nyanten
 popd

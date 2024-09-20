@@ -21,11 +21,16 @@ thiserror = "1.0.63"
 
 [dev-dependencies]
 criterion = "0.5.1"
+cxx = "1.0.128"
+
+[build-dependencies]
+cxx-build = "1.0.128"
 
 [features]
 bench = ["dep:mt19937", "dep:rand"]
 test = []
 common = ["bench", "test"]
+correctness = ["test"]
 
 [[bench]]
 name = "bench"

@@ -17,7 +17,7 @@ args = [
     "verify_correctness",
     "--release",
     "--features",
-    "test",
+    "correctness",
     "--",
     "--ignored",
 ]

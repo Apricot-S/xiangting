@@ -1,71 +1,58 @@
 // SPDX-FileCopyrightText: 2024 Apricot S.
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-mod calsht;
+#[cfg(feature = "correctness")]
+mod nyanten;
 
-use crate::calsht::Calsht;
-use std::env;
-use std::fs::OpenOptions;
-use std::io::Write;
-use xiangting::calculate_replacement_number;
-use xiangting::common::HandEnumerator;
+#[cfg(feature = "correctness")]
+mod tests {
+    use crate::nyanten::calculateReplacementNumber;
+    use std::fs::OpenOptions;
+    use std::io::Write;
+    use xiangting::calculate_replacement_number;
+    use xiangting::common::HandEnumerator;
 
-fn verify_correctness(length: usize) -> bool {
-    let result = env::var("SHANTEN_NUMBER_ROOT");
-    assert!(result.is_ok(), "SHANTEN_NUMBER_ROOT is not set.");
-    let shanten_number_path = result.unwrap();
+    fn verify_correctness(length: usize) -> bool {
+        let enumerator = HandEnumerator::new(length).unwrap();
+        let mut all_match = true;
+        let file_name = format!("./mismatches_{}.txt", length);
 
-    if !std::fs::metadata(&shanten_number_path)
-        .map(|m| m.is_dir())
-        .unwrap_or(false)
-    {
-        eprintln!("{:?}: Not a directory.", shanten_number_path);
-        assert!(false, "Path is not a directory");
+        enumerator.into_iter().for_each(|hand| {
+            let result_nyanten =
+                unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(33)) };
+            let result_xiangting = calculate_replacement_number(&hand, &None).unwrap();
+
+            if result_xiangting != result_nyanten {
+                all_match = false;
+
+                let mut file = OpenOptions::new()
+                    .append(true)
+                    .create(true)
+                    .open(&file_name)
+                    .unwrap();
+
+                writeln!(
+                    file,
+                    "Hand: {:?}, Nyanten: {}, xiangting: {}",
+                    hand, result_nyanten, result_xiangting,
+                )
+                .unwrap();
+            }
+        });
+
+        all_match
     }
 
-    let enumerator = HandEnumerator::new(length).unwrap();
-    let mut all_match = true;
-    let file_name = format!("./mismatches_{}.txt", length);
+    #[test]
+    #[ignore]
+    fn verify_correctness_1() {
+        assert!(verify_correctness(1));
+    }
 
-    let mut calculator0 = Calsht::new();
-    calculator0.initialize(&shanten_number_path);
-
-    enumerator.into_iter().for_each(|hand| {
-        let hand_i32: Vec<i32> = hand.iter().map(|&t| t as i32).collect();
-        let m = (length / 3) as i32;
-        let (result_shanten_number, _) = calculator0.operator(&hand_i32, m, 0b111);
-        let result_xiangting = calculate_replacement_number(&hand, &None).unwrap();
-
-        if result_xiangting != (result_shanten_number as u8) {
-            all_match = false;
-
-            let mut file = OpenOptions::new()
-                .append(true)
-                .create(true)
-                .open(&file_name)
-                .unwrap();
-
-            writeln!(
-                file,
-                "Hand: {:?}, Shanten Number: {}, xiangting: {}",
-                hand, result_shanten_number, result_xiangting,
-            )
-            .unwrap();
-        }
-    });
-
-    all_match
-}
-
-#[test]
-#[ignore]
-fn verify_correctness_1() {
-    assert!(verify_correctness(1));
-}
-
-#[test]
-#[ignore]
-fn verify_correctness_2() {
-    assert!(verify_correctness(2));
+    #[test]
+    #[ignore]
+    fn verify_correctness_2() {
+        assert!(verify_correctness(2));
+    }
 }
