@@ -149,30 +149,31 @@ fn count_4_tiles_in_shoupai(
     bingpai: &Bingpai,
     fulu_mianzi: &Option<[Option<Mianzi>; MAX_NUM_FULU_MIANZI]>,
 ) -> AllTileFlag {
-    let mut result = AllTileFlag::ZERO;
     match fulu_mianzi {
         None => {
             bingpai
                 .iter()
                 .enumerate()
-                .for_each(|(i, &num_tile_bingpai)| {
+                .fold(AllTileFlag::ZERO, |mut acc, (i, &num_tile_bingpai)| {
                     if num_tile_bingpai == 4 {
-                        result.set(i, true);
+                        acc.set(i, true);
                     }
-                });
+                    acc
+                })
         }
         Some(f) => {
             let fulupai = count_fulupai(f);
-            bingpai.iter().zip(fulupai.iter()).enumerate().for_each(
-                |(i, (&num_tile_bingpai, &num_tile_fulupai))| {
+            bingpai.iter().zip(fulupai.iter()).enumerate().fold(
+                AllTileFlag::ZERO,
+                |mut acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
                     if (num_tile_bingpai + num_tile_fulupai) == 4 {
-                        result.set(i, true);
+                        acc.set(i, true);
                     }
+                    acc
                 },
-            );
+            )
         }
     }
-    result
 }
 
 fn calculate_replacement_number_formula(
