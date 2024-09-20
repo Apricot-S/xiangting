@@ -1,6 +1,5 @@
 {
     "rust-analyzer.cargo.features": [
-        "common",
-        "correctness"
+        "common"
     ]
 }
