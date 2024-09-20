@@ -8,9 +8,10 @@ const MAX_NUM_HAND: usize = 14;
 
 #[inline]
 fn to_34_array(hand: &[usize]) -> [u8; NUM_TILE_INDEX] {
-    let mut hand34 = [0u8; NUM_TILE_INDEX];
-    hand.iter().for_each(|&t| hand34[t] += 1);
-    hand34
+    hand.iter().fold([0u8; NUM_TILE_INDEX], |mut counts, &t| {
+        counts[t] += 1;
+        counts
+    })
 }
 
 pub struct HandEnumerator {

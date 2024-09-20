@@ -20,11 +20,12 @@ fn choose_hand_length(rng: &mut impl Rng) -> usize {
 
 #[inline]
 fn fill_hand(wall: &[u8], hand_length: usize) -> [u8; 34] {
-    let mut hand = [0u8; 34];
     wall.iter()
         .take(hand_length)
-        .for_each(|&t| hand[t as usize] += 1);
-    hand
+        .fold([0u8; 34], |mut hand, &t| {
+            hand[t as usize] += 1;
+            hand
+        })
 }
 
 pub fn generate_random_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
