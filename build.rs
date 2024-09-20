@@ -6,6 +6,7 @@ fn main() {
     if std::env::var("CARGO_FEATURE_CORRECTNESS").is_ok() {
         cxx_build::bridge("tests/nyanten.rs")
             .file("/workspaces/nyanten/nyanten/replacement_number.hpp")
+            .include("/workspaces/nyanten")
             .flag_if_supported("-std=c++23")
             .compile("nyanten");
 
