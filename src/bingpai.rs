@@ -5,7 +5,7 @@
 use crate::constants::{MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
 use thiserror::Error;
 
-/// 兵牌: Tiles in hand excluding melds (a.k.a. pure hand, 純手牌).
+/// 兵牌: Hand excluding melds (a.k.a. pure hand, 純手牌).
 ///
 /// A element of array indicates the number of each tile in the hand.
 /// The correspondence between the index and the tile is shown in the table below.
