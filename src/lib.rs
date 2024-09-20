@@ -13,6 +13,8 @@
 //! - Supports three-player mahjong.
 //! - Does not support short hand or long hand.
 
+#![warn(missing_docs)]
+
 mod bingpai;
 mod calculate;
 mod constants;
@@ -22,6 +24,7 @@ mod shisanyao;
 mod shoupai;
 mod standard;
 
+#[doc(hidden)]
 pub mod common;
 
 pub use bingpai::Bingpai;
