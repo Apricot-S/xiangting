@@ -7,6 +7,23 @@ use super::constants::{MAX_NUM_FULU_MIANZI, MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, 
 use super::mianzi::{ClaimedTilePosition, InvalidMianziError, Mianzi};
 use thiserror::Error;
 
+/// 副露面子: List of melds.
+///
+/// A element of array indicates a meld in the hand.
+/// Specify [None] for the element where there is no meld.
+///
+/// # Examples
+///
+/// ```
+/// # use xiangting::{ClaimedTilePosition, FuluMianzi, Mianzi};
+/// // 456p 7777s 111z
+/// let melds: FuluMianzi = [
+///     Some(Mianzi::Shunzi(12, ClaimedTilePosition::Low)),
+///     Some(Mianzi::Gangzi(24)),
+///     Some(Mianzi::Kezi(27)),
+///     None,
+/// ];
+/// ```
 pub type FuluMianzi = [Option<Mianzi>; MAX_NUM_FULU_MIANZI];
 
 pub(super) fn count_fulupai(fulu_mianzi: &FuluMianzi) -> Bingpai {
