@@ -555,18 +555,21 @@ pub(crate) fn calculate_replacement_number(
 
     // Calculate the replacement number without a pair
     let mut min = calculate_replacement_number_inner(&mut bingpai, num_fulu, four_tiles, None);
+    if min == 0 {
+        return 0;
+    }
 
     // Remove a possible pair and calculate the replacement number with a pair
     for n in 0..NUM_TILE_INDEX {
-        if min == 0 {
-            return 0;
-        }
-
         if bingpai.has_duizi(n) {
             bingpai.remove_duizi(n);
             let temp =
                 calculate_replacement_number_inner(&mut bingpai, num_fulu, four_tiles, Some(n));
             bingpai.restore_duizi(n);
+
+            if temp == 0 {
+                return 0;
+            }
 
             if temp < min {
                 min = temp;
@@ -588,13 +591,12 @@ pub(crate) fn calculate_replacement_number_3_player(
     // Calculate the replacement number without a pair
     let mut min =
         calculate_replacement_number_inner_3_player(&mut bingpai, num_fulu, four_tiles, None);
+    if min == 0 {
+        return 0;
+    }
 
     // Remove a possible pair and calculate the replacement number with a pair
     for n in 0..NUM_TILE_INDEX {
-        if min == 0 {
-            return 0;
-        }
-
         if bingpai.has_duizi(n) {
             bingpai.remove_duizi(n);
             let temp = calculate_replacement_number_inner_3_player(
@@ -604,6 +606,10 @@ pub(crate) fn calculate_replacement_number_3_player(
                 Some(n),
             );
             bingpai.restore_duizi(n);
+
+            if temp == 0 {
+                return 0;
+            }
 
             if temp < min {
                 min = temp;
