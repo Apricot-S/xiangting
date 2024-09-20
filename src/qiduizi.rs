@@ -10,17 +10,18 @@ pub(crate) fn calculate_replacement_number(bingpai: &Bingpai, num_bingpai: u8) -
         return u8::MAX;
     }
 
-    let mut num_kinds: u8 = 0;
-    let mut num_duizi: u8 = 0;
-
-    bingpai.iter().for_each(|&num_tile| {
-        if num_tile >= 1 {
-            num_kinds += 1;
-        }
-        if num_tile >= 2 {
-            num_duizi += 1;
-        }
-    });
+    let (num_kinds, num_duizi) =
+        bingpai
+            .iter()
+            .fold((0, 0), |(mut num_kinds, mut num_duizi), &num_tile| {
+                if num_tile >= 1 {
+                    num_kinds += 1;
+                }
+                if num_tile >= 2 {
+                    num_duizi += 1;
+                }
+                (num_kinds, num_duizi)
+            });
 
     7 - num_duizi + (if num_kinds < 7 { 7 - num_kinds } else { 0 })
 }

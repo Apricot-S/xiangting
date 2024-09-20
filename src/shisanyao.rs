@@ -10,17 +10,18 @@ pub(crate) fn calculate_replacement_number(bingpai: &Bingpai, num_bingpai: u8) -
         return u8::MAX;
     }
 
-    let mut num_kinds: u8 = 0;
-    let mut has_jiangpai: bool = false;
-
     const YAOJIUPAI_INDICES: [usize; 13] = [0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33];
-    YAOJIUPAI_INDICES.iter().for_each(|&index| {
-        let count = bingpai[index];
-        if count >= 1 {
-            num_kinds += 1;
-            has_jiangpai |= count >= 2;
-        }
-    });
+    let (num_kinds, has_jiangpai) =
+        YAOJIUPAI_INDICES
+            .iter()
+            .fold((0, false), |(mut num_kinds, mut has_jiangpai), &index| {
+                let count = bingpai[index];
+                if count >= 1 {
+                    num_kinds += 1;
+                    has_jiangpai |= count >= 2;
+                }
+                (num_kinds, has_jiangpai)
+            });
 
     14 - num_kinds - (if has_jiangpai { 1 } else { 0 })
 }
