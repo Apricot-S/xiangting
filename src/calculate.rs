@@ -24,8 +24,8 @@ pub enum XiangtingError {
 ///
 /// # Arguments
 ///
-/// * `bingpai` - A reference to the count of each tile to pure (discardable) hand.
-/// * `fulu_mianzi` - An optional reference to an array of optional `Mianzi` representing melds.
+/// * `bingpai` - A reference to a hand excluding melds.
+/// * `fulu_mianzi` - An optional reference to a list of melds.
 ///
 /// # Returns
 ///
@@ -92,8 +92,8 @@ pub fn calculate_replacement_number(
 ///
 /// # Arguments
 ///
-/// * `bingpai` - A reference to the count of each tile to pure (discardable) hand.
-/// * `fulu_mianzi` - An optional reference to an array of optional `Mianzi` representing melds.
+/// * `bingpai` - A reference to a hand excluding melds.
+/// * `fulu_mianzi` - An optional reference to a list of melds.
 ///
 /// # Returns
 ///
