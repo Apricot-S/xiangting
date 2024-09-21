@@ -7,7 +7,7 @@
 #[cxx::bridge(namespace = "Nyanten")]
 mod ffi {
     extern "C++" {
-        include!("/workspaces/nyanten/nyanten/replacement_number.hpp");
+        include!("/workspaces/xiangting/include/cxx_nyanten.hpp");
 
         #[allow(dead_code)]
         unsafe fn calculateReplacementNumber(first: *const u8, last: *const u8) -> u8;
