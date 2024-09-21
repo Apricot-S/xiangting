@@ -55,7 +55,7 @@ If they are not included (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), `None` 
 If they are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be specified for `fulu_mianzi_list`.
 
 ```rust
-use xiangting::{calculate_replacement_number, ClaimedTilePosition, Mianzi};
+use xiangting::{calculate_replacement_number, ClaimedTilePosition, FuluMianzi};
 
 fn main() {
     // 123m1z (3 melds)
@@ -68,9 +68,9 @@ fn main() {
 
     // 456p 7777s 111z
     let melds = [
-        Some(Mianzi::Shunzi(12, ClaimedTilePosition::Low)),
-        Some(Mianzi::Gangzi(24)),
-        Some(Mianzi::Kezi(27)),
+        Some(FuluMianzi::Shunzi(12, ClaimedTilePosition::Low)),
+        Some(FuluMianzi::Gangzi(24)),
+        Some(FuluMianzi::Kezi(27)),
         None,
     ];
 

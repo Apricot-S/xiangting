@@ -34,7 +34,7 @@ pub enum XiangtingError {
 /// # Examples
 ///
 /// ```
-/// # use xiangting::{calculate_replacement_number, ClaimedTilePosition, Mianzi};
+/// # use xiangting::{calculate_replacement_number, ClaimedTilePosition, FuluMianzi};
 /// // 123m456p789s11222z
 /// let hand_14: [u8; 34] = [
 ///     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
@@ -56,9 +56,9 @@ pub enum XiangtingError {
 ///
 /// // 456p 7777s 111z
 /// let melds = [
-///     Some(Mianzi::Shunzi(12, ClaimedTilePosition::Low)),
-///     Some(Mianzi::Gangzi(24)),
-///     Some(Mianzi::Kezi(27)),
+///     Some(FuluMianzi::Shunzi(12, ClaimedTilePosition::Low)),
+///     Some(FuluMianzi::Gangzi(24)),
+///     Some(FuluMianzi::Kezi(27)),
 ///     None,
 /// ];
 ///
@@ -102,7 +102,7 @@ pub fn calculate_replacement_number(
 /// # Examples
 ///
 /// ```
-/// # use xiangting::{calculate_replacement_number_3_player, ClaimedTilePosition, Mianzi};
+/// # use xiangting::{calculate_replacement_number_3_player, ClaimedTilePosition, FuluMianzi};
 /// // 111m456p789s11222z
 /// let hand_14: [u8; 34] = [
 ///     3, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -124,9 +124,9 @@ pub fn calculate_replacement_number(
 ///
 /// // 444p 7777s 111z
 /// let melds = [
-///     Some(Mianzi::Kezi(12)),
-///     Some(Mianzi::Gangzi(24)),
-///     Some(Mianzi::Kezi(27)),
+///     Some(FuluMianzi::Kezi(12)),
+///     Some(FuluMianzi::Gangzi(24)),
+///     Some(FuluMianzi::Kezi(27)),
 ///     None,
 /// ];
 ///

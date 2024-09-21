@@ -621,7 +621,7 @@ pub(crate) fn calculate_replacement_number_3_player(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{ClaimedTilePosition, Mianzi};
+    use crate::{ClaimedTilePosition, FuluMianzi};
 
     #[test]
     fn calculate_replacement_number_formula_works() {
@@ -744,7 +744,7 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi_list = Some([Some(Mianzi::Kezi(27)), None, None, None]);
+        let fulu_mianzi_list = Some([Some(FuluMianzi::Kezi(27)), None, None, None]);
         let replacement_number_2 =
             calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 1);
@@ -805,8 +805,8 @@ mod tests {
         assert_eq!(replacement_number_1, 2);
 
         let fulu_mianzi_list = Some([
-            Some(Mianzi::Kezi(1)),
-            Some(Mianzi::Shunzi(13, ClaimedTilePosition::Low)),
+            Some(FuluMianzi::Kezi(1)),
+            Some(FuluMianzi::Shunzi(13, ClaimedTilePosition::Low)),
             None,
             None,
         ]);
@@ -935,7 +935,7 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi_list = Some([Some(Mianzi::Kezi(27)), None, None, None]);
+        let fulu_mianzi_list = Some([Some(FuluMianzi::Kezi(27)), None, None, None]);
         let replacement_number_2 =
             calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
@@ -954,7 +954,7 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi_list = Some([Some(Mianzi::Gangzi(1)), None, None, None]);
+        let fulu_mianzi_list = Some([Some(FuluMianzi::Gangzi(1)), None, None, None]);
         let replacement_number_2 =
             calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
@@ -973,7 +973,7 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi_list = Some([Some(Mianzi::Gangzi(11)), None, None, None]);
+        let fulu_mianzi_list = Some([Some(FuluMianzi::Gangzi(11)), None, None, None]);
         let replacement_number_2 =
             calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
@@ -992,7 +992,7 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi_list = Some([Some(Mianzi::Gangzi(24)), None, None, None]);
+        let fulu_mianzi_list = Some([Some(FuluMianzi::Gangzi(24)), None, None, None]);
         let replacement_number_2 =
             calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
@@ -1011,7 +1011,12 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi_list = Some([Some(Mianzi::Gangzi(0)), Some(Mianzi::Gangzi(3)), None, None]);
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Gangzi(0)),
+            Some(FuluMianzi::Gangzi(3)),
+            None,
+            None,
+        ]);
         let replacement_number_2 =
             calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);

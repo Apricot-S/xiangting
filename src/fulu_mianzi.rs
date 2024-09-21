@@ -9,7 +9,7 @@ use thiserror::Error;
 type Tile = u8;
 
 /// Position of the claimed tile in the melded sequence.
-/// Used in [`Mianzi::Shunzi`](self::Mianzi::Shunzi).
+/// Used in [`FuluMianzi::Shunzi`](self::fulu_mianzi::Shunzi).
 #[derive(Debug, Clone)]
 pub enum ClaimedTilePosition {
     /// The claimed tile is the lowest in the sequence.
@@ -23,23 +23,23 @@ pub enum ClaimedTilePosition {
     High,
 }
 
-/// 面子: Meld.
+/// 副露面子: Meld.
 ///
 /// # Examples
 ///
 /// ```
-/// # use xiangting::{ClaimedTilePosition, Mianzi};
+/// # use xiangting::{ClaimedTilePosition, FuluMianzi};
 /// // 4-56p (Chii 4m Low)
-/// let shunzi = Mianzi::Shunzi(12, ClaimedTilePosition::Low);
+/// let shunzi = FuluMianzi::Shunzi(12, ClaimedTilePosition::Low);
 ///
 /// // 1-11z (Pon 1z)
-/// let kezi = Mianzi::Kezi(27);
+/// let kezi = FuluMianzi::Kezi(27);
 ///
 /// // 7-777s (Kan 7s)
-/// let gangzi = Mianzi::Gangzi(24);
+/// let gangzi = FuluMianzi::Gangzi(24);
 /// ```
 #[derive(Clone)]
-pub enum Mianzi {
+pub enum FuluMianzi {
     /// 順子: Sequence.
     ///
     /// The first argument represents the index of the tile.
@@ -50,15 +50,15 @@ pub enum Mianzi {
     /// # Examples
     ///
     /// ```
-    /// # use xiangting::{ClaimedTilePosition, Mianzi};
+    /// # use xiangting::{ClaimedTilePosition, FuluMianzi};
     /// // 1-23m
-    /// let shunzi_low = Mianzi::Shunzi(0, ClaimedTilePosition::Low);
+    /// let shunzi_low = FuluMianzi::Shunzi(0, ClaimedTilePosition::Low);
     ///
     /// // 2-13m
-    /// let shunzi_middle = Mianzi::Shunzi(1, ClaimedTilePosition::Middle);
+    /// let shunzi_middle = FuluMianzi::Shunzi(1, ClaimedTilePosition::Middle);
     ///
     /// // 3-12m
-    /// let shunzi_high = Mianzi::Shunzi(2, ClaimedTilePosition::High);
+    /// let shunzi_high = FuluMianzi::Shunzi(2, ClaimedTilePosition::High);
     /// ```
     Shunzi(Tile, ClaimedTilePosition),
     /// 刻子: Triplet.
@@ -70,9 +70,9 @@ pub enum Mianzi {
     /// # Examples
     ///
     /// ```
-    /// # use xiangting::Mianzi;
+    /// # use xiangting::FuluMianzi;
     /// // 1-11m
-    /// let kezi = Mianzi::Kezi(0);
+    /// let kezi = FuluMianzi::Kezi(0);
     /// ```
     Kezi(Tile),
     /// 槓子: Quad.
@@ -84,9 +84,9 @@ pub enum Mianzi {
     /// # Examples
     ///
     /// ```
-    /// # use xiangting::Mianzi;
+    /// # use xiangting::FuluMianzi;
     /// // 1-111m (Kan 1m)
-    /// let gangzi = Mianzi::Gangzi(0);
+    /// let gangzi = FuluMianzi::Gangzi(0);
     /// ```
     Gangzi(Tile),
 }
@@ -103,14 +103,14 @@ pub enum InvalidMianziError {
     InvalidShunziCombination(Tile, ClaimedTilePosition),
 }
 
-impl Mianzi {
+impl FuluMianzi {
     pub(crate) fn validate(&self) -> Result<(), InvalidMianziError> {
         match self {
-            Mianzi::Shunzi(tile, position) => {
+            FuluMianzi::Shunzi(tile, position) => {
                 if *tile > MAX_SHUPAI_INDEX {
                     return Err(InvalidMianziError::ShunziWithZipai(*tile));
                 }
-                if !Mianzi::is_valid_shunzi_combination(tile, position) {
+                if !FuluMianzi::is_valid_shunzi_combination(tile, position) {
                     return Err(InvalidMianziError::InvalidShunziCombination(
                         *tile,
                         position.clone(),
@@ -118,7 +118,7 @@ impl Mianzi {
                 }
                 Ok(())
             }
-            Mianzi::Kezi(tile) | Mianzi::Gangzi(tile) => {
+            FuluMianzi::Kezi(tile) | FuluMianzi::Gangzi(tile) => {
                 if *tile > MAX_TILE_INDEX {
                     return Err(InvalidMianziError::IndexOutOfRange(*tile));
                 }
@@ -152,10 +152,10 @@ const TILE_NAMES: [&str; NUM_TILE_INDEX] = [
     "1z", "2z", "3z", "4z", "5z", "6z", "7z", // z
 ];
 
-impl fmt::Display for Mianzi {
+impl fmt::Display for FuluMianzi {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Mianzi::Shunzi(index, position) => {
+            FuluMianzi::Shunzi(index, position) => {
                 let position_str = match position {
                     ClaimedTilePosition::Low => "Low",
                     ClaimedTilePosition::Middle => "Middle",
@@ -166,13 +166,15 @@ impl fmt::Display for Mianzi {
                     TILE_NAMES[*index as usize], &position_str
                 ))
             }
-            Mianzi::Kezi(index) => f.write_str(&format!("Pon {}", TILE_NAMES[*index as usize])),
-            Mianzi::Gangzi(index) => f.write_str(&format!("Kan {}", TILE_NAMES[*index as usize])),
+            FuluMianzi::Kezi(index) => f.write_str(&format!("Pon {}", TILE_NAMES[*index as usize])),
+            FuluMianzi::Gangzi(index) => {
+                f.write_str(&format!("Kan {}", TILE_NAMES[*index as usize]))
+            }
         }
     }
 }
 
-impl fmt::Debug for Mianzi {
+impl fmt::Debug for FuluMianzi {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self, f)
     }
@@ -184,24 +186,24 @@ mod tests {
 
     #[test]
     fn valid_shunzi() {
-        let shunzi_1m_low = Mianzi::Shunzi(0, ClaimedTilePosition::Low);
-        let shunzi_7m_low = Mianzi::Shunzi(6, ClaimedTilePosition::Low);
-        let shunzi_1p_low = Mianzi::Shunzi(0 + 9, ClaimedTilePosition::Low);
-        let shunzi_7p_low = Mianzi::Shunzi(6 + 9, ClaimedTilePosition::Low);
-        let shunzi_1s_low = Mianzi::Shunzi(0 + 18, ClaimedTilePosition::Low);
-        let shunzi_7s_low = Mianzi::Shunzi(6 + 18, ClaimedTilePosition::Low);
-        let shunzi_2m_middle = Mianzi::Shunzi(1, ClaimedTilePosition::Middle);
-        let shunzi_8m_middle = Mianzi::Shunzi(7, ClaimedTilePosition::Middle);
-        let shunzi_2p_middle = Mianzi::Shunzi(1 + 9, ClaimedTilePosition::Middle);
-        let shunzi_8p_middle = Mianzi::Shunzi(7 + 9, ClaimedTilePosition::Middle);
-        let shunzi_2s_middle = Mianzi::Shunzi(1 + 18, ClaimedTilePosition::Middle);
-        let shunzi_8s_middle = Mianzi::Shunzi(7 + 18, ClaimedTilePosition::Middle);
-        let shunzi_3m_high = Mianzi::Shunzi(2, ClaimedTilePosition::High);
-        let shunzi_9m_high = Mianzi::Shunzi(8, ClaimedTilePosition::High);
-        let shunzi_3p_high = Mianzi::Shunzi(2 + 9, ClaimedTilePosition::High);
-        let shunzi_9p_high = Mianzi::Shunzi(8 + 9, ClaimedTilePosition::High);
-        let shunzi_3s_high = Mianzi::Shunzi(2 + 18, ClaimedTilePosition::High);
-        let shunzi_9s_high = Mianzi::Shunzi(8 + 18, ClaimedTilePosition::High);
+        let shunzi_1m_low = FuluMianzi::Shunzi(0, ClaimedTilePosition::Low);
+        let shunzi_7m_low = FuluMianzi::Shunzi(6, ClaimedTilePosition::Low);
+        let shunzi_1p_low = FuluMianzi::Shunzi(0 + 9, ClaimedTilePosition::Low);
+        let shunzi_7p_low = FuluMianzi::Shunzi(6 + 9, ClaimedTilePosition::Low);
+        let shunzi_1s_low = FuluMianzi::Shunzi(0 + 18, ClaimedTilePosition::Low);
+        let shunzi_7s_low = FuluMianzi::Shunzi(6 + 18, ClaimedTilePosition::Low);
+        let shunzi_2m_middle = FuluMianzi::Shunzi(1, ClaimedTilePosition::Middle);
+        let shunzi_8m_middle = FuluMianzi::Shunzi(7, ClaimedTilePosition::Middle);
+        let shunzi_2p_middle = FuluMianzi::Shunzi(1 + 9, ClaimedTilePosition::Middle);
+        let shunzi_8p_middle = FuluMianzi::Shunzi(7 + 9, ClaimedTilePosition::Middle);
+        let shunzi_2s_middle = FuluMianzi::Shunzi(1 + 18, ClaimedTilePosition::Middle);
+        let shunzi_8s_middle = FuluMianzi::Shunzi(7 + 18, ClaimedTilePosition::Middle);
+        let shunzi_3m_high = FuluMianzi::Shunzi(2, ClaimedTilePosition::High);
+        let shunzi_9m_high = FuluMianzi::Shunzi(8, ClaimedTilePosition::High);
+        let shunzi_3p_high = FuluMianzi::Shunzi(2 + 9, ClaimedTilePosition::High);
+        let shunzi_9p_high = FuluMianzi::Shunzi(8 + 9, ClaimedTilePosition::High);
+        let shunzi_3s_high = FuluMianzi::Shunzi(2 + 18, ClaimedTilePosition::High);
+        let shunzi_9s_high = FuluMianzi::Shunzi(8 + 18, ClaimedTilePosition::High);
 
         assert_eq!(shunzi_1m_low.validate().unwrap(), ());
         assert_eq!(shunzi_7m_low.validate().unwrap(), ());
@@ -225,13 +227,13 @@ mod tests {
 
     #[test]
     fn invalid_shunzi() {
-        let shunzi_1z_low = Mianzi::Shunzi(MAX_SHUPAI_INDEX + 1, ClaimedTilePosition::Low);
-        let shunzi_8m_low = Mianzi::Shunzi(7, ClaimedTilePosition::Low);
-        let shunzi_9m_low = Mianzi::Shunzi(8, ClaimedTilePosition::Low);
-        let shunzi_1m_middle = Mianzi::Shunzi(0, ClaimedTilePosition::Middle);
-        let shunzi_9m_middle = Mianzi::Shunzi(8, ClaimedTilePosition::Middle);
-        let shunzi_1m_high = Mianzi::Shunzi(0, ClaimedTilePosition::High);
-        let shunzi_2m_high = Mianzi::Shunzi(1, ClaimedTilePosition::High);
+        let shunzi_1z_low = FuluMianzi::Shunzi(MAX_SHUPAI_INDEX + 1, ClaimedTilePosition::Low);
+        let shunzi_8m_low = FuluMianzi::Shunzi(7, ClaimedTilePosition::Low);
+        let shunzi_9m_low = FuluMianzi::Shunzi(8, ClaimedTilePosition::Low);
+        let shunzi_1m_middle = FuluMianzi::Shunzi(0, ClaimedTilePosition::Middle);
+        let shunzi_9m_middle = FuluMianzi::Shunzi(8, ClaimedTilePosition::Middle);
+        let shunzi_1m_high = FuluMianzi::Shunzi(0, ClaimedTilePosition::High);
+        let shunzi_2m_high = FuluMianzi::Shunzi(1, ClaimedTilePosition::High);
 
         assert!(matches!(
             shunzi_1z_low.validate().unwrap_err(),
@@ -265,8 +267,8 @@ mod tests {
 
     #[test]
     fn valid_kezi() {
-        let kezi_1 = Mianzi::Kezi(0);
-        let kezi_2 = Mianzi::Kezi(MAX_TILE_INDEX);
+        let kezi_1 = FuluMianzi::Kezi(0);
+        let kezi_2 = FuluMianzi::Kezi(MAX_TILE_INDEX);
 
         assert_eq!(kezi_1.validate().unwrap(), ());
         assert_eq!(kezi_2.validate().unwrap(), ());
@@ -274,7 +276,7 @@ mod tests {
 
     #[test]
     fn invalid_kezi() {
-        let kezi_1 = Mianzi::Kezi(MAX_TILE_INDEX + 1);
+        let kezi_1 = FuluMianzi::Kezi(MAX_TILE_INDEX + 1);
 
         assert!(matches!(
             kezi_1.validate().unwrap_err(),
@@ -284,8 +286,8 @@ mod tests {
 
     #[test]
     fn valid_gangzi() {
-        let gangzi_1 = Mianzi::Gangzi(0);
-        let gangzi_2 = Mianzi::Gangzi(MAX_TILE_INDEX);
+        let gangzi_1 = FuluMianzi::Gangzi(0);
+        let gangzi_2 = FuluMianzi::Gangzi(MAX_TILE_INDEX);
 
         assert_eq!(gangzi_1.validate().unwrap(), ());
         assert_eq!(gangzi_2.validate().unwrap(), ());
@@ -293,7 +295,7 @@ mod tests {
 
     #[test]
     fn invalid_gangzi() {
-        let gangzi_1 = Mianzi::Gangzi(MAX_TILE_INDEX + 1);
+        let gangzi_1 = FuluMianzi::Gangzi(MAX_TILE_INDEX + 1);
 
         assert!(matches!(
             gangzi_1.validate().unwrap_err(),
@@ -303,25 +305,25 @@ mod tests {
 
     #[test]
     fn shunzi_display() {
-        let shunzi_low = Mianzi::Shunzi(0, ClaimedTilePosition::Low);
+        let shunzi_low = FuluMianzi::Shunzi(0, ClaimedTilePosition::Low);
         assert_eq!(format!("{}", shunzi_low), "Chii 1m Low");
 
-        let shunzi_middle = Mianzi::Shunzi(1, ClaimedTilePosition::Middle);
+        let shunzi_middle = FuluMianzi::Shunzi(1, ClaimedTilePosition::Middle);
         assert_eq!(format!("{}", shunzi_middle), "Chii 2m Middle");
 
-        let shunzi_high = Mianzi::Shunzi(2, ClaimedTilePosition::High);
+        let shunzi_high = FuluMianzi::Shunzi(2, ClaimedTilePosition::High);
         assert_eq!(format!("{}", shunzi_high), "Chii 3m High");
     }
 
     #[test]
     fn kezi_display() {
-        let kezi = Mianzi::Kezi(0);
+        let kezi = FuluMianzi::Kezi(0);
         assert_eq!(format!("{}", kezi), "Pon 1m");
     }
 
     #[test]
     fn gangzi_display() {
-        let gangzi = Mianzi::Gangzi(0);
+        let gangzi = FuluMianzi::Gangzi(0);
         assert_eq!(format!("{}", gangzi), "Kan 1m");
     }
 }
