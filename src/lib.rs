@@ -28,8 +28,6 @@ mod standard;
 pub mod common;
 
 pub use bingpai::Bingpai;
-pub use calculate::{
-    calculate_replacement_number, calculate_replacement_number_3_player, XiangtingError,
-};
+pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi};
-pub use shoupai::FuluMianziList;
+pub use shoupai::{FuluMianziList, InvalidShoupaiError};

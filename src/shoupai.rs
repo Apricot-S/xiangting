@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::bingpai::Bingpai;
+use super::bingpai::{Bingpai, InvalidBingpaiError};
 use super::constants::{MAX_NUM_FULU_MIANZI, MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
 use super::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, InvalidFuluMianziError};
 use thiserror::Error;
@@ -66,12 +66,29 @@ pub enum InvalidShoupaiError {
     ExceedsMaxNumSameTile(u8),
     #[error("Invalid hand: Total tile count exceeds 14 ({0}).")]
     ExceedsMaxNumShoupai(u8),
+    #[error("Invalid hand: Hand is empty.")]
+    EmptyShoupai,
     #[error("Invalid hand: Total tile count is not a multiple of 3 plus 1 or 2 ({0}).")]
     InvalidNumShoupai(u8),
     #[error("InvalidFuluMianziError({0})")]
     InvalidFuluMianzi(#[from] InvalidFuluMianziError),
+    #[error("Invalid hand: 2m to 8m cannot be used in 3-player mahjong ({0}).")]
+    InvalidTileFor3Player(usize),
     #[error("Invalid hand: {0} cannot be used in 3-player mahjong.")]
     InvalidFuluMianziFor3Player(FuluMianzi),
+}
+
+#[doc(hidden)]
+impl From<InvalidBingpaiError> for InvalidShoupaiError {
+    fn from(value: InvalidBingpaiError) -> Self {
+        match value {
+            InvalidBingpaiError::EmptyBingpai => Self::EmptyShoupai,
+            InvalidBingpaiError::ExceedsMaxNumBingpai(n) => Self::ExceedsMaxNumShoupai(n),
+            InvalidBingpaiError::ExceedsMaxNumSameTile(n) => Self::ExceedsMaxNumSameTile(n),
+            InvalidBingpaiError::InvalidNumBingpai(n) => Self::InvalidNumShoupai(n),
+            InvalidBingpaiError::InvalidTileFor3Player(i) => Self::InvalidTileFor3Player(i),
+        }
+    }
 }
 
 pub(super) fn validate_shoupai(

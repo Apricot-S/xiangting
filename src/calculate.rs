@@ -2,25 +2,13 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::bingpai::{count_bingpai, count_bingpai_3_player, Bingpai, InvalidBingpaiError};
+use super::bingpai::{count_bingpai, count_bingpai_3_player, Bingpai};
 use super::qiduizi;
 use super::shisanyao;
 use super::shoupai::{
     validate_shoupai, validate_shoupai_3_player, FuluMianziList, InvalidShoupaiError,
 };
 use super::standard;
-use thiserror::Error;
-
-/// Error type of replacement number calculation
-///
-/// Indicates that the hand or melds are invalid.
-#[derive(Debug, Error)]
-pub enum XiangtingError {
-    #[error("InvalidBingpaiError({0})")]
-    InvalidBingpai(#[from] InvalidBingpaiError),
-    #[error("InvalidShoupaiError({0})")]
-    InvalidShoupai(#[from] InvalidShoupaiError),
-}
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
 /// This function is for 4-player mahjong.
@@ -30,16 +18,16 @@ pub enum XiangtingError {
 /// * `bingpai` - A reference to a hand excluding melds.
 /// * `fulu_mianzi_list` - An optional reference to a list of melds.
 ///
-/// # Returns
+/// # Errors
 ///
-/// A [`Result`] containing the replacement number as [`u8`] or a [`XiangtingError`].
+/// Returns [`Err`] if the hand is invalid.
 ///
 /// # Examples
 ///
 /// ```
 /// # use xiangting::{calculate_replacement_number, ClaimedTilePosition, FuluMianzi};
-/// # use xiangting::XiangtingError;
-/// # fn main() -> Result<(), XiangtingError> {
+/// # use xiangting::InvalidShoupaiError;
+/// # fn main() -> Result<(), InvalidShoupaiError> {
 /// // 123m456p789s11222z
 /// let hand_14: [u8; 34] = [
 ///     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
@@ -78,7 +66,7 @@ pub enum XiangtingError {
 pub fn calculate_replacement_number(
     bingpai: &Bingpai,
     fulu_mianzi_list: &Option<FuluMianziList>,
-) -> Result<u8, XiangtingError> {
+) -> Result<u8, InvalidShoupaiError> {
     let num_bingpai = count_bingpai(bingpai)?;
 
     if let Some(f) = fulu_mianzi_list {
@@ -102,16 +90,16 @@ pub fn calculate_replacement_number(
 /// * `bingpai` - A reference to a hand excluding melds.
 /// * `fulu_mianzi_list` - An optional reference to a list of melds.
 ///
-/// # Returns
+/// # Errors
 ///
-/// A [`Result`] containing the replacement number as [`u8`] or a [`XiangtingError`].
+/// Returns [`Err`] if the hand is invalid.
 ///
 /// # Examples
 ///
 /// ```
 /// # use xiangting::{calculate_replacement_number_3_player, ClaimedTilePosition, FuluMianzi};
-/// # use xiangting::XiangtingError;
-/// # fn main() -> Result<(), XiangtingError> {
+/// # use xiangting::InvalidShoupaiError;
+/// # fn main() -> Result<(), InvalidShoupaiError> {
 /// // 111m456p789s11222z
 /// let hand_14: [u8; 34] = [
 ///     3, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -150,7 +138,7 @@ pub fn calculate_replacement_number(
 pub fn calculate_replacement_number_3_player(
     bingpai: &Bingpai,
     fulu_mianzi_list: &Option<FuluMianziList>,
-) -> Result<u8, XiangtingError> {
+) -> Result<u8, InvalidShoupaiError> {
     let num_bingpai = count_bingpai_3_player(bingpai)?;
 
     if let Some(f) = fulu_mianzi_list {
@@ -205,6 +193,21 @@ mod tests {
     }
 
     #[test]
+    fn calculate_replacement_number_empty_bingpai() {
+        let bingpai: Bingpai = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let replacement_number = calculate_replacement_number(&bingpai, &None);
+        assert!(matches!(
+            replacement_number.unwrap_err(),
+            InvalidShoupaiError::EmptyShoupai
+        ));
+    }
+
+    #[test]
     fn calculate_replacement_number_3_player_standard_tenpai() {
         let bingpai: Bingpai = [
             3, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -238,5 +241,20 @@ mod tests {
         ];
         let replacement_number = calculate_replacement_number_3_player(&bingpai, &None);
         assert_eq!(replacement_number.unwrap(), 1);
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_player_empty_bingpai() {
+        let bingpai: Bingpai = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let replacement_number = calculate_replacement_number_3_player(&bingpai, &None);
+        assert!(matches!(
+            replacement_number.unwrap_err(),
+            InvalidShoupaiError::EmptyShoupai
+        ));
     }
 }
