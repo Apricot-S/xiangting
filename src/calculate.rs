@@ -11,6 +11,9 @@ use super::shoupai::{
 use super::standard;
 use thiserror::Error;
 
+/// Error type of replacement number calculation
+///
+/// Indicates that the hand or melds are invalid.
 #[derive(Debug, Error)]
 pub enum XiangtingError {
     #[error("InvalidBingpaiError({0})")]
@@ -29,12 +32,14 @@ pub enum XiangtingError {
 ///
 /// # Returns
 ///
-/// A `Result` containing the replacement number as `u8` or a `XiangtingError`.
+/// A [`Result`] containing the replacement number as [`u8`] or a [`XiangtingError`].
 ///
 /// # Examples
 ///
 /// ```
 /// # use xiangting::{calculate_replacement_number, ClaimedTilePosition, FuluMianzi};
+/// # use xiangting::XiangtingError;
+/// # fn main() -> Result<(), XiangtingError> {
 /// // 123m456p789s11222z
 /// let hand_14: [u8; 34] = [
 ///     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
@@ -44,7 +49,7 @@ pub enum XiangtingError {
 /// ];
 ///
 /// let replacement_number = calculate_replacement_number(&hand_14, &None);
-/// assert_eq!(replacement_number.unwrap(), 0u8);
+/// assert_eq!(replacement_number?, 0u8);
 ///
 /// // 123m1z (3 melds)
 /// let hand_4: [u8; 34] = [
@@ -63,10 +68,12 @@ pub enum XiangtingError {
 /// ];
 ///
 /// let replacement_number_wo_melds = calculate_replacement_number(&hand_4, &None);
-/// assert_eq!(replacement_number_wo_melds.unwrap(), 1u8);
+/// assert_eq!(replacement_number_wo_melds?, 1u8);
 ///
 /// let replacement_number_w_melds = calculate_replacement_number(&hand_4, &Some(melds));
-/// assert_eq!(replacement_number_w_melds.unwrap(), 2u8);
+/// assert_eq!(replacement_number_w_melds?, 2u8);
+/// # Ok(())
+/// # }
 /// ```
 pub fn calculate_replacement_number(
     bingpai: &Bingpai,
@@ -97,12 +104,14 @@ pub fn calculate_replacement_number(
 ///
 /// # Returns
 ///
-/// A `Result` containing the replacement number as `u8` or a `XiangtingError`.
+/// A [`Result`] containing the replacement number as [`u8`] or a [`XiangtingError`].
 ///
 /// # Examples
 ///
 /// ```
 /// # use xiangting::{calculate_replacement_number_3_player, ClaimedTilePosition, FuluMianzi};
+/// # use xiangting::XiangtingError;
+/// # fn main() -> Result<(), XiangtingError> {
 /// // 111m456p789s11222z
 /// let hand_14: [u8; 34] = [
 ///     3, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -112,7 +121,7 @@ pub fn calculate_replacement_number(
 /// ];
 ///
 /// let replacement_number = calculate_replacement_number_3_player(&hand_14, &None);
-/// assert_eq!(replacement_number.unwrap(), 0u8);
+/// assert_eq!(replacement_number?, 0u8);
 ///
 /// // 111m1z (3 melds)
 /// let hand_4: [u8; 34] = [
@@ -131,10 +140,12 @@ pub fn calculate_replacement_number(
 /// ];
 ///
 /// let replacement_number_wo_melds = calculate_replacement_number_3_player(&hand_4, &None);
-/// assert_eq!(replacement_number_wo_melds.unwrap(), 1u8);
+/// assert_eq!(replacement_number_wo_melds?, 1u8);
 ///
 /// let replacement_number_w_melds = calculate_replacement_number_3_player(&hand_4, &Some(melds));
-/// assert_eq!(replacement_number_w_melds.unwrap(), 2u8);
+/// assert_eq!(replacement_number_w_melds?, 2u8);
+/// # Ok(())
+/// # }
 /// ```
 pub fn calculate_replacement_number_3_player(
     bingpai: &Bingpai,
