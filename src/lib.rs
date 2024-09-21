@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+#![warn(missing_docs)]
+
 //! A library for calculation of deficiency number (a.k.a. xiangting number, 向聴数).
 //!
 //! This is a port of [majiang-core/lib/xiangting.js](https://github.com/kobalab/majiang-core/blob/master/lib/xiangting.js) to Rust.
@@ -12,8 +14,26 @@
 //! - The original algorithm miscalculated the deficiency number in some cases. These errors have been corrected in this port, but the calculation speed has deteriorated as a result.
 //! - Supports three-player mahjong.
 //! - Does not support short hand or long hand.
-
-#![warn(missing_docs)]
+//!
+//! # Example
+//!
+//! ```
+//! # use xiangting::calculate_replacement_number;
+//! # use xiangting::InvalidShoupaiError;
+//! # fn main() -> Result<(), InvalidShoupaiError> {
+//! // 123m456p789s11222z
+//! let hand_14: [u8; 34] = [
+//!     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
+//!     0, 0, 0, 1, 1, 1, 0, 0, 0, // p
+//!     0, 0, 0, 0, 0, 0, 1, 1, 1, // s
+//!     2, 3, 0, 0, 0, 0, 0, // z
+//! ];
+//!
+//! let replacement_number = calculate_replacement_number(&hand_14, &None);
+//! assert_eq!(replacement_number?, 0u8);
+//! # Ok(())
+//! # }
+//! ```
 
 mod bingpai;
 mod calculate;
