@@ -95,15 +95,13 @@ pub enum FuluMianzi {
 #[derive(Debug, Error)]
 pub enum InvalidFuluMianziError {
     /// The tile index is outside the range of 0 to 33.
-    #[error("Invalid meld: Tile index must be between 0 and 33, but got {0}.")]
+    #[error("tile index must be between 0 and 33 but was {0}")]
     IndexOutOfRange(Tile),
     /// An attempt was made to create a sequence using honors (字牌).
-    #[error("Invalid meld: A sequence cannot be made with honors ({0}).")]
+    #[error("a sequence cannot be made with honors ({0})")]
     ShunziWithZipai(Tile),
     /// The tile and position combination cannot form a valid sequence.
-    #[error(
-        "Invalid meld: A sequence cannot be made with the given tile and position ({0}, {1:?})."
-    )]
+    #[error("a sequence cannot be made with {0} and {1:?}")]
     InvalidShunziCombination(Tile, ClaimedTilePosition),
 }
 

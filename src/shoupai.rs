@@ -64,25 +64,27 @@ pub(super) fn count_fulupai(fulu_mianzi_list: &FuluMianziList) -> Bingpai {
 #[derive(Debug, Error)]
 pub enum InvalidShoupaiError {
     /// Same tile count exceeds 4.
-    #[error("Invalid hand: Same tile count exceeds 4 ({0}).")]
+    #[error("same tile count must be 4 or less but was {0}")]
     ExceedsMaxNumSameTile(u8),
     /// Total tile count exceeds 14.
-    #[error("Invalid hand: Total tile count exceeds 14 ({0}).")]
+    #[error("total tile count must be 14 or less but was {0}")]
     ExceedsMaxNumShoupai(u8),
     /// Hand is empty.
-    #[error("Invalid hand: Hand is empty.")]
+    #[error("hand is empty")]
     EmptyShoupai,
     /// Total tile count is not a multiple of 3 plus 1 or 2.
-    #[error("Invalid hand: Total tile count is not a multiple of 3 plus 1 or 2 ({0}).")]
+    #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidNumShoupai(u8),
-    /// Contains invalid melds.
-    #[error("InvalidFuluMianziError({0})")]
+    /// Contains an invalid meld.
+    #[error("hand contains an invalid meld ({0})")]
     InvalidFuluMianzi(#[from] InvalidFuluMianziError),
     /// Contains tiles that cannot be used in 3-player mahjong (2m to 8m).
-    #[error("Invalid hand: 2m to 8m cannot be used in 3-player mahjong ({0}).")]
+    #[error(
+        "tile index {0} (must be outside 1 (2m) to 7 (8m)) cannot be used in 3-player mahjong"
+    )]
     InvalidTileFor3Player(usize),
-    /// Contains melds that cannot be used in 3-player mahjong.
-    #[error("Invalid hand: {0} cannot be used in 3-player mahjong.")]
+    /// Contains a meld that cannot be used in 3-player mahjong.
+    #[error("{0} cannot be used in 3-player mahjong")]
     InvalidFuluMianziFor3Player(FuluMianzi),
 }
 

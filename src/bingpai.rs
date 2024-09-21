@@ -50,15 +50,17 @@ pub type Bingpai = [u8; NUM_TILE_INDEX];
 
 #[derive(Debug, Error)]
 pub(crate) enum InvalidBingpaiError {
-    #[error("Invalid hand: Same tile count exceeds 4 ({0}).")]
+    #[error("same tile count must be 4 or less but was {0}")]
     ExceedsMaxNumSameTile(u8),
-    #[error("Invalid hand: Total tile count exceeds 14 ({0}).")]
+    #[error("total tile count must be 14 or less but was {0}")]
     ExceedsMaxNumBingpai(u8),
-    #[error("Invalid hand: Hand is empty.")]
+    #[error("hand is empty")]
     EmptyBingpai,
-    #[error("Invalid hand: Total tile count is not a multiple of 3 plus 1 or 2 ({0}).")]
+    #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidNumBingpai(u8),
-    #[error("Invalid hand: 2m to 8m cannot be used in 3-player mahjong ({0}).")]
+    #[error(
+        "tile index {0} (must be outside 1 (2m) to 7 (8m)) cannot be used in 3-player mahjong"
+    )]
     InvalidTileFor3Player(usize),
 }
 
