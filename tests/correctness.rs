@@ -46,13 +46,61 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn verify_correctness_1() {
+    fn verify_correctness_01() {
         assert!(verify_correctness(1));
     }
 
     #[test]
     #[ignore]
-    fn verify_correctness_2() {
+    fn verify_correctness_02() {
         assert!(verify_correctness(2));
+    }
+
+    #[test]
+    #[ignore]
+    fn verify_correctness_04() {
+        assert!(verify_correctness(4));
+    }
+
+    #[test]
+    #[ignore]
+    fn verify_correctness_05() {
+        assert!(verify_correctness(5));
+    }
+
+    #[test]
+    #[ignore]
+    fn verify_correctness_07() {
+        assert!(verify_correctness(7));
+    }
+
+    #[test]
+    #[ignore]
+    fn verify_correctness_08() {
+        assert!(verify_correctness(8));
+    }
+
+    #[test]
+    #[ignore]
+    fn verify_correctness_10() {
+        assert!(verify_correctness(10));
+    }
+
+    #[test]
+    #[ignore]
+    fn verify_correctness_11() {
+        assert!(verify_correctness(11));
+    }
+
+    #[test]
+    #[ignore]
+    fn verify_correctness_13() {
+        assert!(verify_correctness(13));
+    }
+
+    #[test]
+    #[ignore]
+    fn verify_correctness_14() {
+        assert!(verify_correctness(14));
     }
 }
