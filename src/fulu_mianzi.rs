@@ -51,13 +51,13 @@ pub enum FuluMianzi {
     ///
     /// ```
     /// # use xiangting::{ClaimedTilePosition, FuluMianzi};
-    /// // 1-23m
+    /// // 1-23m (Chii 1m Low)
     /// let shunzi_low = FuluMianzi::Shunzi(0, ClaimedTilePosition::Low);
     ///
-    /// // 2-13m
+    /// // 2-13m (Chii 2m Middle)
     /// let shunzi_middle = FuluMianzi::Shunzi(1, ClaimedTilePosition::Middle);
     ///
-    /// // 3-12m
+    /// // 3-12m (Chii 3m High)
     /// let shunzi_high = FuluMianzi::Shunzi(2, ClaimedTilePosition::High);
     /// ```
     Shunzi(Tile, ClaimedTilePosition),
@@ -71,7 +71,7 @@ pub enum FuluMianzi {
     ///
     /// ```
     /// # use xiangting::FuluMianzi;
-    /// // 1-11m
+    /// // 1-11m (Pon 1m)
     /// let kezi = FuluMianzi::Kezi(0);
     /// ```
     Kezi(Tile),
