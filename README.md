@@ -50,9 +50,9 @@ fn main() {
 
 In the calculation for a hand with melds (副露), the meld tiles can be included or excluded in the counting of the tiles that exist in four copies within the hand.
 
-If they are not included (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), `&None` should be specified for `fulu_mianzi`.
+If they are not included (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), `None` should be specified for `fulu_mianzi_list`.
 
-If they are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be specified for `fulu_mianzi`.
+If they are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be specified for `fulu_mianzi_list`.
 
 ```rust
 use xiangting::{calculate_replacement_number, ClaimedTilePosition, Mianzi};

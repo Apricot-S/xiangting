@@ -6,7 +6,7 @@ use super::bingpai::{count_bingpai, count_bingpai_3_player, Bingpai, InvalidBing
 use super::qiduizi;
 use super::shisanyao;
 use super::shoupai::{
-    validate_shoupai, validate_shoupai_3_player, FuluMianzi, InvalidShoupaiError,
+    validate_shoupai, validate_shoupai_3_player, FuluMianziList, InvalidShoupaiError,
 };
 use super::standard;
 use thiserror::Error;
@@ -25,7 +25,7 @@ pub enum XiangtingError {
 /// # Arguments
 ///
 /// * `bingpai` - A reference to a hand excluding melds.
-/// * `fulu_mianzi` - An optional reference to a list of melds.
+/// * `fulu_mianzi_list` - An optional reference to a list of melds.
 ///
 /// # Returns
 ///
@@ -70,15 +70,15 @@ pub enum XiangtingError {
 /// ```
 pub fn calculate_replacement_number(
     bingpai: &Bingpai,
-    fulu_mianzi: &Option<FuluMianzi>,
+    fulu_mianzi_list: &Option<FuluMianziList>,
 ) -> Result<u8, XiangtingError> {
     let num_bingpai = count_bingpai(bingpai)?;
 
-    if let Some(f) = fulu_mianzi {
+    if let Some(f) = fulu_mianzi_list {
         validate_shoupai(bingpai, f)?;
     }
 
-    let r0 = standard::calculate_replacement_number(*bingpai, fulu_mianzi, num_bingpai);
+    let r0 = standard::calculate_replacement_number(*bingpai, fulu_mianzi_list, num_bingpai);
     let r1 = qiduizi::calculate_replacement_number(bingpai, num_bingpai);
     let r2 = shisanyao::calculate_replacement_number(bingpai, num_bingpai);
     Ok([r0, r1, r2].into_iter().min().unwrap())
@@ -93,7 +93,7 @@ pub fn calculate_replacement_number(
 /// # Arguments
 ///
 /// * `bingpai` - A reference to a hand excluding melds.
-/// * `fulu_mianzi` - An optional reference to a list of melds.
+/// * `fulu_mianzi_list` - An optional reference to a list of melds.
 ///
 /// # Returns
 ///
@@ -138,15 +138,16 @@ pub fn calculate_replacement_number(
 /// ```
 pub fn calculate_replacement_number_3_player(
     bingpai: &Bingpai,
-    fulu_mianzi: &Option<FuluMianzi>,
+    fulu_mianzi_list: &Option<FuluMianziList>,
 ) -> Result<u8, XiangtingError> {
     let num_bingpai = count_bingpai_3_player(bingpai)?;
 
-    if let Some(f) = fulu_mianzi {
+    if let Some(f) = fulu_mianzi_list {
         validate_shoupai_3_player(bingpai, f)?;
     }
 
-    let r0 = standard::calculate_replacement_number_3_player(*bingpai, fulu_mianzi, num_bingpai);
+    let r0 =
+        standard::calculate_replacement_number_3_player(*bingpai, fulu_mianzi_list, num_bingpai);
     let r1 = qiduizi::calculate_replacement_number(bingpai, num_bingpai);
     let r2 = shisanyao::calculate_replacement_number(bingpai, num_bingpai);
     Ok([r0, r1, r2].into_iter().min().unwrap())

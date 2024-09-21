@@ -7,7 +7,7 @@ use super::constants::{MAX_NUM_FULU_MIANZI, MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, 
 use super::mianzi::{ClaimedTilePosition, InvalidMianziError, Mianzi};
 use thiserror::Error;
 
-/// 副露面子: List of melds.
+/// List of melds.
 ///
 /// A element of array indicates a meld in the hand.
 /// Specify [`None`] for the element where there is no meld.
@@ -15,19 +15,19 @@ use thiserror::Error;
 /// # Examples
 ///
 /// ```
-/// # use xiangting::{ClaimedTilePosition, FuluMianzi, Mianzi};
+/// # use xiangting::{ClaimedTilePosition, FuluMianziList, Mianzi};
 /// // 456p 7777s 111z
-/// let melds: FuluMianzi = [
+/// let melds: FuluMianziList = [
 ///     Some(Mianzi::Shunzi(12, ClaimedTilePosition::Low)),
 ///     Some(Mianzi::Gangzi(24)),
 ///     Some(Mianzi::Kezi(27)),
 ///     None,
 /// ];
 /// ```
-pub type FuluMianzi = [Option<Mianzi>; MAX_NUM_FULU_MIANZI];
+pub type FuluMianziList = [Option<Mianzi>; MAX_NUM_FULU_MIANZI];
 
-pub(super) fn count_fulupai(fulu_mianzi: &FuluMianzi) -> Bingpai {
-    fulu_mianzi
+pub(super) fn count_fulupai(fulu_mianzi_list: &FuluMianziList) -> Bingpai {
+    fulu_mianzi_list
         .iter()
         .fold([0; NUM_TILE_INDEX], |mut fulupai, m| {
             match m {
@@ -76,21 +76,21 @@ pub enum InvalidShoupaiError {
 
 pub(super) fn validate_shoupai(
     bingpai: &Bingpai,
-    fulu_mianzi: &FuluMianzi,
+    fulu_mianzi_list: &FuluMianziList,
 ) -> Result<(), InvalidShoupaiError> {
-    fulu_mianzi
+    fulu_mianzi_list
         .iter()
         .flatten()
         .try_for_each(|m| m.validate())?;
 
-    let num_gangzi = fulu_mianzi
+    let num_gangzi = fulu_mianzi_list
         .iter()
         .flatten()
         .filter(|m| matches!(*m, Mianzi::Gangzi(_)))
         .count() as u8;
 
     let mut shoupai = *bingpai;
-    let fulupai = count_fulupai(fulu_mianzi);
+    let fulupai = count_fulupai(fulu_mianzi_list);
     shoupai
         .iter_mut()
         .zip(fulupai.iter())
@@ -115,20 +115,23 @@ pub(super) fn validate_shoupai(
 
 pub(super) fn validate_shoupai_3_player(
     bingpai: &Bingpai,
-    fulu_mianzi: &FuluMianzi,
+    fulu_mianzi_list: &FuluMianziList,
 ) -> Result<(), InvalidShoupaiError> {
-    fulu_mianzi.iter().flatten().try_for_each(|m| match m {
-        Mianzi::Shunzi(_, _) => Err(InvalidShoupaiError::InvalidMianziFor3Player(m.clone())),
-        Mianzi::Kezi(t) | Mianzi::Gangzi(t) => {
-            if (1..8).contains(t) {
-                Err(InvalidShoupaiError::InvalidMianziFor3Player(m.clone()))
-            } else {
-                Ok(())
+    fulu_mianzi_list
+        .iter()
+        .flatten()
+        .try_for_each(|m| match m {
+            Mianzi::Shunzi(_, _) => Err(InvalidShoupaiError::InvalidMianziFor3Player(m.clone())),
+            Mianzi::Kezi(t) | Mianzi::Gangzi(t) => {
+                if (1..8).contains(t) {
+                    Err(InvalidShoupaiError::InvalidMianziFor3Player(m.clone()))
+                } else {
+                    Ok(())
+                }
             }
-        }
-    })?;
+        })?;
 
-    validate_shoupai(bingpai, fulu_mianzi)
+    validate_shoupai(bingpai, fulu_mianzi_list)
 }
 
 #[cfg(test)]

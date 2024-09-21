@@ -4,7 +4,7 @@
 
 use super::bingpai::Bingpai;
 use super::constants::NUM_TILE_INDEX;
-use super::shoupai::{count_fulupai, FuluMianzi};
+use super::shoupai::{count_fulupai, FuluMianziList};
 use bitvec::prelude::*;
 
 trait BingpaiExt {
@@ -144,8 +144,11 @@ fn merge_flags(
     all_tiles
 }
 
-fn count_4_tiles_in_shoupai(bingpai: &Bingpai, fulu_mianzi: &Option<FuluMianzi>) -> AllTileFlag {
-    match fulu_mianzi {
+fn count_4_tiles_in_shoupai(
+    bingpai: &Bingpai,
+    fulu_mianzi_list: &Option<FuluMianziList>,
+) -> AllTileFlag {
+    match fulu_mianzi_list {
         None => {
             bingpai
                 .iter()
@@ -526,8 +529,8 @@ fn calculate_replacement_number_inner_3_player(
 }
 
 #[inline]
-fn calculate_num_fulu(num_bingpai: u8, fulu_mianzi: &Option<FuluMianzi>) -> u8 {
-    match fulu_mianzi {
+fn calculate_num_fulu(num_bingpai: u8, fulu_mianzi_list: &Option<FuluMianziList>) -> u8 {
+    match fulu_mianzi_list {
         None => match num_bingpai {
             12..=14 => 0,
             9..=11 => 1,
@@ -542,11 +545,11 @@ fn calculate_num_fulu(num_bingpai: u8, fulu_mianzi: &Option<FuluMianzi>) -> u8 {
 
 pub(crate) fn calculate_replacement_number(
     mut bingpai: Bingpai,
-    fulu_mianzi: &Option<FuluMianzi>,
+    fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi);
-    let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi);
+    let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi_list);
+    let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
 
     // Calculate the replacement number without a pair
     let mut min = calculate_replacement_number_inner(&mut bingpai, num_fulu, four_tiles, None);
@@ -577,11 +580,11 @@ pub(crate) fn calculate_replacement_number(
 
 pub(crate) fn calculate_replacement_number_3_player(
     mut bingpai: Bingpai,
-    fulu_mianzi: &Option<FuluMianzi>,
+    fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi);
-    let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi);
+    let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi_list);
+    let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
 
     // Calculate the replacement number without a pair
     let mut min =
@@ -741,8 +744,9 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi = Some([Some(Mianzi::Kezi(27)), None, None, None]);
-        let replacement_number_2 = calculate_replacement_number(bingpai, &fulu_mianzi, num_bingpai);
+        let fulu_mianzi_list = Some([Some(Mianzi::Kezi(27)), None, None, None]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 1);
     }
 
@@ -800,13 +804,14 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 2);
 
-        let fulu_mianzi = Some([
+        let fulu_mianzi_list = Some([
             Some(Mianzi::Kezi(1)),
             Some(Mianzi::Shunzi(13, ClaimedTilePosition::Low)),
             None,
             None,
         ]);
-        let replacement_number_2 = calculate_replacement_number(bingpai, &fulu_mianzi, num_bingpai);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -930,8 +935,9 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi = Some([Some(Mianzi::Kezi(27)), None, None, None]);
-        let replacement_number_2 = calculate_replacement_number(bingpai, &fulu_mianzi, num_bingpai);
+        let fulu_mianzi_list = Some([Some(Mianzi::Kezi(27)), None, None, None]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -948,8 +954,9 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi = Some([Some(Mianzi::Gangzi(1)), None, None, None]);
-        let replacement_number_2 = calculate_replacement_number(bingpai, &fulu_mianzi, num_bingpai);
+        let fulu_mianzi_list = Some([Some(Mianzi::Gangzi(1)), None, None, None]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -966,8 +973,9 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi = Some([Some(Mianzi::Gangzi(11)), None, None, None]);
-        let replacement_number_2 = calculate_replacement_number(bingpai, &fulu_mianzi, num_bingpai);
+        let fulu_mianzi_list = Some([Some(Mianzi::Gangzi(11)), None, None, None]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -984,8 +992,9 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi = Some([Some(Mianzi::Gangzi(24)), None, None, None]);
-        let replacement_number_2 = calculate_replacement_number(bingpai, &fulu_mianzi, num_bingpai);
+        let fulu_mianzi_list = Some([Some(Mianzi::Gangzi(24)), None, None, None]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -1002,8 +1011,9 @@ mod tests {
         let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi = Some([Some(Mianzi::Gangzi(0)), Some(Mianzi::Gangzi(3)), None, None]);
-        let replacement_number_2 = calculate_replacement_number(bingpai, &fulu_mianzi, num_bingpai);
+        let fulu_mianzi_list = Some([Some(Mianzi::Gangzi(0)), Some(Mianzi::Gangzi(3)), None, None]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 

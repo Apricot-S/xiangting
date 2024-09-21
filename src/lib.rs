@@ -32,4 +32,4 @@ pub use calculate::{
     calculate_replacement_number, calculate_replacement_number_3_player, XiangtingError,
 };
 pub use mianzi::{ClaimedTilePosition, Mianzi};
-pub use shoupai::FuluMianzi;
+pub use shoupai::FuluMianziList;
