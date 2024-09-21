@@ -29,7 +29,7 @@ pub enum ClaimedTilePosition {
 ///
 /// ```
 /// # use xiangting::{ClaimedTilePosition, FuluMianzi};
-/// // 4-56p (Chii 4m Low)
+/// // 4-56p (Chii 4p Low)
 /// let shunzi = FuluMianzi::Shunzi(12, ClaimedTilePosition::Low);
 ///
 /// // 1-11z (Pon 1z)
