@@ -11,6 +11,10 @@ However, the following differences apply:
 - Supports three-player mahjong.
 - Does not support short hand or long hand.
 
+Documentation:
+
+- [API reference (main branch)](https://Apricot-S.github.io/xiangting/xiangting)
+
 ## Usage
 
 The hand is represented by the number of each tile in an array of `[u8; 34]`. The correspondence between the index and the tile is shown in the table below.
