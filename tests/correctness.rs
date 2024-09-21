@@ -20,7 +20,7 @@ mod tests {
 
         enumerator.into_iter().for_each(|hand| {
             let result_nyanten =
-                unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(33)) };
+                unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(34)) };
             let result_xiangting = calculate_replacement_number(&hand, &None).unwrap();
 
             if result_xiangting != result_nyanten {
