@@ -60,6 +60,7 @@ pub(super) fn count_fulupai(fulu_mianzi_list: &FuluMianziList) -> Bingpai {
         })
 }
 
+/// Errors that occur when an invalid hand (手牌) is provided.
 #[derive(Debug, Error)]
 pub enum InvalidShoupaiError {
     #[error("Invalid hand: Same tile count exceeds 4 ({0}).")]
