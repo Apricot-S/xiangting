@@ -1023,6 +1023,45 @@ mod tests {
     }
 
     #[test]
+    fn calculate_replacement_number_4_honors_1() {
+        let bingpai: Bingpai = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            4, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_4_honors_2() {
+        let bingpai: Bingpai = [
+            1, 1, 1, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            4, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_4_honors_3() {
+        let bingpai: Bingpai = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            4, 4, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
     fn calculate_replacement_number_different_3_player_and_4_player() {
         let bingpai: Bingpai = [
             4, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -1037,5 +1076,44 @@ mod tests {
         let replacement_number_3p =
             calculate_replacement_number_3_player(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_3p, 3);
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_player_4_19m_1() {
+        let bingpai: Bingpai = [
+            4, 0, 0, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number_3_player(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_player_4_19m_2() {
+        let bingpai: Bingpai = [
+            4, 0, 0, 0, 0, 0, 0, 0, 0, // m
+            1, 1, 1, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number_3_player(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_player_4_19m_3() {
+        let bingpai: Bingpai = [
+            4, 0, 0, 0, 0, 0, 0, 0, 4, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number_3_player(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
     }
 }
