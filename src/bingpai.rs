@@ -49,7 +49,7 @@ use thiserror::Error;
 pub type Bingpai = [u8; NUM_TILE_INDEX];
 
 #[derive(Debug, Error)]
-pub enum InvalidBingpaiError {
+pub(crate) enum InvalidBingpaiError {
     #[error("Invalid hand: Same tile count exceeds 4 ({0}).")]
     ExceedsMaxNumSameTile(u8),
     #[error("Invalid hand: Total tile count exceeds 14 ({0}).")]
