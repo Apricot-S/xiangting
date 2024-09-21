@@ -9,7 +9,7 @@ use thiserror::Error;
 type Tile = u8;
 
 /// Position of the claimed tile in the melded sequence.
-/// Used in [Mianzi::Shunzi](self::Mianzi::Shunzi).
+/// Used in [`Mianzi::Shunzi`](self::Mianzi::Shunzi).
 #[derive(Debug, Clone)]
 pub enum ClaimedTilePosition {
     /// The claimed tile is the lowest in the sequence.
@@ -44,7 +44,8 @@ pub enum Mianzi {
     ///
     /// The first argument represents the index of the tile.
     /// The second argument represents the position of the claimed tile in the meld.
-    /// The correspondence between the index and the tile is the same as [Bingpai](crate::Bingpai).
+    /// The correspondence between the index and the tile is the same as
+    /// [`Bingpai`](crate::Bingpai).
     ///
     /// # Examples
     ///
@@ -63,7 +64,8 @@ pub enum Mianzi {
     /// 刻子: Triplet.
     ///
     /// The argument represents the index of the tile.
-    /// The correspondence between the index and the tile is the same as [Bingpai](crate::Bingpai).
+    /// The correspondence between the index and the tile is the same as
+    /// [`Bingpai`](crate::Bingpai).
     ///
     /// # Examples
     ///
@@ -76,7 +78,8 @@ pub enum Mianzi {
     /// 槓子: Quad.
     ///
     /// The argument represents the index of the tile.
-    /// The correspondence between the index and the tile is the same as [Bingpai](crate::Bingpai).
+    /// The correspondence between the index and the tile is the same as
+    /// [`Bingpai`](crate::Bingpai).
     ///
     /// # Examples
     ///

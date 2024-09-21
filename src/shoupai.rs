@@ -10,7 +10,7 @@ use thiserror::Error;
 /// 副露面子: List of melds.
 ///
 /// A element of array indicates a meld in the hand.
-/// Specify [None] for the element where there is no meld.
+/// Specify [`None`] for the element where there is no meld.
 ///
 /// # Examples
 ///
