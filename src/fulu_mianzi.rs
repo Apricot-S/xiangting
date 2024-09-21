@@ -9,7 +9,7 @@ use thiserror::Error;
 type Tile = u8;
 
 /// Position of the claimed tile in the melded sequence.
-/// Used in [`FuluMianzi::Shunzi`](self::fulu_mianzi::Shunzi).
+/// Used in [`FuluMianzi::Shunzi`](self::FuluMianzi::Shunzi).
 #[derive(Debug, Clone)]
 pub enum ClaimedTilePosition {
     /// The claimed tile is the lowest in the sequence.
