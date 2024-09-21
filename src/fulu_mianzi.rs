@@ -92,7 +92,7 @@ pub enum FuluMianzi {
 }
 
 #[derive(Debug, Error)]
-pub enum InvalidMianziError {
+pub enum InvalidFuluMianziError {
     #[error("Invalid meld: Tile index must be between 0 and 33, but got {0}.")]
     IndexOutOfRange(Tile),
     #[error("Invalid meld: A sequence cannot be made with honors ({0}).")]
@@ -104,14 +104,14 @@ pub enum InvalidMianziError {
 }
 
 impl FuluMianzi {
-    pub(crate) fn validate(&self) -> Result<(), InvalidMianziError> {
+    pub(crate) fn validate(&self) -> Result<(), InvalidFuluMianziError> {
         match self {
             FuluMianzi::Shunzi(tile, position) => {
                 if *tile > MAX_SHUPAI_INDEX {
-                    return Err(InvalidMianziError::ShunziWithZipai(*tile));
+                    return Err(InvalidFuluMianziError::ShunziWithZipai(*tile));
                 }
                 if !FuluMianzi::is_valid_shunzi_combination(tile, position) {
-                    return Err(InvalidMianziError::InvalidShunziCombination(
+                    return Err(InvalidFuluMianziError::InvalidShunziCombination(
                         *tile,
                         position.clone(),
                     ));
@@ -120,7 +120,7 @@ impl FuluMianzi {
             }
             FuluMianzi::Kezi(tile) | FuluMianzi::Gangzi(tile) => {
                 if *tile > MAX_TILE_INDEX {
-                    return Err(InvalidMianziError::IndexOutOfRange(*tile));
+                    return Err(InvalidFuluMianziError::IndexOutOfRange(*tile));
                 }
                 Ok(())
             }
@@ -237,31 +237,31 @@ mod tests {
 
         assert!(matches!(
             shunzi_1z_low.validate().unwrap_err(),
-            InvalidMianziError::ShunziWithZipai(27)
+            InvalidFuluMianziError::ShunziWithZipai(27)
         ));
         assert!(matches!(
             shunzi_8m_low.validate().unwrap_err(),
-            InvalidMianziError::InvalidShunziCombination(7, ClaimedTilePosition::Low)
+            InvalidFuluMianziError::InvalidShunziCombination(7, ClaimedTilePosition::Low)
         ));
         assert!(matches!(
             shunzi_9m_low.validate().unwrap_err(),
-            InvalidMianziError::InvalidShunziCombination(8, ClaimedTilePosition::Low)
+            InvalidFuluMianziError::InvalidShunziCombination(8, ClaimedTilePosition::Low)
         ));
         assert!(matches!(
             shunzi_1m_middle.validate().unwrap_err(),
-            InvalidMianziError::InvalidShunziCombination(0, ClaimedTilePosition::Middle)
+            InvalidFuluMianziError::InvalidShunziCombination(0, ClaimedTilePosition::Middle)
         ));
         assert!(matches!(
             shunzi_9m_middle.validate().unwrap_err(),
-            InvalidMianziError::InvalidShunziCombination(8, ClaimedTilePosition::Middle)
+            InvalidFuluMianziError::InvalidShunziCombination(8, ClaimedTilePosition::Middle)
         ));
         assert!(matches!(
             shunzi_1m_high.validate().unwrap_err(),
-            InvalidMianziError::InvalidShunziCombination(0, ClaimedTilePosition::High)
+            InvalidFuluMianziError::InvalidShunziCombination(0, ClaimedTilePosition::High)
         ));
         assert!(matches!(
             shunzi_2m_high.validate().unwrap_err(),
-            InvalidMianziError::InvalidShunziCombination(1, ClaimedTilePosition::High)
+            InvalidFuluMianziError::InvalidShunziCombination(1, ClaimedTilePosition::High)
         ));
     }
 
@@ -280,7 +280,7 @@ mod tests {
 
         assert!(matches!(
             kezi_1.validate().unwrap_err(),
-            InvalidMianziError::IndexOutOfRange(34)
+            InvalidFuluMianziError::IndexOutOfRange(34)
         ));
     }
 
@@ -299,7 +299,7 @@ mod tests {
 
         assert!(matches!(
             gangzi_1.validate().unwrap_err(),
-            InvalidMianziError::IndexOutOfRange(34)
+            InvalidFuluMianziError::IndexOutOfRange(34)
         ));
     }
 
