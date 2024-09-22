@@ -349,6 +349,7 @@ fn count_zipai_tile_group(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> Tile
             match n {
                 4 => {
                     acc.num_mianzi += 1;
+                    acc.num_gulipai += 1;
                     acc.gulipai.set(i, true);
                 }
                 3 => acc.num_mianzi += 1,
@@ -383,6 +384,7 @@ fn count_19m_tile_group(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> TileGr
                 match n {
                     4 => {
                         acc.num_mianzi += 1;
+                        acc.num_gulipai += 1;
                         acc.gulipai.set(i, true);
                     }
                     3 => acc.num_mianzi += 1,
