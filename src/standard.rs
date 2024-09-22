@@ -1074,7 +1074,17 @@ mod tests {
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number_4p = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_4p, 2);
+    }
 
+    #[test]
+    fn calculate_replacement_number_3_player_different_3_player_and_4_player() {
+        let bingpai: Bingpai = [
+            4, 0, 0, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            4, 3, 2, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number_3p =
             calculate_replacement_number_3_player(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_3p, 3);
