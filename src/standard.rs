@@ -441,23 +441,35 @@ fn calculate_replacement_number_inner(
                 let num_dazi = m.num_dazi + p.num_dazi + s.num_dazi + z.num_dazi;
                 let num_duizi = m.num_duizi + p.num_duizi + s.num_duizi + z.num_duizi;
                 let num_mianzi_candidate = num_dazi + num_duizi;
-                let num_gulipai = m.num_gulipai + p.num_gulipai + s.num_gulipai + z.num_gulipai;
+                let mut num_gulipai = m.num_gulipai + p.num_gulipai + s.num_gulipai + z.num_gulipai;
 
-                let mut temp = calculate_replacement_number_formula(
+                if !has_jiangpai && (num_duizi == 0) && four_tiles.any() {
+                    let gulipai = merge_flags(m.gulipai, p.gulipai, s.gulipai, z.gulipai);
+                    if gulipai.any() {
+                        let four_tiles_gulipai = four_tiles | gulipai;
+                        if four_tiles_gulipai == four_tiles {
+                            // A tile that is held in a quantity of four
+                            // cannot become a pair even if it is isolated.
+                            let mut four_tiles_gulipai_shupai =
+                                four_tiles_gulipai[0..27].count_ones() as u8;
+
+                            if four_tiles_gulipai_shupai >= 2 {
+                                // One of the isolated suits can become a sequence candidate.
+                                four_tiles_gulipai_shupai -= 1;
+                            }
+
+                            num_gulipai -= four_tiles_gulipai_shupai;
+                            num_gulipai -= four_tiles_gulipai[27..34].count_ones() as u8;
+                        }
+                    }
+                }
+
+                let temp = calculate_replacement_number_formula(
                     num_mianzi,
                     num_mianzi_candidate,
                     num_gulipai,
                     has_jiangpai,
                 );
-
-                if !has_jiangpai && (num_duizi == 0) && four_tiles.any() {
-                    let gulipai = merge_flags(m.gulipai, p.gulipai, s.gulipai, z.gulipai);
-                    if gulipai.any() && (four_tiles | gulipai) == four_tiles {
-                        // A tile that is held in a quantity of four
-                        // cannot become a pair even if it is isolated.
-                        temp += 1;
-                    }
-                }
 
                 if temp == 0 {
                     return 0;
@@ -499,23 +511,37 @@ fn calculate_replacement_number_inner_3_player(
             let num_dazi = m.num_dazi + p.num_dazi + s.num_dazi + z.num_dazi;
             let num_duizi = m.num_duizi + p.num_duizi + s.num_duizi + z.num_duizi;
             let num_mianzi_candidate = num_dazi + num_duizi;
-            let num_gulipai = m.num_gulipai + p.num_gulipai + s.num_gulipai + z.num_gulipai;
+            let mut num_gulipai = m.num_gulipai + p.num_gulipai + s.num_gulipai + z.num_gulipai;
 
-            let mut temp = calculate_replacement_number_formula(
+            if !has_jiangpai && (num_duizi == 0) && four_tiles.any() {
+                let gulipai = merge_flags(m.gulipai, p.gulipai, s.gulipai, z.gulipai);
+                if gulipai.any() {
+                    let four_tiles_gulipai = four_tiles | gulipai;
+                    if four_tiles_gulipai == four_tiles {
+                        // A tile that is held in a quantity of four
+                        // cannot become a pair even if it is isolated.
+                        let mut four_tiles_gulipai_shupai =
+                            four_tiles_gulipai[9..27].count_ones() as u8;
+
+                        if four_tiles_gulipai_shupai >= 2 {
+                            // One of the isolated suits can become a sequence candidate.
+                            four_tiles_gulipai_shupai -= 1;
+                        }
+
+                        num_gulipai -= four_tiles_gulipai_shupai;
+                        num_gulipai -= four_tiles_gulipai[0] as u8;
+                        num_gulipai -= four_tiles_gulipai[8] as u8;
+                        num_gulipai -= four_tiles_gulipai[27..34].count_ones() as u8;
+                    }
+                }
+            }
+
+            let temp = calculate_replacement_number_formula(
                 num_mianzi,
                 num_mianzi_candidate,
                 num_gulipai,
                 has_jiangpai,
             );
-
-            if !has_jiangpai && (num_duizi == 0) && four_tiles.any() {
-                let gulipai = merge_flags(m.gulipai, p.gulipai, s.gulipai, z.gulipai);
-                if gulipai.any() && (four_tiles | gulipai) == four_tiles {
-                    // A tile that is held in a quantity of four
-                    // cannot become a pair even if it is isolated.
-                    temp += 1;
-                }
-            }
 
             if temp == 0 {
                 return 0;
@@ -1025,6 +1051,45 @@ mod tests {
     }
 
     #[test]
+    fn calculate_replacement_number_2_isolated_4_tiles_1() {
+        let bingpai: Bingpai = [
+            4, 1, 0, 1, 0, 0, 4, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_2_isolated_4_tiles_2() {
+        let bingpai: Bingpai = [
+            4, 1, 0, 1, 0, 0, 4, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            3, 1, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_isolated_4_tiles() {
+        let bingpai: Bingpai = [
+            4, 1, 0, 1, 0, 0, 4, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            4, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
     fn calculate_replacement_number_4_honors_1() {
         let bingpai: Bingpai = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -1061,6 +1126,19 @@ mod tests {
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_4_honors_4() {
+        let bingpai: Bingpai = [
+            1, 1, 1, 0, 0, 0, 0, 0, 0, // m
+            2, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            4, 4, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 3);
     }
 
     #[test]
