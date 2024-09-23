@@ -15,17 +15,14 @@ mod tests {
 
     fn verify_correctness(length: usize) -> bool {
         let enumerator = HandEnumerator::new(length).unwrap();
-        let mut all_match = true;
-        let file_name = format!("./mismatches_{}.txt", length);
+        let file_name = format!("./mismatch_{}.txt", length);
 
-        enumerator.into_iter().for_each(|hand| {
+        let result = enumerator.into_iter().try_for_each(|hand| {
             let result_nyanten =
                 unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(34)) };
             let result_xiangting = calculate_replacement_number(&hand, &None).unwrap();
 
             if result_xiangting != result_nyanten {
-                all_match = false;
-
                 let mut file = OpenOptions::new()
                     .append(true)
                     .create(true)
@@ -38,10 +35,14 @@ mod tests {
                     hand, result_nyanten, result_xiangting,
                 )
                 .unwrap();
+
+                return Err(());
             }
+
+            Ok(())
         });
 
-        all_match
+        result.is_ok()
     }
 
     #[test]
