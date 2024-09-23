@@ -466,6 +466,11 @@ fn calculate_replacement_number_inner(
                     has_jiangpai,
                 );
 
+                println!(
+                    "雀頭: {:?}, 面子数: {}, 搭子数: {}, 対子数: {}, 孤立牌数: {}, 置換数: {} ",
+                    jiangpai, num_mianzi, num_dazi, num_duizi, num_gulipai, temp
+                );
+
                 if temp == 0 {
                     return 0;
                 }
