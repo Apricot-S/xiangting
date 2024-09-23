@@ -175,20 +175,14 @@ fn count_4_tiles_in_shoupai(
     }
 }
 
+// Reference: https://blog.kobalab.net/entry/20170917/1505601161
 fn calculate_replacement_number_formula(
-    mut num_mianzi: u8,
+    num_mianzi: u8,
     mut num_mianzi_candidate: u8,
     mut num_gulipai: u8,
     has_jiangpai: bool,
 ) -> u8 {
-    // If there is no pair, 5 blocks are needed
-    let num_required_block: u8 = if has_jiangpai { 4 } else { 5 };
-
-    // Adjust for excess melds
-    if num_mianzi > 4 {
-        num_mianzi_candidate += num_mianzi - 4;
-        num_mianzi = 4;
-    }
+    debug_assert!(num_mianzi <= 4);
 
     // Adjust for excess meld candidates
     if (num_mianzi + num_mianzi_candidate) > 4 {
@@ -196,14 +190,14 @@ fn calculate_replacement_number_formula(
         num_mianzi_candidate = 4 - num_mianzi;
     }
 
-    // Adjust for excess isolated tiles
-    if (num_mianzi + num_mianzi_candidate + num_gulipai) > num_required_block {
-        num_gulipai = num_required_block - num_mianzi - num_mianzi_candidate;
-    }
-
     // Count the pair as a meld candidate if it exists
     if has_jiangpai {
         num_mianzi_candidate += 1;
+    }
+
+    // Adjust for excess isolated tiles
+    if (num_mianzi + num_mianzi_candidate + num_gulipai) > 5 {
+        num_gulipai = 5 - num_mianzi - num_mianzi_candidate;
     }
 
     14 - num_mianzi * 3 - num_mianzi_candidate * 2 - num_gulipai
@@ -557,17 +551,14 @@ fn calculate_replacement_number_inner_3_player(
 }
 
 #[inline]
-fn calculate_num_fulu(num_bingpai: u8, fulu_mianzi_list: &Option<FuluMianziList>) -> u8 {
-    match fulu_mianzi_list {
-        None => match num_bingpai {
-            12..=14 => 0,
-            9..=11 => 1,
-            6..=8 => 2,
-            3..=5 => 3,
-            1..=2 => 4,
-            _ => panic!("Invalid hand: Total tile count exceeds 14."),
-        },
-        Some(f) => f.iter().flatten().count() as u8,
+fn calculate_num_fulu(num_bingpai: u8) -> u8 {
+    match num_bingpai {
+        13 | 14 => 0,
+        10 | 11 => 1,
+        7 | 8 => 2,
+        4 | 5 => 3,
+        1 | 2 => 4,
+        _ => panic!("Invalid hand"),
     }
 }
 
@@ -576,7 +567,14 @@ pub(crate) fn calculate_replacement_number(
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi_list);
+    let num_fulu = calculate_num_fulu(num_bingpai);
+    debug_assert!(
+        num_fulu
+            >= fulu_mianzi_list
+                .as_ref()
+                .map_or(0, |f| f.iter().flatten().count()) as u8
+    );
+
     let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
 
     // Calculate the replacement number without a pair
@@ -611,7 +609,14 @@ pub(crate) fn calculate_replacement_number_3_player(
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi_list);
+    let num_fulu = calculate_num_fulu(num_bingpai);
+    debug_assert!(
+        num_fulu
+            >= fulu_mianzi_list
+                .as_ref()
+                .map_or(0, |f| f.iter().flatten().count()) as u8
+    );
+
     let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
 
     // Calculate the replacement number without a pair
@@ -722,16 +727,6 @@ mod tests {
         let num_bingpai_2: u8 = bingpai_13.iter().sum();
         let replacement_number_2 = calculate_replacement_number(bingpai_13, &None, num_bingpai_2);
         assert_eq!(replacement_number_2, 9);
-
-        let bingpai_12: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
-        let num_bingpai_3: u8 = bingpai_12.iter().sum();
-        let replacement_number_3 = calculate_replacement_number(bingpai_13, &None, num_bingpai_3);
-        assert_eq!(replacement_number_3, 9);
     }
 
     #[test]
@@ -821,6 +816,7 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
     fn calculate_replacement_number_incomplete_hand_4_melds_without_a_pair() {
         let bingpai: Bingpai = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -841,6 +837,28 @@ mod tests {
         let replacement_number_2 =
             calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_incomplete_melds() {
+        let bingpai: Bingpai = [
+            1, 1, 1, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            1, 0, 0, 0, 0, 0, 0, // z
+        ];
+
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Shunzi(12, ClaimedTilePosition::Low)),
+            Some(FuluMianzi::Gangzi(24)),
+            None,
+            None,
+        ]);
+
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        assert_eq!(replacement_number, 1);
     }
 
     #[test]

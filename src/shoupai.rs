@@ -83,7 +83,7 @@ pub enum InvalidShoupaiError {
         "tile index {0} (must be outside 1 (2m) to 7 (8m)) cannot be used in 3-player mahjong"
     )]
     InvalidTileFor3Player(usize),
-    /// Contains a meld that cannot be used in 3-player mahjong.
+    /// Contains a meld that cannot be used in 3-player mahjong (2m to 8m or sequence).
     #[error("{0} cannot be used in 3-player mahjong")]
     InvalidFuluMianziFor3Player(FuluMianzi),
 }
