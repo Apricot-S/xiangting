@@ -203,7 +203,7 @@ fn calculate_replacement_number_formula(
     14 - num_mianzi * 3 - num_mianzi_candidate * 2 - num_gulipai
 }
 
-struct TileGroupCount {
+struct BlockCount {
     num_mianzi: u8,
     num_dazi: u8,
     num_duizi: u8,
@@ -211,27 +211,27 @@ struct TileGroupCount {
     gulipai: SingleColorTileFlag,
 }
 
-struct TileGroupCountPattern {
-    a: TileGroupCount, // Pattern with the minimum number of isolated tiles
-    b: TileGroupCount, // Pattern with the maximum number of melds
+struct BlockCountPattern {
+    a: BlockCount, // Pattern with the minimum number of isolated tiles
+    b: BlockCount, // Pattern with the maximum number of melds
 }
 
-fn count_shupai_tile_group(
+fn count_shupai_block(
     single_color_bingpai: &mut [u8],
     n: usize,
     jiangpai: Option<usize>,
     four_tiles: &BitSlice,
-) -> TileGroupCountPattern {
+) -> BlockCountPattern {
     if n > 8 {
-        return TileGroupCountPattern {
-            a: TileGroupCount {
+        return BlockCountPattern {
+            a: BlockCount {
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
                 num_gulipai: single_color_bingpai.iter().sum(),
                 gulipai: to_flag(single_color_bingpai),
             },
-            b: TileGroupCount {
+            b: BlockCount {
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
@@ -241,10 +241,10 @@ fn count_shupai_tile_group(
         };
     }
 
-    let mut max = count_shupai_tile_group(single_color_bingpai, n + 1, jiangpai, four_tiles);
+    let mut max = count_shupai_block(single_color_bingpai, n + 1, jiangpai, four_tiles);
 
     #[inline]
-    fn update_max(max: &mut TileGroupCountPattern, r: TileGroupCountPattern) {
+    fn update_max(max: &mut BlockCountPattern, r: BlockCountPattern) {
         if (r.a.num_gulipai < max.a.num_gulipai)
             || (r.a.num_gulipai == max.a.num_gulipai)
                 && ((r.a.num_dazi + r.a.num_duizi) < (max.a.num_dazi + max.a.num_duizi))
@@ -261,7 +261,7 @@ fn count_shupai_tile_group(
 
     if (n <= 6) && single_color_bingpai.has_shunzi(n) {
         single_color_bingpai.remove_shunzi(n);
-        let mut r = count_shupai_tile_group(single_color_bingpai, n, jiangpai, four_tiles);
+        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
         single_color_bingpai.restore_shunzi(n);
 
         r.a.num_mianzi += 1;
@@ -272,7 +272,7 @@ fn count_shupai_tile_group(
 
     if single_color_bingpai.has_kezi(n) {
         single_color_bingpai.remove_kezi(n);
-        let mut r = count_shupai_tile_group(single_color_bingpai, n, jiangpai, four_tiles);
+        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
         single_color_bingpai.restore_kezi(n);
 
         r.a.num_mianzi += 1;
@@ -283,7 +283,7 @@ fn count_shupai_tile_group(
 
     if (n <= 6) && single_color_bingpai.has_qianzhang_dazi(n) {
         single_color_bingpai.remove_qianzhang_dazi(n);
-        let mut r = count_shupai_tile_group(single_color_bingpai, n, jiangpai, four_tiles);
+        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
         single_color_bingpai.restore_qianzhang_dazi(n);
 
         if !four_tiles[n + 1] {
@@ -296,7 +296,7 @@ fn count_shupai_tile_group(
 
     if (n <= 7) && single_color_bingpai.has_liangmen_dazi(n) {
         single_color_bingpai.remove_liangmen_dazi(n);
-        let mut r = count_shupai_tile_group(single_color_bingpai, n, jiangpai, four_tiles);
+        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
         single_color_bingpai.restore_liangmen_dazi(n);
 
         let is_wait_consumed_in_hand = match n {
@@ -316,7 +316,7 @@ fn count_shupai_tile_group(
 
     if single_color_bingpai.has_duizi(n) {
         single_color_bingpai.remove_duizi(n);
-        let mut r = count_shupai_tile_group(single_color_bingpai, n, jiangpai, four_tiles);
+        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
         single_color_bingpai.restore_duizi(n);
 
         if Some(n) != jiangpai {
@@ -330,9 +330,9 @@ fn count_shupai_tile_group(
     max
 }
 
-fn count_zipai_tile_group(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> TileGroupCount {
+fn count_zipai_block(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount {
     zipai_bingpai.iter().enumerate().fold(
-        TileGroupCount {
+        BlockCount {
             num_mianzi: 0,
             num_dazi: 0,
             num_duizi: 0,
@@ -364,9 +364,9 @@ fn count_zipai_tile_group(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> Tile
     )
 }
 
-fn count_19m_tile_group(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> TileGroupCount {
+fn count_19m_block(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount {
     wanzi_bingpai.iter().enumerate().fold(
-        TileGroupCount {
+        BlockCount {
             num_mianzi: 0,
             num_dazi: 0,
             num_duizi: 0,
@@ -419,11 +419,10 @@ fn calculate_replacement_number_inner(
     let jiangpai_s = offset_jiangpai(jiangpai, 18, 27);
     let jiangpai_z = offset_jiangpai(jiangpai, 27, 34);
 
-    let z = count_zipai_tile_group(&bingpai[27..34], jiangpai_z);
-    let pattern_m = count_shupai_tile_group(&mut bingpai[0..9], 0, jiangpai_m, &four_tiles[0..9]);
-    let pattern_p = count_shupai_tile_group(&mut bingpai[9..18], 0, jiangpai_p, &four_tiles[9..18]);
-    let pattern_s =
-        count_shupai_tile_group(&mut bingpai[18..27], 0, jiangpai_s, &four_tiles[18..27]);
+    let z = count_zipai_block(&bingpai[27..34], jiangpai_z);
+    let pattern_m = count_shupai_block(&mut bingpai[0..9], 0, jiangpai_m, &four_tiles[0..9]);
+    let pattern_p = count_shupai_block(&mut bingpai[9..18], 0, jiangpai_p, &four_tiles[9..18]);
+    let pattern_s = count_shupai_block(&mut bingpai[18..27], 0, jiangpai_s, &four_tiles[18..27]);
 
     let mut min = 14;
 
@@ -493,11 +492,10 @@ fn calculate_replacement_number_inner_3_player(
     let jiangpai_s = offset_jiangpai(jiangpai, 18, 27);
     let jiangpai_z = offset_jiangpai(jiangpai, 27, 34);
 
-    let z = count_zipai_tile_group(&bingpai[27..34], jiangpai_z);
-    let m = count_19m_tile_group(&bingpai[0..9], jiangpai_m);
-    let pattern_p = count_shupai_tile_group(&mut bingpai[9..18], 0, jiangpai_p, &four_tiles[9..18]);
-    let pattern_s =
-        count_shupai_tile_group(&mut bingpai[18..27], 0, jiangpai_s, &four_tiles[18..27]);
+    let z = count_zipai_block(&bingpai[27..34], jiangpai_z);
+    let m = count_19m_block(&bingpai[0..9], jiangpai_m);
+    let pattern_p = count_shupai_block(&mut bingpai[9..18], 0, jiangpai_p, &four_tiles[9..18]);
+    let pattern_s = count_shupai_block(&mut bingpai[18..27], 0, jiangpai_s, &four_tiles[18..27]);
 
     let mut min = 14;
 
@@ -670,10 +668,9 @@ mod tests {
     }
 
     #[test]
-    fn count_shupai_tile_group_works() {
+    fn count_shupai_block_works() {
         let mut single_color_bingpai = [1, 0, 3, 1, 2, 1, 0, 1, 0];
-        let r =
-            count_shupai_tile_group(&mut single_color_bingpai, 0, None, &AllTileFlag::ZERO[0..9]);
+        let r = count_shupai_block(&mut single_color_bingpai, 0, None, &AllTileFlag::ZERO[0..9]);
         assert_eq!(r.a.num_mianzi, 1);
         assert_eq!(r.a.num_dazi, 3);
         assert_eq!(r.a.num_duizi, 0);
