@@ -442,18 +442,20 @@ fn calculate_replacement_number_inner(
                     if gulipai.any() {
                         let four_tiles_gulipai = four_tiles & gulipai;
                         if four_tiles_gulipai.any() {
-                            // A tile that is held in a quantity of four
-                            // cannot become a pair even if it is isolated.
-                            let mut num_four_tiles_gulipai_shupai =
+                            let num_four_tiles_gulipai_shupai =
                                 four_tiles_gulipai[0..27].count_ones() as u8;
-
-                            if num_mianzi < 4 && num_four_tiles_gulipai_shupai >= 2 {
-                                // One of the isolated suits can become a sequence candidate.
-                                num_four_tiles_gulipai_shupai -= 1;
-                            }
-
+                            let num_four_tiles_gulipai_zipai =
+                                four_tiles_gulipai[27..34].count_ones() as u8;
+                            // A tile that is held in a quantity of four
+                            // cannot become a pair or a sequence candidate.
                             num_gulipai -= num_four_tiles_gulipai_shupai;
-                            num_gulipai -= four_tiles_gulipai[27..34].count_ones() as u8;
+                            num_gulipai -= num_four_tiles_gulipai_zipai;
+                            if has_jiangpai || num_duizi != 0 {
+                                if num_four_tiles_gulipai_shupai >= 2 {
+                                    // One of the isolated suits can become a sequence candidate.
+                                    num_gulipai += 1;
+                                }
+                            }
                         }
                     }
                 }
@@ -512,20 +514,22 @@ fn calculate_replacement_number_inner_3_player(
                 if gulipai.any() {
                     let four_tiles_gulipai = four_tiles & gulipai;
                     if four_tiles_gulipai.any() {
-                        // A tile that is held in a quantity of four
-                        // cannot become a pair even if it is isolated.
-                        let mut num_four_tiles_gulipai_shupai =
+                        let num_four_tiles_gulipai_shupai =
                             four_tiles_gulipai[9..27].count_ones() as u8;
-
-                        if num_mianzi < 4 && num_four_tiles_gulipai_shupai >= 2 {
-                            // One of the isolated suits can become a sequence candidate.
-                            num_four_tiles_gulipai_shupai -= 1;
-                        }
-
+                        let num_four_tiles_gulipai_zipai_19m =
+                            four_tiles_gulipai[27..34].count_ones() as u8
+                                + four_tiles_gulipai[0] as u8
+                                + four_tiles_gulipai[8] as u8;
+                        // A tile that is held in a quantity of four
+                        // cannot become a pair or a sequence candidate.
                         num_gulipai -= num_four_tiles_gulipai_shupai;
-                        num_gulipai -= four_tiles_gulipai[0] as u8;
-                        num_gulipai -= four_tiles_gulipai[8] as u8;
-                        num_gulipai -= four_tiles_gulipai[27..34].count_ones() as u8;
+                        num_gulipai -= num_four_tiles_gulipai_zipai_19m;
+                        if has_jiangpai || num_duizi != 0 {
+                            if num_four_tiles_gulipai_shupai >= 2 {
+                                // One of the isolated suits can become a sequence candidate.
+                                num_gulipai += 1;
+                            }
+                        }
                     }
                 }
             }
