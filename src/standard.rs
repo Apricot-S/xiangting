@@ -184,23 +184,20 @@ fn calculate_replacement_number_formula(
 ) -> u8 {
     debug_assert!(num_mianzi <= 4);
 
-    // If there is no pair, 5 blocks are needed
-    let num_required_block: u8 = if has_jiangpai { 4 } else { 5 };
-
     // Adjust for excess meld candidates
     if (num_mianzi + num_mianzi_candidate) > 4 {
         num_gulipai += num_mianzi + num_mianzi_candidate - 4;
         num_mianzi_candidate = 4 - num_mianzi;
     }
 
-    // Adjust for excess isolated tiles
-    if (num_mianzi + num_mianzi_candidate + num_gulipai) > num_required_block {
-        num_gulipai = num_required_block - num_mianzi - num_mianzi_candidate;
-    }
-
     // Count the pair as a meld candidate if it exists
     if has_jiangpai {
         num_mianzi_candidate += 1;
+    }
+
+    // Adjust for excess isolated tiles
+    if (num_mianzi + num_mianzi_candidate + num_gulipai) > 5 {
+        num_gulipai = 5 - num_mianzi - num_mianzi_candidate;
     }
 
     14 - num_mianzi * 3 - num_mianzi_candidate * 2 - num_gulipai
