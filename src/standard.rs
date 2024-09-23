@@ -557,12 +557,12 @@ fn calculate_replacement_number_inner_3_player(
 fn calculate_num_fulu(num_bingpai: u8, fulu_mianzi_list: &Option<FuluMianziList>) -> u8 {
     match fulu_mianzi_list {
         None => match num_bingpai {
-            12..=14 => 0,
-            9..=11 => 1,
-            6..=8 => 2,
-            3..=5 => 3,
-            1..=2 => 4,
-            _ => panic!("Invalid hand: Total tile count exceeds 14."),
+            13 | 14 => 0,
+            10 | 11 => 1,
+            7 | 8 => 2,
+            4 | 5 => 3,
+            1 | 2 => 4,
+            _ => panic!("Invalid hand"),
         },
         Some(f) => f.iter().flatten().count() as u8,
     }
@@ -719,16 +719,6 @@ mod tests {
         let num_bingpai_2: u8 = bingpai_13.iter().sum();
         let replacement_number_2 = calculate_replacement_number(bingpai_13, &None, num_bingpai_2);
         assert_eq!(replacement_number_2, 9);
-
-        let bingpai_12: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
-        let num_bingpai_3: u8 = bingpai_12.iter().sum();
-        let replacement_number_3 = calculate_replacement_number(bingpai_13, &None, num_bingpai_3);
-        assert_eq!(replacement_number_3, 9);
     }
 
     #[test]
@@ -818,6 +808,7 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
     fn calculate_replacement_number_incomplete_hand_4_melds_without_a_pair() {
         let bingpai: Bingpai = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, // m
