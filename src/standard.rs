@@ -177,19 +177,15 @@ fn count_4_tiles_in_shoupai(
 
 // Reference: https://blog.kobalab.net/entry/20170917/1505601161
 fn calculate_replacement_number_formula(
-    mut num_mianzi: u8,
+    num_mianzi: u8,
     mut num_mianzi_candidate: u8,
     mut num_gulipai: u8,
     has_jiangpai: bool,
 ) -> u8 {
+    debug_assert!(num_mianzi <= 4);
+
     // If there is no pair, 5 blocks are needed
     let num_required_block: u8 = if has_jiangpai { 4 } else { 5 };
-
-    // Adjust for excess melds
-    if num_mianzi > 4 {
-        num_mianzi_candidate += num_mianzi - 4;
-        num_mianzi = 4;
-    }
 
     // Adjust for excess meld candidates
     if (num_mianzi + num_mianzi_candidate) > 4 {
