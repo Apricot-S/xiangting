@@ -1090,6 +1090,32 @@ mod tests {
     }
 
     #[test]
+    fn calculate_replacement_number_2_isolated_4_tiles_4() {
+        let bingpai: Bingpai = [
+            4, 1, 0, 1, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            4, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_2_isolated_4_tiles_5() {
+        let bingpai: Bingpai = [
+            4, 0, 0, 4, 0, 0, 1, 1, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 3);
+    }
+
+    #[test]
     fn calculate_replacement_number_3_isolated_4_tiles() {
         let bingpai: Bingpai = [
             4, 1, 0, 1, 0, 0, 4, 0, 0, // m
