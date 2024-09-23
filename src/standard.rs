@@ -1105,7 +1105,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Temporarily ignored while documentation is updated"]
     fn calculate_replacement_number_2_isolated_4_tiles_4() {
         let bingpai: Bingpai = [
             4, 1, 0, 1, 0, 0, 0, 0, 0, // m
@@ -1119,7 +1118,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Temporarily ignored while documentation is updated"]
     fn calculate_replacement_number_2_isolated_4_tiles_5() {
         let bingpai: Bingpai = [
             4, 0, 0, 4, 0, 0, 1, 1, 0, // m
