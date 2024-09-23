@@ -554,17 +554,14 @@ fn calculate_replacement_number_inner_3_player(
 }
 
 #[inline]
-fn calculate_num_fulu(num_bingpai: u8, fulu_mianzi_list: &Option<FuluMianziList>) -> u8 {
-    match fulu_mianzi_list {
-        None => match num_bingpai {
-            13 | 14 => 0,
-            10 | 11 => 1,
-            7 | 8 => 2,
-            4 | 5 => 3,
-            1 | 2 => 4,
-            _ => panic!("Invalid hand"),
-        },
-        Some(f) => f.iter().flatten().count() as u8,
+fn calculate_num_fulu(num_bingpai: u8) -> u8 {
+    match num_bingpai {
+        13 | 14 => 0,
+        10 | 11 => 1,
+        7 | 8 => 2,
+        4 | 5 => 3,
+        1 | 2 => 4,
+        _ => panic!("Invalid hand"),
     }
 }
 
@@ -573,7 +570,14 @@ pub(crate) fn calculate_replacement_number(
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi_list);
+    let num_fulu = calculate_num_fulu(num_bingpai);
+    debug_assert!(
+        num_fulu
+            >= fulu_mianzi_list
+                .as_ref()
+                .map_or(0, |f| f.iter().flatten().count()) as u8
+    );
+
     let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
 
     // Calculate the replacement number without a pair
@@ -608,7 +612,14 @@ pub(crate) fn calculate_replacement_number_3_player(
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_fulu = calculate_num_fulu(num_bingpai, fulu_mianzi_list);
+    let num_fulu = calculate_num_fulu(num_bingpai);
+    debug_assert!(
+        num_fulu
+            >= fulu_mianzi_list
+                .as_ref()
+                .map_or(0, |f| f.iter().flatten().count()) as u8
+    );
+
     let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
 
     // Calculate the replacement number without a pair
@@ -829,6 +840,28 @@ mod tests {
         let replacement_number_2 =
             calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_incomplete_melds() {
+        let bingpai: Bingpai = [
+            1, 1, 1, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            1, 0, 0, 0, 0, 0, 0, // z
+        ];
+
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Shunzi(12, ClaimedTilePosition::Low)),
+            Some(FuluMianzi::Gangzi(24)),
+            None,
+            None,
+        ]);
+
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        assert_eq!(replacement_number, 1);
     }
 
     #[test]
