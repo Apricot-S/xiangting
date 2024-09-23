@@ -203,7 +203,7 @@ fn calculate_replacement_number_formula(
     14 - num_mianzi * 3 - num_mianzi_candidate * 2 - num_gulipai
 }
 
-struct TileGroupCount {
+struct BlockCount {
     num_mianzi: u8,
     num_dazi: u8,
     num_duizi: u8,
@@ -211,9 +211,9 @@ struct TileGroupCount {
     gulipai: SingleColorTileFlag,
 }
 
-struct TileGroupCountPattern {
-    a: TileGroupCount, // Pattern with the minimum number of isolated tiles
-    b: TileGroupCount, // Pattern with the maximum number of melds
+struct BlockCountPattern {
+    a: BlockCount, // Pattern with the minimum number of isolated tiles
+    b: BlockCount, // Pattern with the maximum number of melds
 }
 
 fn count_shupai_tile_group(
@@ -221,17 +221,17 @@ fn count_shupai_tile_group(
     n: usize,
     jiangpai: Option<usize>,
     four_tiles: &BitSlice,
-) -> TileGroupCountPattern {
+) -> BlockCountPattern {
     if n > 8 {
-        return TileGroupCountPattern {
-            a: TileGroupCount {
+        return BlockCountPattern {
+            a: BlockCount {
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
                 num_gulipai: single_color_bingpai.iter().sum(),
                 gulipai: to_flag(single_color_bingpai),
             },
-            b: TileGroupCount {
+            b: BlockCount {
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
@@ -244,7 +244,7 @@ fn count_shupai_tile_group(
     let mut max = count_shupai_tile_group(single_color_bingpai, n + 1, jiangpai, four_tiles);
 
     #[inline]
-    fn update_max(max: &mut TileGroupCountPattern, r: TileGroupCountPattern) {
+    fn update_max(max: &mut BlockCountPattern, r: BlockCountPattern) {
         if (r.a.num_gulipai < max.a.num_gulipai)
             || (r.a.num_gulipai == max.a.num_gulipai)
                 && ((r.a.num_dazi + r.a.num_duizi) < (max.a.num_dazi + max.a.num_duizi))
@@ -330,9 +330,9 @@ fn count_shupai_tile_group(
     max
 }
 
-fn count_zipai_tile_group(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> TileGroupCount {
+fn count_zipai_tile_group(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount {
     zipai_bingpai.iter().enumerate().fold(
-        TileGroupCount {
+        BlockCount {
             num_mianzi: 0,
             num_dazi: 0,
             num_duizi: 0,
@@ -364,9 +364,9 @@ fn count_zipai_tile_group(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> Tile
     )
 }
 
-fn count_19m_tile_group(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> TileGroupCount {
+fn count_19m_tile_group(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount {
     wanzi_bingpai.iter().enumerate().fold(
-        TileGroupCount {
+        BlockCount {
             num_mianzi: 0,
             num_dazi: 0,
             num_duizi: 0,
