@@ -175,6 +175,7 @@ fn count_4_tiles_in_shoupai(
     }
 }
 
+// Reference: https://blog.kobalab.net/entry/20170917/1505601161
 fn calculate_replacement_number_formula(
     mut num_mianzi: u8,
     mut num_mianzi_candidate: u8,
