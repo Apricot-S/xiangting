@@ -110,6 +110,9 @@ impl FuluMianzi {
         match self {
             FuluMianzi::Shunzi(tile, position) => {
                 if *tile > MAX_SHUPAI_INDEX {
+                    if *tile > MAX_TILE_INDEX {
+                        return Err(InvalidFuluMianziError::IndexOutOfRange(*tile));
+                    }
                     return Err(InvalidFuluMianziError::ShunziWithZipai(*tile));
                 }
                 if !FuluMianzi::is_valid_shunzi_combination(tile, position) {
