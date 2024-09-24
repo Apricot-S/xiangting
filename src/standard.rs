@@ -487,10 +487,7 @@ fn calculate_replacement_number_inner(
                         // A tile that is held in a quantity of four cannot become a pair.
                         num_gulipai -= four_tiles_gulipai.count_ones() as u8;
 
-                        let num_four_tiles_gulipai_shupai =
-                            four_tiles_gulipai[0..27].count_ones() as u8;
-
-                        if (has_jiangpai || num_duizi != 0) && num_four_tiles_gulipai_shupai > 0 {
+                        if (has_jiangpai || num_duizi != 0) && four_tiles_gulipai[0..27].any() {
                             // One of the isolated suits can become a sequence candidate.
                             num_gulipai += 1;
                         }
@@ -557,10 +554,7 @@ fn calculate_replacement_number_inner_3_player(
                     // A tile that is held in a quantity of four cannot become a pair.
                     num_gulipai -= four_tiles_gulipai.count_ones() as u8;
 
-                    let num_four_tiles_gulipai_shupai =
-                        four_tiles_gulipai[9..27].count_ones() as u8;
-
-                    if (has_jiangpai || num_duizi != 0) && num_four_tiles_gulipai_shupai > 0 {
+                    if (has_jiangpai || num_duizi != 0) && four_tiles_gulipai[9..27].any() {
                         // One of the isolated suits can become a sequence candidate.
                         num_gulipai += 1;
                     }
