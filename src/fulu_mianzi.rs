@@ -231,8 +231,32 @@ mod tests {
     }
 
     #[test]
-    fn invalid_shunzi() {
+    fn invalid_shunzi_out_of_range() {
+        let shunzi_8z_low = FuluMianzi::Shunzi(MAX_TILE_INDEX + 1, ClaimedTilePosition::Low);
+
+        assert!(matches!(
+            shunzi_8z_low.validate().unwrap_err(),
+            InvalidFuluMianziError::IndexOutOfRange(34)
+        ));
+    }
+
+    #[test]
+    fn invalid_shunzi_zipai() {
         let shunzi_1z_low = FuluMianzi::Shunzi(MAX_SHUPAI_INDEX + 1, ClaimedTilePosition::Low);
+        let shunzi_7z_high = FuluMianzi::Shunzi(MAX_TILE_INDEX, ClaimedTilePosition::High);
+
+        assert!(matches!(
+            shunzi_1z_low.validate().unwrap_err(),
+            InvalidFuluMianziError::ShunziWithZipai(27)
+        ));
+        assert!(matches!(
+            shunzi_7z_high.validate().unwrap_err(),
+            InvalidFuluMianziError::ShunziWithZipai(33)
+        ));
+    }
+
+    #[test]
+    fn invalid_shunzi_combination() {
         let shunzi_8m_low = FuluMianzi::Shunzi(7, ClaimedTilePosition::Low);
         let shunzi_9m_low = FuluMianzi::Shunzi(8, ClaimedTilePosition::Low);
         let shunzi_1m_middle = FuluMianzi::Shunzi(0, ClaimedTilePosition::Middle);
@@ -240,10 +264,6 @@ mod tests {
         let shunzi_1m_high = FuluMianzi::Shunzi(0, ClaimedTilePosition::High);
         let shunzi_2m_high = FuluMianzi::Shunzi(1, ClaimedTilePosition::High);
 
-        assert!(matches!(
-            shunzi_1z_low.validate().unwrap_err(),
-            InvalidFuluMianziError::ShunziWithZipai(27)
-        ));
         assert!(matches!(
             shunzi_8m_low.validate().unwrap_err(),
             InvalidFuluMianziError::InvalidShunziCombination(7, ClaimedTilePosition::Low)
