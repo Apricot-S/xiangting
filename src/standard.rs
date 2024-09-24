@@ -224,17 +224,18 @@ fn count_shupai_block(
     four_tiles: &BitSlice,
 ) -> BlockCountPattern {
     if n > 8 {
+        let num_gulipai = single_color_bingpai.iter().sum();
         let gulipai = to_flag(single_color_bingpai);
         let mut four_tiles_gulipai = SingleColorTileFlag::ZERO;
         four_tiles_gulipai.store(four_tiles.load::<u16>());
-        four_tiles_gulipai = four_tiles_gulipai & gulipai;
+        four_tiles_gulipai &= gulipai;
 
         return BlockCountPattern {
             a: BlockCount {
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
-                num_gulipai: single_color_bingpai.iter().sum(),
+                num_gulipai,
                 gulipai,
                 four_tiles_gulipai,
             },
@@ -242,7 +243,7 @@ fn count_shupai_block(
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
-                num_gulipai: single_color_bingpai.iter().sum(),
+                num_gulipai,
                 gulipai,
                 four_tiles_gulipai,
             },
