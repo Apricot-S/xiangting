@@ -209,6 +209,7 @@ struct BlockCount {
     num_duizi: u8,
     num_gulipai: u8,
     gulipai: SingleColorTileFlag,
+    four_tiles_gulipai: SingleColorTileFlag,
 }
 
 struct BlockCountPattern {
@@ -223,20 +224,27 @@ fn count_shupai_block(
     four_tiles: &BitSlice,
 ) -> BlockCountPattern {
     if n > 8 {
+        let gulipai = to_flag(single_color_bingpai);
+        let mut four_tiles_gulipai = SingleColorTileFlag::ZERO;
+        four_tiles_gulipai.store(four_tiles.load::<u16>());
+        four_tiles_gulipai = four_tiles_gulipai & gulipai;
+
         return BlockCountPattern {
             a: BlockCount {
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
                 num_gulipai: single_color_bingpai.iter().sum(),
-                gulipai: to_flag(single_color_bingpai),
+                gulipai,
+                four_tiles_gulipai,
             },
             b: BlockCount {
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
                 num_gulipai: single_color_bingpai.iter().sum(),
-                gulipai: to_flag(single_color_bingpai),
+                gulipai,
+                four_tiles_gulipai,
             },
         };
     }
@@ -252,8 +260,11 @@ fn count_shupai_block(
             max.a = r.a;
         }
         if (r.b.num_mianzi > max.b.num_mianzi)
-            || (r.b.num_mianzi == max.b.num_mianzi)
-                && ((r.b.num_dazi + r.b.num_duizi) > (max.b.num_dazi + max.b.num_duizi))
+            || ((r.b.num_mianzi == max.b.num_mianzi)
+                && ((r.b.num_dazi + r.b.num_duizi) > (max.b.num_dazi + max.b.num_duizi)))
+            || ((r.b.num_mianzi == max.b.num_mianzi)
+                && ((r.b.num_dazi + r.b.num_duizi) == (max.b.num_dazi + max.b.num_duizi))
+                && (r.b.four_tiles_gulipai.count_ones() < max.b.four_tiles_gulipai.count_ones()))
         {
             max.b = r.b;
         }
@@ -338,6 +349,7 @@ fn count_zipai_block(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCoun
             num_duizi: 0,
             num_gulipai: 0,
             gulipai: SingleColorTileFlag::ZERO,
+            four_tiles_gulipai: SingleColorTileFlag::ZERO,
         },
         |mut acc, (i, &n)| {
             match n {
@@ -345,6 +357,7 @@ fn count_zipai_block(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCoun
                     acc.num_mianzi += 1;
                     acc.num_gulipai += 1;
                     acc.gulipai.set(i, true);
+                    acc.four_tiles_gulipai.set(i, true);
                 }
                 3 => acc.num_mianzi += 1,
                 2 => {
@@ -372,6 +385,7 @@ fn count_19m_block(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount 
             num_duizi: 0,
             num_gulipai: 0,
             gulipai: SingleColorTileFlag::ZERO,
+            four_tiles_gulipai: SingleColorTileFlag::ZERO,
         },
         |mut acc, (i, &n)| {
             if i == 0 || i == 8 {
@@ -380,6 +394,7 @@ fn count_19m_block(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount 
                         acc.num_mianzi += 1;
                         acc.num_gulipai += 1;
                         acc.gulipai.set(i, true);
+                        acc.four_tiles_gulipai.set(i, true);
                     }
                     3 => acc.num_mianzi += 1,
                     2 => {
