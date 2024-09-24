@@ -2,12 +2,12 @@
 
 A library for calculation of deficiency number (a.k.a. xiangting number, 向聴数).
 
-This is a port of [majiang-core/lib/xiangting.js](https://github.com/kobalab/majiang-core/blob/master/lib/xiangting.js) to Rust.  
+This library is based on the algorithm in [majiang-core/lib/xiangting.js](https://github.com/kobalab/majiang-core/blob/master/lib/xiangting.js).  
 However, the following differences apply:
 
 - Calculates the replacement number, which is equal to the deficiency number (a.k.a. xiangting number, 向聴数) plus one.
 - Supports both calculations that include and exclude melds (副露) when considering the four tiles in a hand.
-- The original algorithm miscalculated the deficiency number in some cases. These errors have been corrected in this port, but the calculation speed has deteriorated as a result.
+- The original algorithm miscalculated the deficiency number in some cases. These errors have been corrected in this library, but the calculation speed has deteriorated as a result.
 - Supports three-player mahjong.
 - Does not support short hand or long hand.
 
