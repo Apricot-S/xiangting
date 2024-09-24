@@ -221,13 +221,13 @@ fn count_shupai_block(
     single_color_bingpai: &mut [u8],
     n: usize,
     jiangpai: Option<usize>,
-    four_tiles: &BitSlice,
+    single_color_four_tiles: &BitSlice,
 ) -> BlockCountPattern {
     if n > 8 {
         let num_gulipai = single_color_bingpai.iter().sum();
         let gulipai = to_flag(single_color_bingpai);
         let mut four_tiles_gulipai = SingleColorTileFlag::ZERO;
-        four_tiles_gulipai.store(four_tiles.load::<u16>());
+        four_tiles_gulipai.store(single_color_four_tiles.load::<u16>());
         four_tiles_gulipai &= gulipai;
 
         return BlockCountPattern {
@@ -250,7 +250,12 @@ fn count_shupai_block(
         };
     }
 
-    let mut max = count_shupai_block(single_color_bingpai, n + 1, jiangpai, four_tiles);
+    let mut max = count_shupai_block(
+        single_color_bingpai,
+        n + 1,
+        jiangpai,
+        single_color_four_tiles,
+    );
 
     #[inline]
     fn update_max(max: &mut BlockCountPattern, r: BlockCountPattern) {
@@ -274,7 +279,7 @@ fn count_shupai_block(
 
     if (n <= 6) && single_color_bingpai.has_shunzi(n) {
         single_color_bingpai.remove_shunzi(n);
-        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
+        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, single_color_four_tiles);
         single_color_bingpai.restore_shunzi(n);
 
         r.a.num_mianzi += 1;
@@ -285,7 +290,7 @@ fn count_shupai_block(
 
     if single_color_bingpai.has_kezi(n) {
         single_color_bingpai.remove_kezi(n);
-        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
+        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, single_color_four_tiles);
         single_color_bingpai.restore_kezi(n);
 
         r.a.num_mianzi += 1;
@@ -294,9 +299,9 @@ fn count_shupai_block(
         update_max(&mut max, r);
     }
 
-    if (n <= 6) && single_color_bingpai.has_qianzhang_dazi(n) && !four_tiles[n + 1] {
+    if (n <= 6) && single_color_bingpai.has_qianzhang_dazi(n) && !single_color_four_tiles[n + 1] {
         single_color_bingpai.remove_qianzhang_dazi(n);
-        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
+        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, single_color_four_tiles);
         single_color_bingpai.restore_qianzhang_dazi(n);
 
         r.a.num_dazi += 1;
@@ -307,15 +312,16 @@ fn count_shupai_block(
 
     if (n <= 7) && single_color_bingpai.has_liangmen_dazi(n) {
         let is_wait_consumed_by_hand = match n {
-            0 => four_tiles[2],
-            1..=6 => four_tiles[n - 1] && four_tiles[n + 2],
-            7 => four_tiles[6],
+            0 => single_color_four_tiles[2],
+            1..=6 => single_color_four_tiles[n - 1] && single_color_four_tiles[n + 2],
+            7 => single_color_four_tiles[6],
             _ => unreachable!("Invalid rank"),
         };
 
         if !is_wait_consumed_by_hand {
             single_color_bingpai.remove_liangmen_dazi(n);
-            let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
+            let mut r =
+                count_shupai_block(single_color_bingpai, n, jiangpai, single_color_four_tiles);
             single_color_bingpai.restore_liangmen_dazi(n);
 
             r.a.num_dazi += 1;
@@ -330,7 +336,7 @@ fn count_shupai_block(
     // a triplet and an isolated tile, it is not practically an issue.
     if single_color_bingpai.has_duizi(n) && Some(n) != jiangpai {
         single_color_bingpai.remove_duizi(n);
-        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
+        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, single_color_four_tiles);
         single_color_bingpai.restore_duizi(n);
 
         r.a.num_duizi += 1;
@@ -345,7 +351,7 @@ fn count_shupai_block(
 fn count_zipai_block(
     zipai_bingpai: &[u8],
     jiangpai: Option<usize>,
-    four_tiles: &BitSlice,
+    zipai_four_tiles: &BitSlice,
 ) -> BlockCount {
     zipai_bingpai.iter().enumerate().fold(
         BlockCount {
@@ -363,7 +369,7 @@ fn count_zipai_block(
                     acc.num_gulipai += 1;
                     acc.gulipai.set(i, true);
 
-                    if four_tiles[i] {
+                    if zipai_four_tiles[i] {
                         acc.four_tiles_gulipai.set(i, true);
                     }
                 }
@@ -377,7 +383,7 @@ fn count_zipai_block(
                     acc.num_gulipai += 1;
                     acc.gulipai.set(i, true);
 
-                    if four_tiles[i] {
+                    if zipai_four_tiles[i] {
                         acc.four_tiles_gulipai.set(i, true);
                     }
                 }
@@ -393,7 +399,7 @@ fn count_zipai_block(
 fn count_19m_block(
     wanzi_bingpai: &[u8],
     jiangpai: Option<usize>,
-    four_tiles: &BitSlice,
+    wanzi_four_tiles: &BitSlice,
 ) -> BlockCount {
     wanzi_bingpai.iter().enumerate().fold(
         BlockCount {
@@ -412,7 +418,7 @@ fn count_19m_block(
                         acc.num_gulipai += 1;
                         acc.gulipai.set(i, true);
 
-                        if four_tiles[i] {
+                        if wanzi_four_tiles[i] {
                             acc.four_tiles_gulipai.set(i, true);
                         }
                     }
@@ -426,7 +432,7 @@ fn count_19m_block(
                         acc.num_gulipai += 1;
                         acc.gulipai.set(i, true);
 
-                        if four_tiles[i] {
+                        if wanzi_four_tiles[i] {
                             acc.four_tiles_gulipai.set(i, true);
                         }
                     }
