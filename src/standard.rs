@@ -491,11 +491,10 @@ fn calculate_replacement_number_inner(
                         // cannot become a pair or a sequence candidate.
                         num_gulipai -= num_four_tiles_gulipai_shupai;
                         num_gulipai -= num_four_tiles_gulipai_zipai;
-                        if has_jiangpai || num_duizi != 0 {
-                            if num_four_tiles_gulipai_shupai >= 2 {
-                                // One of the isolated suits can become a sequence candidate.
-                                num_gulipai += 1;
-                            }
+
+                        if (has_jiangpai || num_duizi != 0) && num_four_tiles_gulipai_shupai >= 2 {
+                            // One of the isolated suits can become a sequence candidate.
+                            num_gulipai += 1;
                         }
                     }
                 }
@@ -567,11 +566,10 @@ fn calculate_replacement_number_inner_3_player(
                     // cannot become a pair or a sequence candidate.
                     num_gulipai -= num_four_tiles_gulipai_shupai;
                     num_gulipai -= num_four_tiles_gulipai_zipai_19m;
-                    if has_jiangpai || num_duizi != 0 {
-                        if num_four_tiles_gulipai_shupai >= 2 {
-                            // One of the isolated suits can become a sequence candidate.
-                            num_gulipai += 1;
-                        }
+
+                    if (has_jiangpai || num_duizi != 0) && num_four_tiles_gulipai_shupai >= 2 {
+                        // One of the isolated suits can become a sequence candidate.
+                        num_gulipai += 1;
                     }
                 }
             }
