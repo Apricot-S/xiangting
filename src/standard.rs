@@ -209,6 +209,7 @@ struct BlockCount {
     num_duizi: u8,
     num_gulipai: u8,
     gulipai: SingleColorTileFlag,
+    four_tiles_gulipai: SingleColorTileFlag,
 }
 
 struct BlockCountPattern {
@@ -223,20 +224,28 @@ fn count_shupai_block(
     four_tiles: &BitSlice,
 ) -> BlockCountPattern {
     if n > 8 {
+        let num_gulipai = single_color_bingpai.iter().sum();
+        let gulipai = to_flag(single_color_bingpai);
+        let mut four_tiles_gulipai = SingleColorTileFlag::ZERO;
+        four_tiles_gulipai.store(four_tiles.load::<u16>());
+        four_tiles_gulipai &= gulipai;
+
         return BlockCountPattern {
             a: BlockCount {
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
-                num_gulipai: single_color_bingpai.iter().sum(),
-                gulipai: to_flag(single_color_bingpai),
+                num_gulipai,
+                gulipai,
+                four_tiles_gulipai,
             },
             b: BlockCount {
                 num_mianzi: 0,
                 num_dazi: 0,
                 num_duizi: 0,
-                num_gulipai: single_color_bingpai.iter().sum(),
-                gulipai: to_flag(single_color_bingpai),
+                num_gulipai,
+                gulipai,
+                four_tiles_gulipai,
             },
         };
     }
@@ -251,9 +260,13 @@ fn count_shupai_block(
         {
             max.a = r.a;
         }
+
         if (r.b.num_mianzi > max.b.num_mianzi)
-            || (r.b.num_mianzi == max.b.num_mianzi)
-                && ((r.b.num_dazi + r.b.num_duizi) > (max.b.num_dazi + max.b.num_duizi))
+            || ((r.b.num_mianzi == max.b.num_mianzi)
+                && ((r.b.num_dazi + r.b.num_duizi) > (max.b.num_dazi + max.b.num_duizi)))
+            || ((r.b.num_mianzi == max.b.num_mianzi)
+                && ((r.b.num_dazi + r.b.num_duizi) == (max.b.num_dazi + max.b.num_duizi))
+                && (r.b.four_tiles_gulipai.count_ones() < max.b.four_tiles_gulipai.count_ones()))
         {
             max.b = r.b;
         }
@@ -281,48 +294,47 @@ fn count_shupai_block(
         update_max(&mut max, r);
     }
 
-    if (n <= 6) && single_color_bingpai.has_qianzhang_dazi(n) {
+    if (n <= 6) && single_color_bingpai.has_qianzhang_dazi(n) && !four_tiles[n + 1] {
         single_color_bingpai.remove_qianzhang_dazi(n);
         let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
         single_color_bingpai.restore_qianzhang_dazi(n);
 
-        if !four_tiles[n + 1] {
-            r.a.num_dazi += 1;
-            r.b.num_dazi += 1;
-        }
+        r.a.num_dazi += 1;
+        r.b.num_dazi += 1;
 
         update_max(&mut max, r);
     }
 
     if (n <= 7) && single_color_bingpai.has_liangmen_dazi(n) {
-        single_color_bingpai.remove_liangmen_dazi(n);
-        let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
-        single_color_bingpai.restore_liangmen_dazi(n);
-
-        let is_wait_consumed_in_hand = match n {
+        let is_wait_consumed_by_hand = match n {
             0 => four_tiles[2],
             1..=6 => four_tiles[n - 1] && four_tiles[n + 2],
             7 => four_tiles[6],
-            _ => panic!("Invalid rank"),
+            _ => unreachable!("Invalid rank"),
         };
 
-        if !is_wait_consumed_in_hand {
+        if !is_wait_consumed_by_hand {
+            single_color_bingpai.remove_liangmen_dazi(n);
+            let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
+            single_color_bingpai.restore_liangmen_dazi(n);
+
             r.a.num_dazi += 1;
             r.b.num_dazi += 1;
-        }
 
-        update_max(&mut max, r);
+            update_max(&mut max, r);
+        }
     }
 
-    if single_color_bingpai.has_duizi(n) {
+    // There is a possibility of extracting a pair twice from the four tiles,
+    // but since the replacement number is greater than the pattern of
+    // a triplet and an isolated tile, it is not practically an issue.
+    if single_color_bingpai.has_duizi(n) && Some(n) != jiangpai {
         single_color_bingpai.remove_duizi(n);
         let mut r = count_shupai_block(single_color_bingpai, n, jiangpai, four_tiles);
         single_color_bingpai.restore_duizi(n);
 
-        if Some(n) != jiangpai {
-            r.a.num_duizi += 1;
-            r.b.num_duizi += 1;
-        }
+        r.a.num_duizi += 1;
+        r.b.num_duizi += 1;
 
         update_max(&mut max, r);
     }
@@ -330,7 +342,11 @@ fn count_shupai_block(
     max
 }
 
-fn count_zipai_block(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount {
+fn count_zipai_block(
+    zipai_bingpai: &[u8],
+    jiangpai: Option<usize>,
+    four_tiles: &BitSlice,
+) -> BlockCount {
     zipai_bingpai.iter().enumerate().fold(
         BlockCount {
             num_mianzi: 0,
@@ -338,6 +354,7 @@ fn count_zipai_block(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCoun
             num_duizi: 0,
             num_gulipai: 0,
             gulipai: SingleColorTileFlag::ZERO,
+            four_tiles_gulipai: SingleColorTileFlag::ZERO,
         },
         |mut acc, (i, &n)| {
             match n {
@@ -345,6 +362,10 @@ fn count_zipai_block(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCoun
                     acc.num_mianzi += 1;
                     acc.num_gulipai += 1;
                     acc.gulipai.set(i, true);
+
+                    if four_tiles[i] {
+                        acc.four_tiles_gulipai.set(i, true);
+                    }
                 }
                 3 => acc.num_mianzi += 1,
                 2 => {
@@ -355,16 +376,25 @@ fn count_zipai_block(zipai_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCoun
                 1 => {
                     acc.num_gulipai += 1;
                     acc.gulipai.set(i, true);
+
+                    if four_tiles[i] {
+                        acc.four_tiles_gulipai.set(i, true);
+                    }
                 }
                 0 => (),
                 _ => panic!("There are 5 or more of the same tiles: {} tiles", n),
             }
+
             acc
         },
     )
 }
 
-fn count_19m_block(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount {
+fn count_19m_block(
+    wanzi_bingpai: &[u8],
+    jiangpai: Option<usize>,
+    four_tiles: &BitSlice,
+) -> BlockCount {
     wanzi_bingpai.iter().enumerate().fold(
         BlockCount {
             num_mianzi: 0,
@@ -372,6 +402,7 @@ fn count_19m_block(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount 
             num_duizi: 0,
             num_gulipai: 0,
             gulipai: SingleColorTileFlag::ZERO,
+            four_tiles_gulipai: SingleColorTileFlag::ZERO,
         },
         |mut acc, (i, &n)| {
             if i == 0 || i == 8 {
@@ -380,6 +411,10 @@ fn count_19m_block(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount 
                         acc.num_mianzi += 1;
                         acc.num_gulipai += 1;
                         acc.gulipai.set(i, true);
+
+                        if four_tiles[i] {
+                            acc.four_tiles_gulipai.set(i, true);
+                        }
                     }
                     3 => acc.num_mianzi += 1,
                     2 => {
@@ -390,6 +425,10 @@ fn count_19m_block(wanzi_bingpai: &[u8], jiangpai: Option<usize>) -> BlockCount 
                     1 => {
                         acc.num_gulipai += 1;
                         acc.gulipai.set(i, true);
+
+                        if four_tiles[i] {
+                            acc.four_tiles_gulipai.set(i, true);
+                        }
                     }
                     0 => (),
                     _ => panic!("There are 5 or more of the same tiles: {} tiles", n),
@@ -419,7 +458,7 @@ fn calculate_replacement_number_inner(
     let jiangpai_s = offset_jiangpai(jiangpai, 18, 27);
     let jiangpai_z = offset_jiangpai(jiangpai, 27, 34);
 
-    let z = count_zipai_block(&bingpai[27..34], jiangpai_z);
+    let z = count_zipai_block(&bingpai[27..34], jiangpai_z, &four_tiles[27..34]);
     let pattern_m = count_shupai_block(&mut bingpai[0..9], 0, jiangpai_m, &four_tiles[0..9]);
     let pattern_p = count_shupai_block(&mut bingpai[9..18], 0, jiangpai_p, &four_tiles[9..18]);
     let pattern_s = count_shupai_block(&mut bingpai[18..27], 0, jiangpai_s, &four_tiles[18..27]);
@@ -437,22 +476,26 @@ fn calculate_replacement_number_inner(
                 let mut num_gulipai = m.num_gulipai + p.num_gulipai + s.num_gulipai + z.num_gulipai;
 
                 if four_tiles.any() {
-                    let gulipai = merge_flags(m.gulipai, p.gulipai, s.gulipai, z.gulipai);
-                    if gulipai.any() {
-                        let four_tiles_gulipai = four_tiles & gulipai;
-                        if four_tiles_gulipai.any() {
-                            // A tile that is held in a quantity of four
-                            // cannot become a pair even if it is isolated.
-                            let mut num_four_tiles_gulipai_shupai =
-                                four_tiles_gulipai[0..27].count_ones() as u8;
+                    let four_tiles_gulipai = merge_flags(
+                        m.four_tiles_gulipai,
+                        p.four_tiles_gulipai,
+                        s.four_tiles_gulipai,
+                        z.four_tiles_gulipai,
+                    );
 
-                            if num_mianzi < 4 && num_four_tiles_gulipai_shupai >= 2 {
-                                // One of the isolated suits can become a sequence candidate.
-                                num_four_tiles_gulipai_shupai -= 1;
-                            }
+                    if four_tiles_gulipai.any() {
+                        let num_four_tiles_gulipai_shupai =
+                            four_tiles_gulipai[0..27].count_ones() as u8;
+                        let num_four_tiles_gulipai_zipai =
+                            four_tiles_gulipai[27..34].count_ones() as u8;
+                        // A tile that is held in a quantity of four
+                        // cannot become a pair or a sequence candidate.
+                        num_gulipai -= num_four_tiles_gulipai_shupai;
+                        num_gulipai -= num_four_tiles_gulipai_zipai;
 
-                            num_gulipai -= num_four_tiles_gulipai_shupai;
-                            num_gulipai -= four_tiles_gulipai[27..34].count_ones() as u8;
+                        if (has_jiangpai || num_duizi != 0) && num_four_tiles_gulipai_shupai >= 2 {
+                            // One of the isolated suits can become a sequence candidate.
+                            num_gulipai += 1;
                         }
                     }
                 }
@@ -490,8 +533,8 @@ fn calculate_replacement_number_inner_3_player(
     let jiangpai_s = offset_jiangpai(jiangpai, 18, 27);
     let jiangpai_z = offset_jiangpai(jiangpai, 27, 34);
 
-    let z = count_zipai_block(&bingpai[27..34], jiangpai_z);
-    let m = count_19m_block(&bingpai[0..9], jiangpai_m);
+    let z = count_zipai_block(&bingpai[27..34], jiangpai_z, &four_tiles[27..34]);
+    let m = count_19m_block(&bingpai[0..9], jiangpai_m, &four_tiles[0..9]);
     let pattern_p = count_shupai_block(&mut bingpai[9..18], 0, jiangpai_p, &four_tiles[9..18]);
     let pattern_s = count_shupai_block(&mut bingpai[18..27], 0, jiangpai_s, &four_tiles[18..27]);
 
@@ -506,24 +549,28 @@ fn calculate_replacement_number_inner_3_player(
             let mut num_gulipai = m.num_gulipai + p.num_gulipai + s.num_gulipai + z.num_gulipai;
 
             if four_tiles.any() {
-                let gulipai = merge_flags(m.gulipai, p.gulipai, s.gulipai, z.gulipai);
-                if gulipai.any() {
-                    let four_tiles_gulipai = four_tiles & gulipai;
-                    if four_tiles_gulipai.any() {
-                        // A tile that is held in a quantity of four
-                        // cannot become a pair even if it is isolated.
-                        let mut num_four_tiles_gulipai_shupai =
-                            four_tiles_gulipai[9..27].count_ones() as u8;
+                let four_tiles_gulipai = merge_flags(
+                    m.four_tiles_gulipai,
+                    p.four_tiles_gulipai,
+                    s.four_tiles_gulipai,
+                    z.four_tiles_gulipai,
+                );
 
-                        if num_mianzi < 4 && num_four_tiles_gulipai_shupai >= 2 {
-                            // One of the isolated suits can become a sequence candidate.
-                            num_four_tiles_gulipai_shupai -= 1;
-                        }
+                if four_tiles_gulipai.any() {
+                    let num_four_tiles_gulipai_shupai =
+                        four_tiles_gulipai[9..27].count_ones() as u8;
+                    let num_four_tiles_gulipai_zipai_19m = four_tiles_gulipai[27..34].count_ones()
+                        as u8
+                        + four_tiles_gulipai[0] as u8
+                        + four_tiles_gulipai[8] as u8;
+                    // A tile that is held in a quantity of four
+                    // cannot become a pair or a sequence candidate.
+                    num_gulipai -= num_four_tiles_gulipai_shupai;
+                    num_gulipai -= num_four_tiles_gulipai_zipai_19m;
 
-                        num_gulipai -= num_four_tiles_gulipai_shupai;
-                        num_gulipai -= four_tiles_gulipai[0] as u8;
-                        num_gulipai -= four_tiles_gulipai[8] as u8;
-                        num_gulipai -= four_tiles_gulipai[27..34].count_ones() as u8;
+                    if (has_jiangpai || num_duizi != 0) && num_four_tiles_gulipai_shupai >= 2 {
+                        // One of the isolated suits can become a sequence candidate.
+                        num_gulipai += 1;
                     }
                 }
             }
@@ -1047,6 +1094,102 @@ mod tests {
         let bingpai: Bingpai = [
             0, 1, 1, 0, 0, 0, 0, 0, 0, // m
             0, 0, 0, 1, 1, 1, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            2, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number_1, 1);
+
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Gangzi(0)),
+            Some(FuluMianzi::Gangzi(3)),
+            None,
+            None,
+        ]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        assert_eq!(replacement_number_2, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_waiting_for_the_5th_tile_9() {
+        // Middle wait for a tile already called as a kan with a isolated 4th tile
+        let bingpai: Bingpai = [
+            1, 0, 4, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            2, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number_1, 1);
+
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Gangzi(1)),
+            Some(FuluMianzi::Gangzi(3)),
+            None,
+            None,
+        ]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        assert_eq!(replacement_number_2, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_waiting_for_the_5th_tile_10() {
+        // Edge wait for a tile already called as a kan with a isolated 4th tile (12-3)
+        let bingpai: Bingpai = [
+            1, 4, 0, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            2, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number_1, 1);
+
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Gangzi(2)),
+            Some(FuluMianzi::Gangzi(3)),
+            None,
+            None,
+        ]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        assert_eq!(replacement_number_2, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_waiting_for_the_5th_tile_11() {
+        // Edge wait for a tile already called as a kan with a isolated 4th tile (7-89)
+        let bingpai: Bingpai = [
+            0, 0, 0, 0, 0, 0, 0, 4, 1, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            2, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number_1, 1);
+
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Gangzi(5)),
+            Some(FuluMianzi::Gangzi(6)),
+            None,
+            None,
+        ]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        assert_eq!(replacement_number_2, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_waiting_for_the_5th_tile_12() {
+        // Open wait for a tile already called as a kan with a isolated 4th tile
+        let bingpai: Bingpai = [
+            0, 1, 4, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
             0, 0, 0, 0, 0, 0, 0, 0, 0, // s
             2, 0, 0, 0, 0, 0, 0, // z
         ];
