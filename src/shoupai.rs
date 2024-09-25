@@ -26,10 +26,13 @@ use thiserror::Error;
 /// ```
 pub type FuluMianziList = [Option<FuluMianzi>; MAX_NUM_FULU_MIANZI];
 
-pub(crate) fn count_fulupai(fulu_mianzi_list: &FuluMianziList) -> Bingpai {
-    fulu_mianzi_list
-        .iter()
-        .fold([0; NUM_TILE_INDEX], |mut fulupai, m| {
+pub(crate) trait FuluMianziListExt {
+    fn count_fulupai(&self) -> Bingpai;
+}
+
+impl FuluMianziListExt for FuluMianziList {
+    fn count_fulupai(&self) -> Bingpai {
+        self.iter().fold([0; NUM_TILE_INDEX], |mut fulupai, m| {
             match m {
                 Some(FuluMianzi::Shunzi(tile, position)) => {
                     fulupai[*tile as usize] += 1;
@@ -58,6 +61,7 @@ pub(crate) fn count_fulupai(fulu_mianzi_list: &FuluMianziList) -> Bingpai {
             }
             fulupai
         })
+    }
 }
 
 /// Errors that occur when an invalid hand (手牌) is provided.
@@ -117,7 +121,7 @@ pub(crate) fn validate_shoupai(
         .count() as u8;
 
     let mut shoupai = *bingpai;
-    let fulupai = count_fulupai(fulu_mianzi_list);
+    let fulupai = fulu_mianzi_list.count_fulupai();
     shoupai
         .iter_mut()
         .zip(fulupai.iter())
@@ -177,7 +181,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let menqian = [None, None, None, None];
-        let fulupai_menqian_2 = count_fulupai(&menqian);
+        let fulupai_menqian_2 = menqian.count_fulupai();
         assert_eq!(fulupai_menqian_1, fulupai_menqian_2);
     }
 
@@ -195,7 +199,7 @@ mod tests {
             Some(FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)),
             None,
         ];
-        let fulupai_3_chi_2 = count_fulupai(&shunzi_3);
+        let fulupai_3_chi_2 = shunzi_3.count_fulupai();
         assert_eq!(fulupai_3_chi_1, fulupai_3_chi_2);
 
         let fulupai_3_peng_1: Bingpai = [
@@ -210,7 +214,7 @@ mod tests {
             Some(FuluMianzi::Kezi(2)),
             Some(FuluMianzi::Kezi(3)),
         ];
-        let fulupai_3_peng_2 = count_fulupai(&kezi_3);
+        let fulupai_3_peng_2 = kezi_3.count_fulupai();
         assert_eq!(fulupai_3_peng_1, fulupai_3_peng_2);
 
         let fulupai_3_gang_1: Bingpai = [
@@ -225,7 +229,7 @@ mod tests {
             Some(FuluMianzi::Gangzi(2)),
             Some(FuluMianzi::Gangzi(3)),
         ];
-        let fulupai_3_gang_2 = count_fulupai(&gangzi_3);
+        let fulupai_3_gang_2 = gangzi_3.count_fulupai();
         assert_eq!(fulupai_3_gang_1, fulupai_3_gang_2);
     }
 
@@ -243,7 +247,7 @@ mod tests {
             Some(FuluMianzi::Shunzi(6, ClaimedTilePosition::Low)),
             Some(FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)),
         ];
-        let fulupai_4_chi_2 = count_fulupai(&shunzi_4);
+        let fulupai_4_chi_2 = shunzi_4.count_fulupai();
         assert_eq!(fulupai_4_chi_1, fulupai_4_chi_2);
 
         let fulupai_4_peng_1: Bingpai = [
@@ -258,7 +262,7 @@ mod tests {
             Some(FuluMianzi::Kezi(2)),
             Some(FuluMianzi::Kezi(3)),
         ];
-        let fulupai_4_peng_2 = count_fulupai(&kezi_4);
+        let fulupai_4_peng_2 = kezi_4.count_fulupai();
         assert_eq!(fulupai_4_peng_1, fulupai_4_peng_2);
 
         let fulupai_4_gang_1: Bingpai = [
@@ -273,7 +277,7 @@ mod tests {
             Some(FuluMianzi::Gangzi(2)),
             Some(FuluMianzi::Gangzi(3)),
         ];
-        let fulupai_4_gang_2 = count_fulupai(&gangzi_4);
+        let fulupai_4_gang_2 = gangzi_4.count_fulupai();
         assert_eq!(fulupai_4_gang_1, fulupai_4_gang_2);
     }
 

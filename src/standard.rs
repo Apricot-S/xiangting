@@ -4,7 +4,7 @@
 
 use crate::bingpai::Bingpai;
 use crate::constants::NUM_TILE_INDEX;
-use crate::shoupai::{count_fulupai, FuluMianziList};
+use crate::shoupai::{FuluMianziList, FuluMianziListExt};
 use bitvec::prelude::*;
 
 trait BingpaiExt {
@@ -161,7 +161,7 @@ fn count_4_tiles_in_shoupai(
                 })
         }
         Some(f) => {
-            let fulupai = count_fulupai(f);
+            let fulupai = f.count_fulupai();
             bingpai.iter().zip(fulupai.iter()).enumerate().fold(
                 AllTileFlag::ZERO,
                 |mut acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
