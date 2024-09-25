@@ -183,6 +183,8 @@ fn calculate_replacement_number_formula(
     has_jiangpai: bool,
 ) -> u8 {
     debug_assert!(num_mianzi <= 4);
+    debug_assert!(num_mianzi_candidate <= 7);
+    debug_assert!(num_gulipai <= 14);
 
     // Adjust for excess meld candidates
     if (num_mianzi + num_mianzi_candidate) > 4 {
