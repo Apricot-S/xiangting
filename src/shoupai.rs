@@ -27,11 +27,11 @@ use thiserror::Error;
 pub type FuluMianziList = [Option<FuluMianzi>; MAX_NUM_FULU_MIANZI];
 
 pub(crate) trait FuluMianziListExt {
-    fn count_fulupai(&self) -> Bingpai;
+    fn to_fulupai(&self) -> Bingpai;
 }
 
 impl FuluMianziListExt for FuluMianziList {
-    fn count_fulupai(&self) -> Bingpai {
+    fn to_fulupai(&self) -> Bingpai {
         self.iter().fold([0; NUM_TILE_INDEX], |mut fulupai, m| {
             match m {
                 Some(FuluMianzi::Shunzi(tile, position)) => {
@@ -121,7 +121,7 @@ pub(crate) fn validate_shoupai(
         .count() as u8;
 
     let mut shoupai = *bingpai;
-    let fulupai = fulu_mianzi_list.count_fulupai();
+    let fulupai = fulu_mianzi_list.to_fulupai();
     shoupai
         .iter_mut()
         .zip(fulupai.iter())
@@ -173,7 +173,7 @@ mod tests {
     use crate::fulu_mianzi::FuluMianzi;
 
     #[test]
-    fn count_fulupai_menqian() {
+    fn to_fulupai_menqian() {
         let fulupai_menqian_1: Bingpai = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, // m
             0, 0, 0, 0, 0, 0, 0, 0, 0, // p
@@ -181,12 +181,12 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let menqian = [None, None, None, None];
-        let fulupai_menqian_2 = menqian.count_fulupai();
+        let fulupai_menqian_2 = menqian.to_fulupai();
         assert_eq!(fulupai_menqian_1, fulupai_menqian_2);
     }
 
     #[test]
-    fn count_fulupai_3_fulu() {
+    fn to_fulupai_3_fulu() {
         let fulupai_3_chi_1: Bingpai = [
             2, 2, 2, 0, 0, 0, 0, 0, 0, // m
             1, 1, 1, 0, 0, 0, 0, 0, 0, // p
@@ -199,7 +199,7 @@ mod tests {
             Some(FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)),
             None,
         ];
-        let fulupai_3_chi_2 = shunzi_3.count_fulupai();
+        let fulupai_3_chi_2 = shunzi_3.to_fulupai();
         assert_eq!(fulupai_3_chi_1, fulupai_3_chi_2);
 
         let fulupai_3_peng_1: Bingpai = [
@@ -214,7 +214,7 @@ mod tests {
             Some(FuluMianzi::Kezi(2)),
             Some(FuluMianzi::Kezi(3)),
         ];
-        let fulupai_3_peng_2 = kezi_3.count_fulupai();
+        let fulupai_3_peng_2 = kezi_3.to_fulupai();
         assert_eq!(fulupai_3_peng_1, fulupai_3_peng_2);
 
         let fulupai_3_gang_1: Bingpai = [
@@ -229,12 +229,12 @@ mod tests {
             Some(FuluMianzi::Gangzi(2)),
             Some(FuluMianzi::Gangzi(3)),
         ];
-        let fulupai_3_gang_2 = gangzi_3.count_fulupai();
+        let fulupai_3_gang_2 = gangzi_3.to_fulupai();
         assert_eq!(fulupai_3_gang_1, fulupai_3_gang_2);
     }
 
     #[test]
-    fn count_fulupai_4_fulu() {
+    fn to_fulupai_4_fulu() {
         let fulupai_4_chi_1: Bingpai = [
             1, 1, 1, 1, 1, 1, 1, 1, 1, // m
             1, 1, 1, 0, 0, 0, 0, 0, 0, // p
@@ -247,7 +247,7 @@ mod tests {
             Some(FuluMianzi::Shunzi(6, ClaimedTilePosition::Low)),
             Some(FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)),
         ];
-        let fulupai_4_chi_2 = shunzi_4.count_fulupai();
+        let fulupai_4_chi_2 = shunzi_4.to_fulupai();
         assert_eq!(fulupai_4_chi_1, fulupai_4_chi_2);
 
         let fulupai_4_peng_1: Bingpai = [
@@ -262,7 +262,7 @@ mod tests {
             Some(FuluMianzi::Kezi(2)),
             Some(FuluMianzi::Kezi(3)),
         ];
-        let fulupai_4_peng_2 = kezi_4.count_fulupai();
+        let fulupai_4_peng_2 = kezi_4.to_fulupai();
         assert_eq!(fulupai_4_peng_1, fulupai_4_peng_2);
 
         let fulupai_4_gang_1: Bingpai = [
@@ -277,7 +277,7 @@ mod tests {
             Some(FuluMianzi::Gangzi(2)),
             Some(FuluMianzi::Gangzi(3)),
         ];
-        let fulupai_4_gang_2 = gangzi_4.count_fulupai();
+        let fulupai_4_gang_2 = gangzi_4.to_fulupai();
         assert_eq!(fulupai_4_gang_1, fulupai_4_gang_2);
     }
 

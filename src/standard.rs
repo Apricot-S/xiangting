@@ -161,7 +161,7 @@ fn count_4_tiles_in_shoupai(
                 })
         }
         Some(f) => {
-            let fulupai = f.count_fulupai();
+            let fulupai = f.to_fulupai();
             bingpai.iter().zip(fulupai.iter()).enumerate().fold(
                 AllTileFlag::ZERO,
                 |mut acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
