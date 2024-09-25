@@ -11,7 +11,7 @@ use xiangting::common::{
 
 const NUM_HAND: usize = 10_000_000;
 const SAMPLE_SIZE: usize = 10_000;
-const NUM_RESAMPLE: usize = 1_000;
+const NUM_RESAMPLE: usize = 100_000;
 
 fn xiangting_normal(c: &mut Criterion) {
     let mut rng = create_rng();
