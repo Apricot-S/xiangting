@@ -22,9 +22,9 @@ use thiserror::Error;
 /// | ----- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 /// | Tile  | 1s  | 2s  | 3s  | 4s  | 5s  | 6s  | 7s  | 8s  | 9s  |
 ///
-/// | Index | 27   | 28    | 29   | 30    | 31    | 32    | 33  |
-/// | ----- | ---- | ----- | ---- | ----- | ----- | ----- | --- |
-/// | Tile  | East | South | West | North | White | Green | Red |
+/// | Index | 27        | 28         | 29        | 30         | 31         | 32         | 33       |
+/// | ----- | --------- | ---------- | --------- | ---------- | ---------- | ---------- | -------- |
+/// | Tile  | East (1z) | South (2z) | West (3z) | North (4z) | White (5z) | Green (6z) | Red (7z) |
 ///
 /// See also [`InvalidShoupaiError`](crate::InvalidShoupaiError) for more information.
 ///
