@@ -5,7 +5,7 @@
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
-use crate::bingpai::{count_bingpai, count_bingpai_3_player, Bingpai};
+use crate::bingpai::{Bingpai, BingpaiExt};
 use crate::shoupai::{
     validate_shoupai, validate_shoupai_3_player, FuluMianziList, InvalidShoupaiError,
 };
@@ -84,7 +84,7 @@ pub fn calculate_replacement_number(
     bingpai: &Bingpai,
     fulu_mianzi_list: &Option<FuluMianziList>,
 ) -> Result<u8, InvalidShoupaiError> {
-    let num_bingpai = count_bingpai(bingpai)?;
+    let num_bingpai = bingpai.count()?;
 
     if let Some(f) = fulu_mianzi_list {
         validate_shoupai(bingpai, f)?;
@@ -174,7 +174,7 @@ pub fn calculate_replacement_number_3_player(
     bingpai: &Bingpai,
     fulu_mianzi_list: &Option<FuluMianziList>,
 ) -> Result<u8, InvalidShoupaiError> {
-    let num_bingpai = count_bingpai_3_player(bingpai)?;
+    let num_bingpai = bingpai.count_3_player()?;
 
     if let Some(f) = fulu_mianzi_list {
         validate_shoupai_3_player(bingpai, f)?;
