@@ -368,14 +368,16 @@ fn count_zipai_block(
                     acc.num_mianzi += 1;
                     acc.num_gulipai += 1;
                     acc.gulipai.set(i, true);
-
-                    if zipai_four_tiles[i] {
-                        acc.four_tiles_gulipai.set(i, true);
-                    }
+                    debug_assert!(zipai_four_tiles[i]);
+                    acc.four_tiles_gulipai.set(i, true);
                 }
-                3 => acc.num_mianzi += 1,
+                3 => {
+                    debug_assert!(!zipai_four_tiles[i]);
+                    acc.num_mianzi += 1;
+                }
                 2 => {
                     if Some(i) != jiangpai {
+                        debug_assert!(!zipai_four_tiles[i]);
                         acc.num_duizi += 1;
                     }
                 }
@@ -417,14 +419,16 @@ fn count_19m_block(
                         acc.num_mianzi += 1;
                         acc.num_gulipai += 1;
                         acc.gulipai.set(i, true);
-
-                        if wanzi_four_tiles[i] {
-                            acc.four_tiles_gulipai.set(i, true);
-                        }
+                        debug_assert!(wanzi_four_tiles[i]);
+                        acc.four_tiles_gulipai.set(i, true);
                     }
-                    3 => acc.num_mianzi += 1,
+                    3 => {
+                        debug_assert!(!wanzi_four_tiles[i]);
+                        acc.num_mianzi += 1;
+                    }
                     2 => {
                         if Some(i) != jiangpai {
+                            debug_assert!(!wanzi_four_tiles[i]);
                             acc.num_duizi += 1;
                         }
                     }
