@@ -129,19 +129,19 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn correct_hands_1() {
+    fn correct_hands_01() {
         correct_hands(1, to_34_array(&[0]), to_34_array(&[33]), 34);
     }
 
     #[test]
     #[ignore]
-    fn correct_hands_2() {
+    fn correct_hands_02() {
         correct_hands(2, to_34_array(&[0, 0]), to_34_array(&[33, 33]), 595);
     }
 
     #[test]
     #[ignore]
-    fn correct_hands_3() {
+    fn correct_hands_03() {
         correct_hands(
             3,
             to_34_array(&[0, 0, 0]),
@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn correct_hands_4() {
+    fn correct_hands_04() {
         correct_hands(
             4,
             to_34_array(&[0, 0, 0, 0]),
@@ -163,7 +163,7 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn correct_hands_5() {
+    fn correct_hands_05() {
         correct_hands(
             5,
             to_34_array(&[0, 0, 0, 0, 1]),
@@ -174,7 +174,7 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn correct_hands_6() {
+    fn correct_hands_06() {
         correct_hands(
             6,
             to_34_array(&[0, 0, 0, 0, 1, 1]),
@@ -185,7 +185,7 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn correct_hands_7() {
+    fn correct_hands_07() {
         correct_hands(
             7,
             to_34_array(&[0, 0, 0, 0, 1, 1, 1]),
@@ -196,7 +196,7 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn correct_hands_8() {
+    fn correct_hands_08() {
         correct_hands(
             8,
             to_34_array(&[0, 0, 0, 0, 1, 1, 1, 1]),
@@ -207,7 +207,7 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn correct_hands_9() {
+    fn correct_hands_09() {
         correct_hands(
             9,
             to_34_array(&[0, 0, 0, 0, 1, 1, 1, 1, 2]),
