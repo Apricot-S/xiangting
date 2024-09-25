@@ -167,13 +167,13 @@ impl fmt::Display for FuluMianzi {
                     ClaimedTilePosition::High => "High",
                 };
                 f.write_str(&format!(
-                    "Chii {} {}",
+                    "Chii-{}-{}",
                     TILE_NAMES[*index as usize], &position_str
                 ))
             }
-            FuluMianzi::Kezi(index) => f.write_str(&format!("Pon {}", TILE_NAMES[*index as usize])),
+            FuluMianzi::Kezi(index) => f.write_str(&format!("Pon-{}", TILE_NAMES[*index as usize])),
             FuluMianzi::Gangzi(index) => {
-                f.write_str(&format!("Kan {}", TILE_NAMES[*index as usize]))
+                f.write_str(&format!("Kan-{}", TILE_NAMES[*index as usize]))
             }
         }
     }
@@ -331,24 +331,24 @@ mod tests {
     #[test]
     fn shunzi_display() {
         let shunzi_low = FuluMianzi::Shunzi(0, ClaimedTilePosition::Low);
-        assert_eq!(format!("{}", shunzi_low), "Chii 1m Low");
+        assert_eq!(format!("{}", shunzi_low), "Chii-1m-Low");
 
         let shunzi_middle = FuluMianzi::Shunzi(1, ClaimedTilePosition::Middle);
-        assert_eq!(format!("{}", shunzi_middle), "Chii 2m Middle");
+        assert_eq!(format!("{}", shunzi_middle), "Chii-2m-Middle");
 
         let shunzi_high = FuluMianzi::Shunzi(2, ClaimedTilePosition::High);
-        assert_eq!(format!("{}", shunzi_high), "Chii 3m High");
+        assert_eq!(format!("{}", shunzi_high), "Chii-3m-High");
     }
 
     #[test]
     fn kezi_display() {
         let kezi = FuluMianzi::Kezi(0);
-        assert_eq!(format!("{}", kezi), "Pon 1m");
+        assert_eq!(format!("{}", kezi), "Pon-1m");
     }
 
     #[test]
     fn gangzi_display() {
         let gangzi = FuluMianzi::Gangzi(0);
-        assert_eq!(format!("{}", gangzi), "Kan 1m");
+        assert_eq!(format!("{}", gangzi), "Kan-1m");
     }
 }
