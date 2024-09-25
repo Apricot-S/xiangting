@@ -9,7 +9,7 @@ sudo rm -rf /var/lib/apt/lists/*
 
 sudo chown vscode:vscode /workspaces
 
-cargo install --force cargo-make
+chmod +x scripts/*.sh
 
 # Clone `nyanten`.
 pushd /workspaces
