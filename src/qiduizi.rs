@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::bingpai::Bingpai;
-use super::constants::MAX_NUM_SHOUPAI;
+use crate::bingpai::Bingpai;
+use crate::constants::MAX_NUM_SHOUPAI;
 
 pub(crate) fn calculate_replacement_number(bingpai: &Bingpai, num_bingpai: u8) -> u8 {
     if (num_bingpai != (MAX_NUM_SHOUPAI - 1)) && (num_bingpai != MAX_NUM_SHOUPAI) {

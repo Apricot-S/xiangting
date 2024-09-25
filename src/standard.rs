@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::bingpai::Bingpai;
-use super::constants::NUM_TILE_INDEX;
-use super::shoupai::{count_fulupai, FuluMianziList};
+use crate::bingpai::Bingpai;
+use crate::constants::NUM_TILE_INDEX;
+use crate::shoupai::{count_fulupai, FuluMianziList};
 use bitvec::prelude::*;
 
 trait BingpaiExt {

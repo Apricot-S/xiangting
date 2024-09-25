@@ -66,7 +66,7 @@ pub(crate) enum InvalidBingpaiError {
     InvalidTileFor3Player(usize),
 }
 
-pub(super) fn count_bingpai(bingpai: &Bingpai) -> Result<u8, InvalidBingpaiError> {
+pub(crate) fn count_bingpai(bingpai: &Bingpai) -> Result<u8, InvalidBingpaiError> {
     let num_bingpai = bingpai.iter().try_fold(0, |acc, &num_tile| {
         if num_tile > MAX_NUM_SAME_TILE {
             return Err(InvalidBingpaiError::ExceedsMaxNumSameTile(num_tile));
@@ -87,7 +87,7 @@ pub(super) fn count_bingpai(bingpai: &Bingpai) -> Result<u8, InvalidBingpaiError
     Ok(num_bingpai)
 }
 
-pub(super) fn count_bingpai_3_player(bingpai: &Bingpai) -> Result<u8, InvalidBingpaiError> {
+pub(crate) fn count_bingpai_3_player(bingpai: &Bingpai) -> Result<u8, InvalidBingpaiError> {
     bingpai[1..8].iter().enumerate().try_for_each(|(i, &t)| {
         if t > 0 {
             return Err(InvalidBingpaiError::InvalidTileFor3Player(i + 1));

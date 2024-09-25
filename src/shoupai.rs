@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::bingpai::{Bingpai, InvalidBingpaiError};
-use super::constants::{MAX_NUM_FULU_MIANZI, MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
-use super::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, InvalidFuluMianziError};
+use crate::bingpai::{Bingpai, InvalidBingpaiError};
+use crate::constants::{MAX_NUM_FULU_MIANZI, MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
+use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, InvalidFuluMianziError};
 use thiserror::Error;
 
 /// List of melds.
@@ -26,7 +26,7 @@ use thiserror::Error;
 /// ```
 pub type FuluMianziList = [Option<FuluMianzi>; MAX_NUM_FULU_MIANZI];
 
-pub(super) fn count_fulupai(fulu_mianzi_list: &FuluMianziList) -> Bingpai {
+pub(crate) fn count_fulupai(fulu_mianzi_list: &FuluMianziList) -> Bingpai {
     fulu_mianzi_list
         .iter()
         .fold([0; NUM_TILE_INDEX], |mut fulupai, m| {
@@ -101,7 +101,7 @@ impl From<InvalidBingpaiError> for InvalidShoupaiError {
     }
 }
 
-pub(super) fn validate_shoupai(
+pub(crate) fn validate_shoupai(
     bingpai: &Bingpai,
     fulu_mianzi_list: &FuluMianziList,
 ) -> Result<(), InvalidShoupaiError> {
@@ -140,7 +140,7 @@ pub(super) fn validate_shoupai(
     Ok(())
 }
 
-pub(super) fn validate_shoupai_3_player(
+pub(crate) fn validate_shoupai_3_player(
     bingpai: &Bingpai,
     fulu_mianzi_list: &FuluMianziList,
 ) -> Result<(), InvalidShoupaiError> {

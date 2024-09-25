@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::bingpai::{count_bingpai, count_bingpai_3_player, Bingpai};
 use super::qiduizi;
 use super::shisanyao;
-use super::shoupai::{
+use super::standard;
+use crate::bingpai::{count_bingpai, count_bingpai_3_player, Bingpai};
+use crate::shoupai::{
     validate_shoupai, validate_shoupai_3_player, FuluMianziList, InvalidShoupaiError,
 };
-use super::standard;
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
 /// This function is for 4-player mahjong.
