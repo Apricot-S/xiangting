@@ -227,7 +227,7 @@ fn count_shupai_block(
         let num_gulipai = single_color_bingpai.iter().sum();
         let gulipai = to_flag(single_color_bingpai);
         let mut four_tiles_gulipai = SingleColorTileFlag::ZERO;
-        four_tiles_gulipai.store(single_color_four_tiles.load::<u16>());
+        four_tiles_gulipai[0..9].copy_from_bitslice(&single_color_four_tiles[0..9]);
         four_tiles_gulipai &= gulipai;
 
         return BlockCountPattern {
