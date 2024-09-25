@@ -5,7 +5,7 @@
 use crate::bingpai::Bingpai;
 use crate::constants::MAX_NUM_SHOUPAI;
 
-pub(crate) fn calculate_replacement_number(bingpai: &Bingpai, num_bingpai: u8) -> u8 {
+pub(super) fn calculate_replacement_number(bingpai: &Bingpai, num_bingpai: u8) -> u8 {
     if (num_bingpai != (MAX_NUM_SHOUPAI - 1)) && (num_bingpai != MAX_NUM_SHOUPAI) {
         return u8::MAX;
     }

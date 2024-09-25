@@ -603,7 +603,7 @@ fn calculate_num_fulu(num_bingpai: u8) -> u8 {
     }
 }
 
-pub(crate) fn calculate_replacement_number(
+pub(super) fn calculate_replacement_number(
     mut bingpai: Bingpai,
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
@@ -645,7 +645,7 @@ pub(crate) fn calculate_replacement_number(
     min
 }
 
-pub(crate) fn calculate_replacement_number_3_player(
+pub(super) fn calculate_replacement_number_3_player(
     mut bingpai: Bingpai,
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
