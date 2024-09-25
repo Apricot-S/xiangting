@@ -24,7 +24,10 @@ pub struct HandEnumerator {
 impl HandEnumerator {
     pub fn new(length: usize) -> Result<Self, String> {
         if length < 1 || length > MAX_NUM_HAND {
-            return Err(format!("Hand length must be between 1 and 14.: {}", length));
+            return Err(format!(
+                "hand length must be between 1 and 14 but was {}",
+                length
+            ));
         }
 
         Ok(Self {
