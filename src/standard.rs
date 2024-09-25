@@ -3,7 +3,7 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use crate::bingpai::Bingpai;
-use crate::constants::NUM_TILE_INDEX;
+use crate::constants::{MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
 use crate::shoupai::{FuluMianziList, FuluMianziListExt};
 use bitvec::prelude::*;
 
@@ -182,9 +182,9 @@ fn calculate_replacement_number_formula(
     mut num_gulipai: u8,
     has_jiangpai: bool,
 ) -> u8 {
-    debug_assert!(num_mianzi <= 4);
-    debug_assert!(num_mianzi_candidate <= 7);
-    debug_assert!(num_gulipai <= 14);
+    debug_assert!(num_mianzi <= (MAX_NUM_SHOUPAI / 3));
+    debug_assert!(num_mianzi_candidate <= (MAX_NUM_SHOUPAI / 2));
+    debug_assert!(num_gulipai <= MAX_NUM_SHOUPAI);
 
     // Adjust for excess meld candidates
     if (num_mianzi + num_mianzi_candidate) > 4 {
