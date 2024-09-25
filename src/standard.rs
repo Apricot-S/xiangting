@@ -136,10 +136,10 @@ fn merge_flags(
 ) -> AllTileFlag {
     let mut all_tiles = AllTileFlag::ZERO;
 
-    all_tiles[0..9].store(m.load::<u16>());
-    all_tiles[9..18].store(p.load::<u16>());
-    all_tiles[18..27].store(s.load::<u16>());
-    all_tiles[27..34].store(z.load::<u8>());
+    all_tiles[0..9].copy_from_bitslice(&m[0..9]);
+    all_tiles[9..18].copy_from_bitslice(&p[0..9]);
+    all_tiles[18..27].copy_from_bitslice(&s[0..9]);
+    all_tiles[27..34].copy_from_bitslice(&z[0..7]);
 
     all_tiles
 }
