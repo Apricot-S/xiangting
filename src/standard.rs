@@ -4,10 +4,24 @@
 
 mod block_count;
 mod calculate;
-mod core;
-mod hash;
-mod shupai_table;
 mod tile_flag;
+
+#[cfg(not(feature = "build-map"))]
+mod core;
+#[cfg(not(feature = "build-map"))]
+mod hash;
+#[cfg(not(feature = "build-map"))]
+mod shupai_table;
+#[cfg(not(feature = "build-map"))]
 mod zipai_table;
+
+#[cfg(feature = "build-map")]
+pub mod core;
+#[cfg(feature = "build-map")]
+pub mod hash;
+#[cfg(feature = "build-map")]
+pub mod shupai_table;
+#[cfg(feature = "build-map")]
+pub mod zipai_table;
 
 pub(super) use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};

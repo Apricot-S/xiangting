@@ -4,10 +4,10 @@
 
 use super::core::ZipaiTable;
 
-pub(super) const ZIPAI_SIZE: u32 = 43130;
+pub const ZIPAI_SIZE: u32 = 43130;
 
 #[rustfmt::skip]
-pub(super) const ZIPAI_TABLE: ZipaiTable = [
+pub const ZIPAI_TABLE: ZipaiTable = [
     [
         // i = 0
         [0, 0, 0, 0, 0], // n = 0

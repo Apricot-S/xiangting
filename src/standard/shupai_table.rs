@@ -4,10 +4,10 @@
 
 use super::core::ShupaiTable;
 
-pub(super) const SHUPAI_SIZE: u32 = 405350;
+pub const SHUPAI_SIZE: u32 = 405350;
 
 #[rustfmt::skip]
-pub(super) const SHUPAI_TABLE: ShupaiTable = [
+pub const SHUPAI_TABLE: ShupaiTable = [
     [
         // i = 0
         [0, 0, 0, 0, 0], // n = 0

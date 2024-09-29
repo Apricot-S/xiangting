@@ -42,7 +42,13 @@ mod fulu_mianzi;
 mod qiduizi;
 mod shisanyao;
 mod shoupai;
+
+#[cfg(not(feature = "build-map"))]
 mod standard;
+
+#[cfg(feature = "build-map")]
+#[doc(hidden)]
+pub mod standard;
 
 #[doc(hidden)]
 pub mod common;
