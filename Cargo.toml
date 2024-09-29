@@ -14,6 +14,10 @@ categories = ["algorithms"]
 name = "xiangting"
 path = "src/lib.rs"
 
+[[bin]]
+name = "build-table"
+path = "src/bin/build_table.rs"
+
 [dependencies]
 bitvec = "1.0.1"
 mt19937 = { version = "2.0.1", optional = true }
