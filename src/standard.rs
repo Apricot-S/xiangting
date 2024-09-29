@@ -5,6 +5,7 @@
 mod block_count;
 mod calculate;
 mod core;
+mod hash;
 mod shupai_table;
 mod tile_flag;
 mod zipai_table;
