@@ -18,6 +18,11 @@ path = "src/lib.rs"
 name = "build-table"
 path = "src/bin/build_table.rs"
 
+[[bin]]
+name = "build-map"
+path = "src/bin/build_map/main.rs"
+required-features = ["build-map"]
+
 [dependencies]
 bitvec = "1.0.1"
 mt19937 = { version = "2.0.1", optional = true }
@@ -36,7 +41,9 @@ bench = ["dep:mt19937", "dep:rand"]
 test = []
 common = ["bench", "test"]
 correctness = ["test"]
+build-map = []
 
 [[bench]]
 name = "bench"
 harness = false
+required-features = ["bench"]
