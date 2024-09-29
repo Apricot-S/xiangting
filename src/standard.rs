@@ -4,6 +4,9 @@
 
 mod block_count;
 mod calculate;
+mod core;
+mod shupai_table;
 mod tile_flag;
+mod zipai_table;
 
 pub(super) use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
