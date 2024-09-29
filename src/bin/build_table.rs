@@ -4,7 +4,7 @@
 
 use std::env;
 use std::fs::File;
-use std::io::{self, Write};
+use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
 
@@ -45,41 +45,43 @@ fn build_table<const N: usize>(i: usize, n: usize, table: &mut TableImpl<N>) -> 
 fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Result<()> {
     assert!(N == 9 || N == 7);
 
-    let mut ofs = File::create(table_path)?;
-    writeln!(ofs, "// SPDX-FileCopyrightText: 2024 Apricot S.")?;
-    writeln!(ofs, "// SPDX-License-Identifier: MIT")?;
+    let file = File::create(table_path)?;
+    let mut w = BufWriter::new(file);
+
+    writeln!(w, "// SPDX-FileCopyrightText: 2024 Apricot S.")?;
+    writeln!(w, "// SPDX-License-Identifier: MIT")?;
     writeln!(
-        ofs,
+        w,
         "// This file is part of https://github.com/Apricot-S/xiangting"
     )?;
-    writeln!(ofs)?;
+    writeln!(w)?;
 
-    if N == 9 {
-        writeln!(ofs, "use super::core::ShupaiTable;")?;
-    } else {
-        writeln!(ofs, "use super::core::ZipaiTable;")?;
+    match N {
+        9 => writeln!(w, "use super::core::ShupaiTable;")?,
+        7 => writeln!(w, "use super::core::ZipaiTable;")?,
+        _ => unreachable!(),
     }
-    writeln!(ofs)?;
+    writeln!(w)?;
 
-    if N == 9 {
-        writeln!(ofs, "pub(super) const SHUPAI_SIZE: u32 = {};", table[0][0])?;
-    } else {
-        writeln!(ofs, "pub(super) const ZIPAI_SIZE: u32 = {};", table[0][0])?;
+    match N {
+        9 => writeln!(w, "pub(super) const SHUPAI_SIZE: u32 = {};", table[0][0])?,
+        7 => writeln!(w, "pub(super) const ZIPAI_SIZE: u32 = {};", table[0][0])?,
+        _ => unreachable!(),
     }
-    writeln!(ofs)?;
+    writeln!(w)?;
 
-    writeln!(ofs, "#[rustfmt::skip]")?;
-    if N == 9 {
-        writeln!(ofs, "pub(super) const SHUPAI_TABLE: ShupaiTable = [")?;
-    } else {
-        writeln!(ofs, "pub(super) const ZIPAI_TABLE: ZipaiTable = [")?;
+    writeln!(w, "#[rustfmt::skip]")?;
+    match N {
+        9 => writeln!(w, "pub(super) const SHUPAI_TABLE: ShupaiTable = [")?,
+        7 => writeln!(w, "pub(super) const ZIPAI_TABLE: ZipaiTable = [")?,
+        _ => unreachable!(),
     }
 
     for i in 0..N {
-        writeln!(ofs, "    [")?;
-        writeln!(ofs, "        // i = {}", i)?;
+        writeln!(w, "    [")?;
+        writeln!(w, "        // i = {}", i)?;
         for n in 0..=14 {
-            write!(ofs, "        [")?;
+            write!(w, "        [")?;
             for c in 0..=4 {
                 let mut entry = 0;
                 for cc in 0..c {
@@ -93,15 +95,15 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
                     }
                 }
                 let separator = if c < 4 { ", " } else { "" };
-                write!(ofs, "{}{}", entry, separator)?;
+                write!(w, "{}{}", entry, separator)?;
             }
-            writeln!(ofs, "], // n = {}", n)?;
+            writeln!(w, "], // n = {}", n)?;
         }
-        writeln!(ofs, "    ],")?;
+        writeln!(w, "    ],")?;
     }
-    writeln!(ofs, "];")?;
+    writeln!(w, "];")?;
 
-    ofs.flush()?;
+    w.flush()?;
 
     Ok(())
 }
