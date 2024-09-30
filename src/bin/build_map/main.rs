@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+mod count_block;
+
+use self::count_block::{count_shupai_block, count_zipai_block};
 use std::env;
 use std::fs::File;
 use std::io::{self, BufWriter, Write};
