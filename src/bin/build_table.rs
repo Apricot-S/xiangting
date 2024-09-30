@@ -64,8 +64,8 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
     writeln!(w)?;
 
     match N {
-        9 => writeln!(w, "pub const SHUPAI_SIZE: u32 = {};", table[0][0])?,
-        7 => writeln!(w, "pub const ZIPAI_SIZE: u32 = {};", table[0][0])?,
+        9 => writeln!(w, "pub const SHUPAI_SIZE: usize = {};", table[0][0])?,
+        7 => writeln!(w, "pub const ZIPAI_SIZE: usize = {};", table[0][0])?,
         _ => unreachable!(),
     }
     writeln!(w)?;

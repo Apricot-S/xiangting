@@ -4,7 +4,7 @@
 
 use super::core::ShupaiTable;
 
-pub const SHUPAI_SIZE: u32 = 405350;
+pub const SHUPAI_SIZE: usize = 405350;
 
 #[rustfmt::skip]
 pub const SHUPAI_TABLE: ShupaiTable = [

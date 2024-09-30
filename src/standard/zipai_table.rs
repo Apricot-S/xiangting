@@ -4,7 +4,7 @@
 
 use super::core::ZipaiTable;
 
-pub const ZIPAI_SIZE: u32 = 43130;
+pub const ZIPAI_SIZE: usize = 43130;
 
 #[rustfmt::skip]
 pub const ZIPAI_TABLE: ZipaiTable = [
