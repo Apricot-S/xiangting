@@ -5,8 +5,8 @@
 use super::shupai_table::SHUPAI_TABLE;
 use super::zipai_table::ZIPAI_TABLE;
 
-pub fn hash_shupai(single_color_bingpai: &[u8]) -> u32 {
-    let mut h: u32 = 0;
+pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
+    let mut h: usize = 0;
     let mut n: u8 = 0;
 
     for (i, &c) in single_color_bingpai.iter().enumerate() {
@@ -22,8 +22,8 @@ pub fn hash_shupai(single_color_bingpai: &[u8]) -> u32 {
     h
 }
 
-pub fn hash_zipai(zipai_bingpai: &[u8]) -> u32 {
-    let mut h: u32 = 0;
+pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
+    let mut h: usize = 0;
     let mut n: u8 = 0;
 
     for (i, &c) in zipai_bingpai.iter().enumerate() {

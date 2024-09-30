@@ -11,7 +11,11 @@ mod core;
 #[cfg(not(feature = "build-map"))]
 mod hash;
 #[cfg(not(feature = "build-map"))]
+mod shupai_map;
+#[cfg(not(feature = "build-map"))]
 mod shupai_table;
+#[cfg(not(feature = "build-map"))]
+mod zipai_map;
 #[cfg(not(feature = "build-map"))]
 mod zipai_table;
 
