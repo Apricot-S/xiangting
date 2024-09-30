@@ -35,25 +35,36 @@
 //! # }
 //! ```
 
+#[cfg(not(feature = "build-file"))]
 mod bingpai;
+#[cfg(not(feature = "build-file"))]
 mod calculate;
+#[cfg(not(feature = "build-file"))]
 mod constants;
+#[cfg(not(feature = "build-file"))]
 mod fulu_mianzi;
+#[cfg(not(feature = "build-file"))]
 mod qiduizi;
+#[cfg(not(feature = "build-file"))]
 mod shisanyao;
+#[cfg(not(feature = "build-file"))]
 mod shoupai;
-
-#[cfg(not(feature = "build-map"))]
+#[cfg(not(feature = "build-file"))]
 mod standard;
+
+#[cfg(not(feature = "build-file"))]
+pub use bingpai::Bingpai;
+#[cfg(not(feature = "build-file"))]
+pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
+#[cfg(not(feature = "build-file"))]
+pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, InvalidFuluMianziError};
+#[cfg(not(feature = "build-file"))]
+pub use shoupai::{FuluMianziList, InvalidShoupaiError};
 
 #[cfg(feature = "build-map")]
 #[doc(hidden)]
 pub mod standard;
 
+#[cfg(all(not(feature = "build-file"), any(feature = "bench", feature = "test")))]
 #[doc(hidden)]
 pub mod common;
-
-pub use bingpai::Bingpai;
-pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
-pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, InvalidFuluMianziError};
-pub use shoupai::{FuluMianziList, InvalidShoupaiError};

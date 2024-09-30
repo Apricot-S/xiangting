@@ -17,6 +17,7 @@ path = "src/lib.rs"
 [[bin]]
 name = "build-table"
 path = "src/bin/build_table.rs"
+required-features = ["build-file"]
 
 [[bin]]
 name = "build-map"
@@ -37,11 +38,12 @@ cxx = "1.0.128"
 cxx-build = "1.0.128"
 
 [features]
+build-file = []
+build-map = ["build-file"]
 bench = ["dep:mt19937", "dep:rand"]
 test = []
 common = ["bench", "test"]
 correctness = ["test"]
-build-map = []
 
 [[bench]]
 name = "bench"
