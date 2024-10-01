@@ -2,21 +2,21 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::{BlockCountImpl, SingleColorTileFlag};
-use xiangting::standard::core::BlockCount;
+use super::core::{SingleColorTileFlag, Wanzi19BlockCountImpl};
+use xiangting::standard::core::Wanzi19BlockCount;
 
-pub(in super::super) fn count_19m_block(wanzi_bingpai: &[u8; 9]) -> BlockCount {
+pub(in super::super) fn count_19m_block(wanzi_bingpai: &[u8; 9]) -> Wanzi19BlockCount {
     wanzi_bingpai
         .iter()
         .enumerate()
         .fold(
-            BlockCountImpl {
+            Wanzi19BlockCountImpl {
                 num_mianzi: 0,
-                num_dazi: 0,
                 num_duizi: 0,
                 num_gulipai: 0,
                 gulipai: SingleColorTileFlag::ZERO,
-                four_tiles_gulipai: SingleColorTileFlag::ZERO,
+                shuangpeng_ting: SingleColorTileFlag::ZERO,
+                danqi_ting: SingleColorTileFlag::ZERO,
             },
             |mut acc, (i, &n)| {
                 if i == 0 || i == 8 {
@@ -25,14 +25,17 @@ pub(in super::super) fn count_19m_block(wanzi_bingpai: &[u8; 9]) -> BlockCount {
                             acc.num_mianzi += 1;
                             acc.num_gulipai += 1;
                             acc.gulipai.set(i, true);
-
-                            acc.four_tiles_gulipai.set(i, true);
+                            acc.danqi_ting.set(i, true);
                         }
                         3 => acc.num_mianzi += 1,
-                        2 => acc.num_duizi += 1,
+                        2 => {
+                            acc.num_duizi += 1;
+                            acc.shuangpeng_ting.set(i, true);
+                        }
                         1 => {
                             acc.num_gulipai += 1;
                             acc.gulipai.set(i, true);
+                            acc.danqi_ting.set(i, true);
                         }
                         0 => (),
                         _ => panic!("There are 5 or more of the same tiles: {} tiles", n),
@@ -54,9 +57,23 @@ mod tests {
         let wanzi_bingpai = [4, 0, 0, 0, 0, 0, 0, 0, 2];
         let r = count_19m_block(&wanzi_bingpai);
         assert_eq!(r.0, 1);
-        assert_eq!(r.1, 0);
+        assert_eq!(r.1, 1);
         assert_eq!(r.2, 1);
-        assert_eq!(r.3, 1);
+        assert_eq!(r.3, 0b000000001);
+        assert_eq!(r.4, 0b100000000);
+        assert_eq!(r.5, 0b000000001);
+    }
+
+    #[test]
+    fn count_19m_block_empty() {
+        let wanzi_bingpai = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let r = count_19m_block(&wanzi_bingpai);
+        assert_eq!(r.0, 0);
+        assert_eq!(r.1, 0);
+        assert_eq!(r.2, 0);
+        assert_eq!(r.3, 0b000000000);
+        assert_eq!(r.4, 0b000000000);
+        assert_eq!(r.5, 0b000000000);
     }
 
     #[test]
@@ -64,8 +81,10 @@ mod tests {
         let wanzi_bingpai = [4, 3, 0, 0, 0, 0, 0, 1, 2];
         let r = count_19m_block(&wanzi_bingpai);
         assert_eq!(r.0, 1);
-        assert_eq!(r.1, 0);
+        assert_eq!(r.1, 1);
         assert_eq!(r.2, 1);
-        assert_eq!(r.3, 1);
+        assert_eq!(r.3, 0b000000001);
+        assert_eq!(r.4, 0b100000000);
+        assert_eq!(r.5, 0b000000001);
     }
 }
