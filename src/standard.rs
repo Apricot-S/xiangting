@@ -3,8 +3,6 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 #[cfg(not(feature = "build-file"))]
-mod block_count;
-#[cfg(not(feature = "build-file"))]
 mod calculate;
 #[cfg(not(feature = "build-file"))]
 mod core;
@@ -16,8 +14,6 @@ mod hash;
 mod shupai_map;
 #[cfg(not(feature = "build-file"))]
 mod shupai_table;
-#[cfg(not(feature = "build-file"))]
-mod tile_flag;
 #[cfg(not(feature = "build-file"))]
 mod wanzi_19_map;
 #[cfg(not(feature = "build-file"))]

@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::block_count::{count_19m_block, count_shupai_block, count_zipai_block};
-use super::tile_flag::{merge_flags, AllTileFlag};
+use super::count_block::{count_19m_block, count_shupai_block, count_zipai_block};
 use crate::bingpai::Bingpai;
 use crate::constants::{MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
 use crate::shoupai::{FuluMianziList, FuluMianziListExt};
+use bitvec::prelude::*;
 
 // Reference: https://blog.kobalab.net/entry/20170917/1505601161
 fn calculate_replacement_number_formula(
@@ -38,11 +38,16 @@ fn calculate_replacement_number_formula(
     14 - num_mianzi * 3 - num_mianzi_candidate * 2 - num_gulipai
 }
 
+type AllTileFlag = BitArr!(for NUM_TILE_INDEX, in u64);
+
 #[inline]
-fn offset_jiangpai(jiangpai: Option<usize>, start: usize, upper: usize) -> Option<usize> {
-    jiangpai
-        .filter(|&value| value >= start && value < upper)
-        .map(|value| value - start)
+fn merge_flags(m: u16, p: u16, s: u16, z: u8) -> AllTileFlag {
+    let mut all_color: u64 = 0;
+    all_color |= m as u64;
+    all_color |= (p as u64) << 9;
+    all_color |= (s as u64) << 18;
+    all_color |= (z as u64) << 27;
+    AllTileFlag::from([all_color; 1])
 }
 
 fn calculate_replacement_number_inner(
@@ -52,35 +57,26 @@ fn calculate_replacement_number_inner(
     jiangpai: Option<usize>,
 ) -> u8 {
     let has_jiangpai = jiangpai.is_some();
-    let jiangpai_m = offset_jiangpai(jiangpai, 0, 9);
-    let jiangpai_p = offset_jiangpai(jiangpai, 9, 18);
-    let jiangpai_s = offset_jiangpai(jiangpai, 18, 27);
-    let jiangpai_z = offset_jiangpai(jiangpai, 27, 34);
 
-    let z = count_zipai_block(&bingpai[27..34], jiangpai_z, &four_tiles[27..34]);
-    let pattern_m = count_shupai_block(&mut bingpai[0..9], 0, jiangpai_m, &four_tiles[0..9]);
-    let pattern_p = count_shupai_block(&mut bingpai[9..18], 0, jiangpai_p, &four_tiles[9..18]);
-    let pattern_s = count_shupai_block(&mut bingpai[18..27], 0, jiangpai_s, &four_tiles[18..27]);
+    let z = count_zipai_block(&bingpai[27..34]);
+    let pattern_m = count_shupai_block(&bingpai[0..9]);
+    let pattern_p = count_shupai_block(&bingpai[9..18]);
+    let pattern_s = count_shupai_block(&bingpai[18..27]);
 
     let mut min = 14;
 
-    for m in [&pattern_m.a, &pattern_m.b] {
-        for p in [&pattern_p.a, &pattern_p.b] {
-            for s in [&pattern_s.a, &pattern_s.b] {
-                let num_mianzi =
-                    num_fulu + m.num_mianzi + p.num_mianzi + s.num_mianzi + z.num_mianzi;
-                let num_dazi = m.num_dazi + p.num_dazi + s.num_dazi + z.num_dazi;
-                let num_duizi = m.num_duizi + p.num_duizi + s.num_duizi + z.num_duizi;
+    for m in pattern_m {
+        for p in pattern_p {
+            for s in pattern_s {
+                let num_mianzi = num_fulu + m.0 + p.0 + s.0 + z.0;
+                let num_dazi = m.1 + p.1 + s.1;
+                let num_duizi = m.2 + p.2 + s.2 + z.1;
                 let num_mianzi_candidate = num_dazi + num_duizi;
-                let mut num_gulipai = m.num_gulipai + p.num_gulipai + s.num_gulipai + z.num_gulipai;
+                let mut num_gulipai = m.3 + p.3 + s.3 + z.2;
 
                 if four_tiles.any() {
-                    let four_tiles_gulipai = merge_flags(
-                        m.four_tiles_gulipai,
-                        p.four_tiles_gulipai,
-                        s.four_tiles_gulipai,
-                        z.four_tiles_gulipai,
-                    );
+                    let gulipai = merge_flags(m.4, p.4, s.4, z.3);
+                    let four_tiles_gulipai = four_tiles & gulipai;
 
                     if four_tiles_gulipai.any() {
                         // A tile that is held in a quantity of four cannot become a pair.
@@ -121,33 +117,25 @@ fn calculate_replacement_number_inner_3_player(
     jiangpai: Option<usize>,
 ) -> u8 {
     let has_jiangpai = jiangpai.is_some();
-    let jiangpai_m = offset_jiangpai(jiangpai, 0, 9);
-    let jiangpai_p = offset_jiangpai(jiangpai, 9, 18);
-    let jiangpai_s = offset_jiangpai(jiangpai, 18, 27);
-    let jiangpai_z = offset_jiangpai(jiangpai, 27, 34);
 
-    let z = count_zipai_block(&bingpai[27..34], jiangpai_z, &four_tiles[27..34]);
-    let m = count_19m_block(&bingpai[0..9], jiangpai_m, &four_tiles[0..9]);
-    let pattern_p = count_shupai_block(&mut bingpai[9..18], 0, jiangpai_p, &four_tiles[9..18]);
-    let pattern_s = count_shupai_block(&mut bingpai[18..27], 0, jiangpai_s, &four_tiles[18..27]);
+    let z = count_zipai_block(&bingpai[27..34]);
+    let m = count_19m_block(&bingpai[0..9]);
+    let pattern_p = count_shupai_block(&bingpai[9..18]);
+    let pattern_s = count_shupai_block(&bingpai[18..27]);
 
     let mut min = 14;
 
-    for p in [&pattern_p.a, &pattern_p.b] {
-        for s in [&pattern_s.a, &pattern_s.b] {
-            let num_mianzi = num_fulu + m.num_mianzi + p.num_mianzi + s.num_mianzi + z.num_mianzi;
-            let num_dazi = m.num_dazi + p.num_dazi + s.num_dazi + z.num_dazi;
-            let num_duizi = m.num_duizi + p.num_duizi + s.num_duizi + z.num_duizi;
+    for p in pattern_p {
+        for s in pattern_s {
+            let num_mianzi = num_fulu + m.0 + p.0 + s.0 + z.0;
+            let num_dazi = p.1 + s.1;
+            let num_duizi = m.1 + p.2 + s.2 + z.1;
             let num_mianzi_candidate = num_dazi + num_duizi;
-            let mut num_gulipai = m.num_gulipai + p.num_gulipai + s.num_gulipai + z.num_gulipai;
+            let mut num_gulipai = m.2 + p.3 + s.3 + z.2;
 
             if four_tiles.any() {
-                let four_tiles_gulipai = merge_flags(
-                    m.four_tiles_gulipai,
-                    p.four_tiles_gulipai,
-                    s.four_tiles_gulipai,
-                    z.four_tiles_gulipai,
-                );
+                let gulipai = merge_flags(m.3, p.4, s.4, z.3);
+                let four_tiles_gulipai = four_tiles & gulipai;
 
                 if four_tiles_gulipai.any() {
                     // A tile that is held in a quantity of four cannot become a pair.
