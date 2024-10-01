@@ -9,17 +9,17 @@ use super::wanzi_19_map::WANZI_19_MAP;
 use super::zipai_map::ZIPAI_MAP;
 
 #[inline]
-pub(super) fn count_shupai_block(single_color_bingpai: &[u8; 9]) -> ShupaiBlockCountPattern {
+pub(super) fn count_shupai_block(single_color_bingpai: &[u8]) -> ShupaiBlockCountPattern {
     SHUPAI_MAP[hash_shupai(single_color_bingpai)]
 }
 
 #[inline]
-pub(super) fn count_zipai_block(zipai_bingpai: &[u8; 7]) -> ZipaiBlockCount {
+pub(super) fn count_zipai_block(zipai_bingpai: &[u8]) -> ZipaiBlockCount {
     ZIPAI_MAP[hash_zipai(zipai_bingpai)]
 }
 
 #[inline]
-pub(super) fn count_19m_block(wanzi_bingpai: &[u8; 9]) -> Wanzi19BlockCount {
+pub(super) fn count_19m_block(wanzi_bingpai: &[u8]) -> Wanzi19BlockCount {
     WANZI_19_MAP[hash_19m(wanzi_bingpai)]
 }
 
