@@ -66,7 +66,7 @@ pub type Wanzi19BlockCount = (u8, u8, u8, u16, u16, u16);
 pub type ShupaiMapValue = BlockCountPattern;
 pub type ShupaiMap = Vec<ShupaiMapValue>;
 
-pub type ZipaiMapValue = BlockCount;
+pub type ZipaiMapValue = ZipaiBlockCount;
 pub type ZipaiMap = Vec<ZipaiMapValue>;
 
 pub type Wanzi19MapValue = Wanzi19BlockCount;
