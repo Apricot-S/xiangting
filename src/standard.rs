@@ -17,6 +17,8 @@ mod shupai_table;
 #[cfg(not(feature = "build-file"))]
 mod tile_flag;
 #[cfg(not(feature = "build-file"))]
+mod wanzi_19_table;
+#[cfg(not(feature = "build-file"))]
 mod zipai_map;
 #[cfg(not(feature = "build-file"))]
 mod zipai_table;
@@ -30,5 +32,7 @@ pub mod core;
 pub mod hash;
 #[cfg(feature = "build-map")]
 pub mod shupai_table;
+#[cfg(feature = "build-map")]
+pub mod wanzi_19_table;
 #[cfg(feature = "build-map")]
 pub mod zipai_table;

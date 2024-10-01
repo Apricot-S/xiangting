@@ -9,17 +9,19 @@ use std::path::Path;
 use std::process;
 
 // table[i][n]
-// i = 0, 1, ..., N - 1 (N = 9 or 7)
+// i = 0, 1, ..., N - 1 (N = 9 or 7 or 2)
 // n = 0, 1, ..., 14
 type TableImpl<const N: usize> = [[u32; 15]; N];
 type ShupaiTableImpl = TableImpl<9>;
 type ZipaiTableImpl = TableImpl<7>;
+type Wanzi19TableImpl = TableImpl<2>;
 
 const INIT_SHUPAI_TABLE: ShupaiTableImpl = [[0; 15]; 9];
 const INIT_ZIPAI_TABLE: ZipaiTableImpl = [[0; 15]; 7];
+const INIT_WANZI_19_TABLE: Wanzi19TableImpl = [[0; 15]; 2];
 
 fn build_table<const N: usize>(i: usize, n: usize, table: &mut TableImpl<N>) -> u32 {
-    assert!(N == 9 || N == 7);
+    assert!(N == 9 || N == 7 || N == 2);
     assert!(i < N);
     assert!(n <= 14);
 
@@ -43,7 +45,7 @@ fn build_table<const N: usize>(i: usize, n: usize, table: &mut TableImpl<N>) -> 
 }
 
 fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Result<()> {
-    assert!(N == 9 || N == 7);
+    assert!(N == 9 || N == 7 || N == 2);
 
     let file = File::create(table_path)?;
     let mut w = BufWriter::new(file);
@@ -59,6 +61,7 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
     match N {
         9 => writeln!(w, "use super::core::ShupaiTable;")?,
         7 => writeln!(w, "use super::core::ZipaiTable;")?,
+        2 => writeln!(w, "use super::core::Wanzi19Table;")?,
         _ => unreachable!(),
     }
     writeln!(w)?;
@@ -66,6 +69,7 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
     match N {
         9 => writeln!(w, "pub const SHUPAI_SIZE: usize = {};", table[0][0])?,
         7 => writeln!(w, "pub const ZIPAI_SIZE: usize = {};", table[0][0])?,
+        2 => writeln!(w, "pub const WANZI_19_SIZE: usize = {};", table[0][0])?,
         _ => unreachable!(),
     }
     writeln!(w)?;
@@ -74,6 +78,7 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
     match N {
         9 => writeln!(w, "pub const SHUPAI_TABLE: ShupaiTable = [")?,
         7 => writeln!(w, "pub const ZIPAI_TABLE: ZipaiTable = [")?,
+        2 => writeln!(w, "pub const WANZI_19_TABLE: Wanzi19Table = [")?,
         _ => unreachable!(),
     }
 
@@ -111,9 +116,9 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 3 {
+    if args.len() != 4 {
         eprintln!(
-            "Usage: {} <PATH TO SHUPAI TABLE> <PATH TO ZIPAI TABLE>",
+            "Usage: {} <PATH TO SHUPAI TABLE> <PATH TO ZIPAI TABLE> <PATH TO WANZI 19 TABLE>",
             args[0]
         );
         process::exit(1);
@@ -121,6 +126,7 @@ fn main() {
 
     let shupai_table_path = Path::new(&args[1]);
     let zipai_table_path = Path::new(&args[2]);
+    let wanzi_19_table_path = Path::new(&args[3]);
 
     {
         let mut shupai_table = INIT_SHUPAI_TABLE;
@@ -136,5 +142,13 @@ fn main() {
         assert_eq!(zipai_table[0][0], 43_130);
 
         dump_table(&zipai_table, zipai_table_path).expect("Failed to dump zipai table");
+    }
+
+    {
+        let mut wanzi_19_table = INIT_WANZI_19_TABLE;
+        let _ = build_table(0, 0, &mut wanzi_19_table);
+        assert_eq!(wanzi_19_table[0][0], 25);
+
+        dump_table(&wanzi_19_table, wanzi_19_table_path).expect("Failed to dump wanzi 19 table");
     }
 }
