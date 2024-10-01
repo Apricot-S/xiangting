@@ -77,8 +77,15 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
+    fn count_19m_block_5_tiles() {
+        let wanzi_bingpai = [5, 0, 0, 0, 0, 0, 0, 0, 0];
+        let _ = count_19m_block(&wanzi_bingpai);
+    }
+
+    #[test]
     fn count_19m_block_ignore_2m_to_8m() {
-        let wanzi_bingpai = [4, 3, 0, 0, 0, 0, 0, 1, 2];
+        let wanzi_bingpai = [4, 3, 5, 0, 0, 0, 0, 1, 2];
         let r = count_19m_block(&wanzi_bingpai);
         assert_eq!(r.0, 1);
         assert_eq!(r.1, 1);
