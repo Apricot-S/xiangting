@@ -3,22 +3,14 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 // table[i][n][s]
-// i = 0, 1, ..., 8
+// i = 0, 1, ..., N - 1 (N = 9 or 7 or 2)
 // n = 0, 1, ..., 14
 // s = 0, 1, 2, 3, 4
-pub type ShupaiTable = [[[usize; 5]; 15]; 9];
+type Table<const I: usize> = [[[usize; 5]; 15]; I];
 
-// table[i][n][s]
-// i = 0, 1, ..., 6
-// n = 0, 1, ..., 14
-// s = 0, 1, 2, 3, 4
-pub type ZipaiTable = [[[usize; 5]; 15]; 7];
-
-// table[i][n][s]
-// i = 0, 1
-// n = 0, 1, ..., 14
-// s = 0, 1, 2, 3, 4
-pub type Wanzi19Table = [[[usize; 5]; 15]; 2];
+pub type ShupaiTable = Table<9>;
+pub type ZipaiTable = Table<7>;
+pub type Wanzi19Table = Table<2>;
 
 // shupai_block_count.0 : number of melds
 // shupai_block_count.1 : number of joints
