@@ -16,7 +16,6 @@ pub(in super::super) fn count_19m_block(wanzi_bingpai: &[u8; 9]) -> Wanzi19Block
                 num_gulipai: 0,
                 gulipai: SingleColorTileFlag::ZERO,
                 shuangpeng_ting: SingleColorTileFlag::ZERO,
-                danqi_ting: SingleColorTileFlag::ZERO,
             },
             |mut acc, (i, &n)| {
                 if i == 0 || i == 8 {
@@ -25,7 +24,6 @@ pub(in super::super) fn count_19m_block(wanzi_bingpai: &[u8; 9]) -> Wanzi19Block
                             acc.num_mianzi += 1;
                             acc.num_gulipai += 1;
                             acc.gulipai.set(i, true);
-                            acc.danqi_ting.set(i, true);
                         }
                         3 => acc.num_mianzi += 1,
                         2 => {
@@ -35,7 +33,6 @@ pub(in super::super) fn count_19m_block(wanzi_bingpai: &[u8; 9]) -> Wanzi19Block
                         1 => {
                             acc.num_gulipai += 1;
                             acc.gulipai.set(i, true);
-                            acc.danqi_ting.set(i, true);
                         }
                         0 => (),
                         _ => panic!("There are 5 or more of the same tiles: {} tiles", n),
@@ -61,7 +58,6 @@ mod tests {
         assert_eq!(r.2, 1);
         assert_eq!(r.3, 0b000000001);
         assert_eq!(r.4, 0b100000000);
-        assert_eq!(r.5, 0b000000001);
     }
 
     #[test]
@@ -73,7 +69,6 @@ mod tests {
         assert_eq!(r.2, 0);
         assert_eq!(r.3, 0b000000000);
         assert_eq!(r.4, 0b000000000);
-        assert_eq!(r.5, 0b000000000);
     }
 
     #[test]
@@ -92,6 +87,5 @@ mod tests {
         assert_eq!(r.2, 1);
         assert_eq!(r.3, 0b000000001);
         assert_eq!(r.4, 0b100000000);
-        assert_eq!(r.5, 0b000000001);
     }
 }

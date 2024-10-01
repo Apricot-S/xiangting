@@ -98,7 +98,6 @@ pub(super) struct ZipaiBlockCountImpl {
     pub(super) num_gulipai: u8,
     pub(super) gulipai: SingleColorTileFlag,
     pub(super) shuangpeng_ting: SingleColorTileFlag,
-    pub(super) danqi_ting: SingleColorTileFlag,
 }
 
 impl ZipaiBlockCountImpl {
@@ -109,7 +108,6 @@ impl ZipaiBlockCountImpl {
             self.num_gulipai,
             self.gulipai.load(),
             self.shuangpeng_ting.load(),
-            self.danqi_ting.load(),
         )
     }
 }
@@ -120,7 +118,6 @@ pub(super) struct Wanzi19BlockCountImpl {
     pub(super) num_gulipai: u8,
     pub(super) gulipai: SingleColorTileFlag,
     pub(super) shuangpeng_ting: SingleColorTileFlag,
-    pub(super) danqi_ting: SingleColorTileFlag,
 }
 
 impl Wanzi19BlockCountImpl {
@@ -131,7 +128,6 @@ impl Wanzi19BlockCountImpl {
             self.num_gulipai,
             self.gulipai.load(),
             self.shuangpeng_ting.load(),
-            self.danqi_ting.load(),
         )
     }
 }

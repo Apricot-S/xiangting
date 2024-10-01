@@ -50,18 +50,16 @@ pub type ShupaiBlockCountPattern = [ShupaiBlockCount; 2];
 // zipai_block_count.0 : number of melds
 // zipai_block_count.1 : number of pairs
 // zipai_block_count.2 : number of isolated tiles
-// zipai_block_count.3 : isolated tiles flag
+// zipai_block_count.3 : isolated tiles flag (= pair wait flag)
 // zipai_block_count.4 : dual pair wait flag
-// zipai_block_count.5 : pair wait flag
-pub type ZipaiBlockCount = (u8, u8, u8, u8, u8, u8);
+pub type ZipaiBlockCount = (u8, u8, u8, u8, u8);
 
 // wanzi19_block_count.0 : number of melds
 // wanzi19_block_count.1 : number of pairs
 // wanzi19_block_count.2 : number of isolated tiles
-// wanzi19_block_count.3 : isolated tiles flag
+// wanzi19_block_count.3 : isolated tiles flag (= pair wait flag)
 // wanzi19_block_count.4 : dual pair wait flag
-// wanzi19_block_count.5 : pair wait flag
-pub type Wanzi19BlockCount = (u8, u8, u8, u16, u16, u16);
+pub type Wanzi19BlockCount = (u8, u8, u8, u16, u16);
 
 pub type ShupaiMapValue = BlockCountPattern;
 pub type ShupaiMap = Vec<ShupaiMapValue>;
