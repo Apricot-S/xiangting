@@ -17,7 +17,7 @@ use xiangting::standard::zipai_table::ZIPAI_SIZE;
 
 fn create_shupai_entry(hand: &[u8; 9], map: &mut ShupaiMap) {
     let h = hash_shupai(hand);
-    let entry = [(0, 0, 0, 0, 0, 0); 2];
+    let entry = [(0, 0, 0, 0, 0, 0, 0, 0, 0); 2];
     map[h] = entry;
 }
 
@@ -88,15 +88,20 @@ fn dump_shupai_map(map: &ShupaiMap, map_path: &Path) -> io::Result<()> {
     )?;
 
     for &entry in map {
+        #[rustfmt::skip]
         write!(
             w,
-            "    [({}, {}, {}, {}, 0b{:09b}, 0b{:09b}), ",
-            entry[0].0, entry[0].1, entry[0].2, entry[0].3, entry[0].4, entry[0].5,
+            "    [({}, {}, {}, {}, 0b{:09b}, 0b{:09b}, 0b{:09b}, 0b{:09b}, 0b{:09b}), ",
+            entry[0].0, entry[0].1, entry[0].2, entry[0].3,
+            entry[0].4, entry[0].5, entry[0].6, entry[0].7, entry[0].8,
         )?;
+
+        #[rustfmt::skip]
         writeln!(
             w,
-            "({}, {}, {}, {}, 0b{:09b}, 0b{:09b})],",
-            entry[1].0, entry[1].1, entry[1].2, entry[1].3, entry[1].4, entry[1].5,
+            "({}, {}, {}, {}, 0b{:09b}, 0b{:09b}, 0b{:09b}, 0b{:09b}, 0b{:09b})],",
+            entry[1].0, entry[1].1, entry[1].2, entry[1].3,
+            entry[1].4, entry[1].5, entry[1].6, entry[1].7, entry[1].8,
         )?;
     }
 
@@ -157,7 +162,7 @@ fn main() {
 
     {
         let mut shupai_map = ShupaiMap::new();
-        shupai_map.resize(SHUPAI_SIZE, [(0, 0, 0, 0, 0, 0); 2]);
+        shupai_map.resize(SHUPAI_SIZE, [(0, 0, 0, 0, 0, 0, 0, 0, 0); 2]);
         let mut hand = [0u8; 9];
         build_shupai_map(&mut hand, 0, 0, &mut shupai_map);
 
