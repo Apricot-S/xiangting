@@ -112,7 +112,7 @@ fn dump_shupai_map(map: &ShupaiMap, map_path: &Path) -> io::Result<()> {
     writeln!(w, "#[rustfmt::skip]")?;
     writeln!(
         w,
-        "pub(super) const SHUPAI_MAP: [ShupaiMapValue; SHUPAI_SIZE] = ["
+        "pub(super) static SHUPAI_MAP: [ShupaiMapValue; SHUPAI_SIZE] = ["
     )?;
 
     for &entry in map {
@@ -157,7 +157,7 @@ fn dump_zipai_map(map: &ZipaiMap, map_path: &Path) -> io::Result<()> {
     writeln!(w, "#[rustfmt::skip]")?;
     writeln!(
         w,
-        "pub(super) const ZIPAI_MAP: [ZipaiMapValue; ZIPAI_SIZE] = ["
+        "pub(super) static ZIPAI_MAP: [ZipaiMapValue; ZIPAI_SIZE] = ["
     )?;
 
     for &entry in map {
@@ -192,7 +192,7 @@ fn dump_19m_map(map: &Wanzi19Map, map_path: &Path) -> io::Result<()> {
     writeln!(w, "#[rustfmt::skip]")?;
     writeln!(
         w,
-        "pub(super) const WANZI_19_MAP: [Wanzi19MapValue; WANZI_19_SIZE] = ["
+        "pub(super) static WANZI_19_MAP: [Wanzi19MapValue; WANZI_19_SIZE] = ["
     )?;
 
     for &entry in map {

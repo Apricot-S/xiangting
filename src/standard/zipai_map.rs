@@ -6,7 +6,7 @@ use super::core::ZipaiMapValue;
 use super::zipai_table::ZIPAI_SIZE;
 
 #[rustfmt::skip]
-pub(super) const ZIPAI_MAP: [ZipaiMapValue; ZIPAI_SIZE] = [
+pub(super) static ZIPAI_MAP: [ZipaiMapValue; ZIPAI_SIZE] = [
     (0, 0, 0, 0b0000000, 0b0000000),
     (0, 0, 1, 0b1000000, 0b0000000),
     (0, 1, 0, 0b0000000, 0b1000000),

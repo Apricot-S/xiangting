@@ -6,7 +6,7 @@ use super::core::Wanzi19MapValue;
 use super::wanzi_19_table::WANZI_19_SIZE;
 
 #[rustfmt::skip]
-pub(super) const WANZI_19_MAP: [Wanzi19MapValue; WANZI_19_SIZE] = [
+pub(super) static WANZI_19_MAP: [Wanzi19MapValue; WANZI_19_SIZE] = [
     (0, 0, 0, 0b000000000, 0b000000000),
     (0, 0, 1, 0b100000000, 0b000000000),
     (0, 1, 0, 0b000000000, 0b100000000),
