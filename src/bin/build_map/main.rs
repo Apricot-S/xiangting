@@ -10,11 +10,15 @@ use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
-use xiangting::standard::core::{ShupaiMap, Wanzi19Map, ZipaiMap};
+use xiangting::standard::core::{ShupaiMapValue, Wanzi19MapValue, ZipaiMapValue};
 use xiangting::standard::hash::{hash_19m, hash_shupai, hash_zipai};
 use xiangting::standard::shupai_table::SHUPAI_SIZE;
 use xiangting::standard::wanzi_19_table::WANZI_19_SIZE;
 use xiangting::standard::zipai_table::ZIPAI_SIZE;
+
+type ShupaiMap = Vec<ShupaiMapValue>;
+type ZipaiMap = Vec<ZipaiMapValue>;
+type Wanzi19Map = Vec<Wanzi19MapValue>;
 
 fn create_shupai_entry(hand: &[u8; 9], map: &mut ShupaiMap) {
     let h = hash_shupai(hand);
