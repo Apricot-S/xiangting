@@ -103,5 +103,23 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {}
+    fn to_flag_empty() {
+        let single_color_bingpai = [0u8; 9];
+        let flag = to_flag(&single_color_bingpai);
+        assert_eq!(flag.load::<u16>(), 0b000000000);
+    }
+
+    #[test]
+    fn to_flag_shupai() {
+        let shupai_bingpai = [1, 0, 3, 1, 2, 1, 0, 1, 0];
+        let flag = to_flag(&shupai_bingpai);
+        assert_eq!(flag.load::<u16>(), 0b010111101);
+    }
+
+    #[test]
+    fn to_flag_zipai() {
+        let zipai_bingpai = [1, 0, 0, 1, 4, 0, 1];
+        let flag = to_flag(&zipai_bingpai);
+        assert_eq!(flag.load::<u8>(), 0b1011001);
+    }
 }
