@@ -101,6 +101,7 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
         }
         writeln!(w, "    ],")?;
     }
+
     writeln!(w, "];")?;
 
     w.flush()?;

@@ -99,6 +99,7 @@ fn dump_shupai_map(map: &ShupaiMap, map_path: &Path) -> io::Result<()> {
             entry[1].0, entry[1].1, entry[1].2, entry[1].3, entry[1].4, entry[1].5,
         )?;
     }
+
     writeln!(w, "];")?;
 
     w.flush()?;
