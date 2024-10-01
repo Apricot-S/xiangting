@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+use super::core::{ShupaiBlockCountExt, Wanzi19BlockCountExt, ZipaiBlockCountExt};
 use super::count_block::{count_19m_block, count_shupai_block, count_zipai_block};
 use crate::bingpai::Bingpai;
 use crate::constants::{MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
@@ -68,14 +69,16 @@ fn calculate_replacement_number_inner(
     for m in pattern_m {
         for p in pattern_p {
             for s in pattern_s {
-                let num_mianzi = num_fulu + m.0 + p.0 + s.0 + z.0;
-                let num_dazi = m.1 + p.1 + s.1;
-                let num_duizi = m.2 + p.2 + s.2 + z.1;
+                let num_mianzi =
+                    num_fulu + m.num_mianzi() + p.num_mianzi() + s.num_mianzi() + z.num_mianzi();
+                let num_dazi = m.num_dazi() + p.num_dazi() + s.num_dazi();
+                let num_duizi = m.num_duizi() + p.num_duizi() + s.num_duizi() + z.num_duizi();
                 let num_mianzi_candidate = num_dazi + num_duizi;
-                let mut num_gulipai = m.3 + p.3 + s.3 + z.2;
+                let mut num_gulipai =
+                    m.num_gulipai() + p.num_gulipai() + s.num_gulipai() + z.num_gulipai();
 
                 if four_tiles.any() {
-                    let gulipai = merge_flags(m.4, p.4, s.4, z.3);
+                    let gulipai = merge_flags(m.gulipai(), p.gulipai(), s.gulipai(), z.gulipai());
                     let four_tiles_gulipai = four_tiles & gulipai;
 
                     if four_tiles_gulipai.any() {
@@ -127,14 +130,16 @@ fn calculate_replacement_number_inner_3_player(
 
     for p in pattern_p {
         for s in pattern_s {
-            let num_mianzi = num_fulu + m.0 + p.0 + s.0 + z.0;
-            let num_dazi = p.1 + s.1;
-            let num_duizi = m.1 + p.2 + s.2 + z.1;
+            let num_mianzi =
+                num_fulu + m.num_mianzi() + p.num_mianzi() + s.num_mianzi() + z.num_mianzi();
+            let num_dazi = p.num_dazi() + s.num_dazi();
+            let num_duizi = m.num_duizi() + p.num_duizi() + s.num_duizi() + z.num_duizi();
             let num_mianzi_candidate = num_dazi + num_duizi;
-            let mut num_gulipai = m.2 + p.3 + s.3 + z.2;
+            let mut num_gulipai =
+                m.num_gulipai() + p.num_gulipai() + s.num_gulipai() + z.num_gulipai();
 
             if four_tiles.any() {
-                let gulipai = merge_flags(m.3, p.4, s.4, z.3);
+                let gulipai = merge_flags(m.gulipai(), p.gulipai(), s.gulipai(), z.gulipai());
                 let four_tiles_gulipai = four_tiles & gulipai;
 
                 if four_tiles_gulipai.any() {
