@@ -23,7 +23,7 @@ fn create_shupai_entry(hand: &[u8; 9], map: &mut ShupaiMap) {
 
 fn create_zipai_entry(hand: &[u8; 7], map: &mut ZipaiMap) {
     let h = hash_zipai(hand);
-    let entry = (0, 0, 0, 0, 0, 0);
+    let entry = count_zipai_block(hand);
     map[h] = entry;
 }
 
@@ -129,10 +129,11 @@ fn dump_zipai_map(map: &ZipaiMap, map_path: &Path) -> io::Result<()> {
     for &entry in map {
         writeln!(
             w,
-            "    ({}, {}, {}, {}, 0b{:07b}, 0b{:07b}),",
-            entry.0, entry.1, entry.2, entry.3, entry.4, entry.5
+            "    ({}, {}, {}, 0b{:07b}, 0b{:07b}),",
+            entry.0, entry.1, entry.2, entry.3, entry.4,
         )?;
     }
+
     writeln!(w, "];")?;
 
     w.flush()?;
@@ -164,7 +165,7 @@ fn main() {
 
     {
         let mut zipai_map = ZipaiMap::new();
-        zipai_map.resize(ZIPAI_SIZE, (0, 0, 0, 0, 0, 0));
+        zipai_map.resize(ZIPAI_SIZE, (0, 0, 0, 0, 0));
         let mut hand = [0u8; 7];
         build_zipai_map(&mut hand, 0, 0, &mut zipai_map);
 
