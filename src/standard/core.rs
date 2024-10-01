@@ -25,7 +25,7 @@ pub type Wanzi19Table = [[[usize; 5]; 15]; 2];
 // shupai_block_count.2 : number of pairs
 // shupai_block_count.3 : number of isolated tiles
 // shupai_block_count.4 : isolated tiles flag
-// shupai_block_count.5 : open wait flag
+// shupai_block_count.5 : open wait flag (record only the smaller one. e.g., 1 for 23)
 // shupai_block_count.6 : edge & closed wait flag
 // shupai_block_count.7 : dual pair wait flag
 // shupai_block_count.8 : pair wait flag

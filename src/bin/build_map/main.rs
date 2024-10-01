@@ -17,7 +17,7 @@ use xiangting::standard::zipai_table::ZIPAI_SIZE;
 
 fn create_shupai_entry(hand: &[u8; 9], map: &mut ShupaiMap) {
     let h = hash_shupai(hand);
-    let entry = [(0, 0, 0, 0, 0, 0, 0, 0, 0); 2];
+    let entry = count_shupai_block(hand);
     map[h] = entry;
 }
 
