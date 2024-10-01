@@ -4,15 +4,16 @@
 
 mod count_block;
 
-use self::count_block::{count_shupai_block, count_zipai_block};
+use self::count_block::{count_19m_block, count_shupai_block, count_zipai_block};
 use std::env;
 use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
-use xiangting::standard::core::{ShupaiMap, ZipaiMap};
-use xiangting::standard::hash::{hash_shupai, hash_zipai};
+use xiangting::standard::core::{ShupaiMap, Wanzi19Map, ZipaiMap};
+use xiangting::standard::hash::{hash_19m, hash_shupai, hash_zipai};
 use xiangting::standard::shupai_table::SHUPAI_SIZE;
+use xiangting::standard::wanzi_19_table::WANZI_19_SIZE;
 use xiangting::standard::zipai_table::ZIPAI_SIZE;
 
 fn create_shupai_entry(hand: &[u8; 9], map: &mut ShupaiMap) {
@@ -24,6 +25,13 @@ fn create_shupai_entry(hand: &[u8; 9], map: &mut ShupaiMap) {
 fn create_zipai_entry(hand: &[u8; 7], map: &mut ZipaiMap) {
     let h = hash_zipai(hand);
     let entry = count_zipai_block(hand);
+    map[h] = entry;
+}
+
+fn create_19m_entry(hand: &[u8; 2], map: &mut Wanzi19Map) {
+    let full_hand = [hand[0], 0, 0, 0, 0, 0, 0, 0, hand[1]];
+    let h = hash_19m(&full_hand);
+    let entry = count_19m_block(&full_hand);
     map[h] = entry;
 }
 
@@ -63,6 +71,26 @@ fn build_zipai_map(hand: &mut [u8; 7], i: usize, n: usize, map: &mut ZipaiMap) {
 
         hand[i] = c as u8;
         build_zipai_map(hand, i + 1, n + c, map);
+        hand[i] = 0;
+    }
+}
+
+fn build_19m_map(hand: &mut [u8; 2], i: usize, n: usize, map: &mut Wanzi19Map) {
+    debug_assert!(i <= 2);
+    debug_assert!(n <= 8);
+
+    if i == 2 {
+        create_19m_entry(hand, map);
+        return;
+    }
+
+    for c in 0..=4 {
+        if n + c > 8 {
+            break;
+        }
+
+        hand[i] = c as u8;
+        build_19m_map(hand, i + 1, n + c, map);
         hand[i] = 0;
     }
 }
@@ -147,11 +175,46 @@ fn dump_zipai_map(map: &ZipaiMap, map_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
+fn dump_19m_map(map: &Wanzi19Map, map_path: &Path) -> io::Result<()> {
+    let file = File::create(map_path)?;
+    let mut w = BufWriter::new(file);
+
+    writeln!(w, "// SPDX-FileCopyrightText: 2024 Apricot S.")?;
+    writeln!(w, "// SPDX-License-Identifier: MIT")?;
+    writeln!(
+        w,
+        "// This file is part of https://github.com/Apricot-S/xiangting"
+    )?;
+    writeln!(w)?;
+    writeln!(w, "use super::core::Wanzi19MapValue;")?;
+    writeln!(w, "use super::wanzi_19_table::WANZI_19_SIZE;")?;
+    writeln!(w)?;
+    writeln!(w, "#[rustfmt::skip]")?;
+    writeln!(
+        w,
+        "pub(super) const WANZI_19_MAP: [Wanzi19MapValue; WANZI_19_SIZE] = ["
+    )?;
+
+    for &entry in map {
+        writeln!(
+            w,
+            "    ({}, {}, {}, 0b{:09b}, 0b{:09b}),",
+            entry.0, entry.1, entry.2, entry.3, entry.4,
+        )?;
+    }
+
+    writeln!(w, "];")?;
+
+    w.flush()?;
+
+    Ok(())
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 3 {
+    if args.len() != 4 {
         eprintln!(
-            "Usage: {} <PATH TO SHUPAI MAP> <PATH TO ZIPAI MAP>",
+            "Usage: {} <PATH TO SHUPAI MAP> <PATH TO ZIPAI MAP> <PATH TO WANZI 19 MAP>",
             args[0]
         );
         process::exit(1);
@@ -159,6 +222,7 @@ fn main() {
 
     let shupai_map_path = Path::new(&args[1]);
     let zipai_map_path = Path::new(&args[2]);
+    let wanzi_19_map_path = Path::new(&args[3]);
 
     {
         let mut shupai_map = ShupaiMap::new();
@@ -176,5 +240,14 @@ fn main() {
         build_zipai_map(&mut hand, 0, 0, &mut zipai_map);
 
         dump_zipai_map(&zipai_map, zipai_map_path).expect("Failed to dump zipai map");
+    }
+
+    {
+        let mut wanzi_19_map = Wanzi19Map::new();
+        wanzi_19_map.resize(WANZI_19_SIZE, (0, 0, 0, 0, 0));
+        let mut hand = [0u8; 2];
+        build_19m_map(&mut hand, 0, 0, &mut wanzi_19_map);
+
+        dump_19m_map(&wanzi_19_map, wanzi_19_map_path).expect("Failed to dump wanzi 19 map");
     }
 }
