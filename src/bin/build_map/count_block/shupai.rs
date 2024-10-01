@@ -3,7 +3,6 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use super::core::{to_flag, BlockCountImpl, BlockCountPatternImpl, SingleColorTileFlag};
-use bitvec::prelude::*;
 use xiangting::standard::core::BlockCountPattern;
 
 trait BingpaiExt {
@@ -114,16 +113,16 @@ impl BingpaiExt for [u8] {
 }
 
 fn count_shupai_block_impl(
-    single_color_bingpai: &mut [u8],
+    single_color_bingpai: &mut [u8; 9],
     n: usize,
-    jiangpai: Option<usize>,
-    single_color_four_tiles: &BitSlice,
+    single_color_four_tiles: &SingleColorTileFlag,
 ) -> BlockCountPatternImpl {
+    debug_assert!(n <= 9);
+
     if n > 8 {
         let num_gulipai = single_color_bingpai.iter().sum();
         let gulipai = to_flag(single_color_bingpai);
-        let mut four_tiles_gulipai = SingleColorTileFlag::ZERO;
-        four_tiles_gulipai[0..9].copy_from_bitslice(&single_color_four_tiles[0..9]);
+        let mut four_tiles_gulipai = *single_color_four_tiles;
         four_tiles_gulipai &= gulipai;
 
         return BlockCountPatternImpl {
@@ -146,12 +145,7 @@ fn count_shupai_block_impl(
         };
     }
 
-    let mut max = count_shupai_block_impl(
-        single_color_bingpai,
-        n + 1,
-        jiangpai,
-        single_color_four_tiles,
-    );
+    let mut max = count_shupai_block_impl(single_color_bingpai, n + 1, single_color_four_tiles);
 
     #[inline]
     fn update_max(max: &mut BlockCountPatternImpl, r: BlockCountPatternImpl) {
@@ -175,8 +169,7 @@ fn count_shupai_block_impl(
 
     if (n <= 6) && single_color_bingpai.has_shunzi(n) {
         single_color_bingpai.remove_shunzi(n);
-        let mut r =
-            count_shupai_block_impl(single_color_bingpai, n, jiangpai, single_color_four_tiles);
+        let mut r = count_shupai_block_impl(single_color_bingpai, n, single_color_four_tiles);
         single_color_bingpai.restore_shunzi(n);
 
         r.a.num_mianzi += 1;
@@ -187,8 +180,7 @@ fn count_shupai_block_impl(
 
     if single_color_bingpai.has_kezi(n) {
         single_color_bingpai.remove_kezi(n);
-        let mut r =
-            count_shupai_block_impl(single_color_bingpai, n, jiangpai, single_color_four_tiles);
+        let mut r = count_shupai_block_impl(single_color_bingpai, n, single_color_four_tiles);
         single_color_bingpai.restore_kezi(n);
 
         r.a.num_mianzi += 1;
@@ -197,10 +189,9 @@ fn count_shupai_block_impl(
         update_max(&mut max, r);
     }
 
-    if (n <= 6) && single_color_bingpai.has_qianzhang_dazi(n) && !single_color_four_tiles[n + 1] {
+    if (n <= 6) && single_color_bingpai.has_qianzhang_dazi(n) {
         single_color_bingpai.remove_qianzhang_dazi(n);
-        let mut r =
-            count_shupai_block_impl(single_color_bingpai, n, jiangpai, single_color_four_tiles);
+        let mut r = count_shupai_block_impl(single_color_bingpai, n, single_color_four_tiles);
         single_color_bingpai.restore_qianzhang_dazi(n);
 
         r.a.num_dazi += 1;
@@ -210,33 +201,22 @@ fn count_shupai_block_impl(
     }
 
     if (n <= 7) && single_color_bingpai.has_liangmen_dazi(n) {
-        let is_wait_consumed_by_hand = match n {
-            0 => single_color_four_tiles[2],
-            1..=6 => single_color_four_tiles[n - 1] && single_color_four_tiles[n + 2],
-            7 => single_color_four_tiles[6],
-            _ => unreachable!("Invalid rank"),
-        };
+        single_color_bingpai.remove_liangmen_dazi(n);
+        let mut r = count_shupai_block_impl(single_color_bingpai, n, single_color_four_tiles);
+        single_color_bingpai.restore_liangmen_dazi(n);
 
-        if !is_wait_consumed_by_hand {
-            single_color_bingpai.remove_liangmen_dazi(n);
-            let mut r =
-                count_shupai_block_impl(single_color_bingpai, n, jiangpai, single_color_four_tiles);
-            single_color_bingpai.restore_liangmen_dazi(n);
+        r.a.num_dazi += 1;
+        r.b.num_dazi += 1;
 
-            r.a.num_dazi += 1;
-            r.b.num_dazi += 1;
-
-            update_max(&mut max, r);
-        }
+        update_max(&mut max, r);
     }
 
     // There is a possibility of extracting a pair twice from the four tiles,
     // but since the replacement number is greater than the pattern of
     // a triplet and an isolated tile, it is not practically an issue.
-    if single_color_bingpai.has_duizi(n) && Some(n) != jiangpai {
+    if single_color_bingpai.has_duizi(n) {
         single_color_bingpai.remove_duizi(n);
-        let mut r =
-            count_shupai_block_impl(single_color_bingpai, n, jiangpai, single_color_four_tiles);
+        let mut r = count_shupai_block_impl(single_color_bingpai, n, single_color_four_tiles);
         single_color_bingpai.restore_duizi(n);
 
         r.a.num_duizi += 1;
@@ -248,13 +228,21 @@ fn count_shupai_block_impl(
     max
 }
 
+fn count_4_tiles_in_shoupai(single_color_bingpai: &[u8; 9]) -> SingleColorTileFlag {
+    single_color_bingpai.iter().enumerate().fold(
+        SingleColorTileFlag::ZERO,
+        |mut acc, (i, &num_tile_bingpai)| {
+            acc.set(i, num_tile_bingpai == 4);
+            acc
+        },
+    )
+}
+
 pub(in super::super) fn count_shupai_block(
-    single_color_bingpai: &mut [u8],
-    n: usize,
-    jiangpai: Option<usize>,
-    single_color_four_tiles: &BitSlice,
+    single_color_bingpai: &mut [u8; 9],
 ) -> BlockCountPattern {
-    count_shupai_block_impl(single_color_bingpai, n, jiangpai, single_color_four_tiles).to_entry()
+    let single_color_four_tiles = count_4_tiles_in_shoupai(&single_color_bingpai);
+    count_shupai_block_impl(single_color_bingpai, 0, &single_color_four_tiles).to_entry()
 }
 
 #[cfg(test)]
@@ -262,22 +250,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn count_shupai_block_impl_works() {
+    fn count_shupai_block_works() {
         let mut single_color_bingpai = [1, 0, 3, 1, 2, 1, 0, 1, 0];
-        let single_color_four_tiles = SingleColorTileFlag::ZERO;
-        let r = count_shupai_block_impl(
-            &mut single_color_bingpai,
-            0,
-            None,
-            &single_color_four_tiles[0..9],
-        );
-        assert_eq!(r.a.num_mianzi, 1);
-        assert_eq!(r.a.num_dazi, 3);
-        assert_eq!(r.a.num_duizi, 0);
-        assert_eq!(r.a.num_gulipai, 0);
-        assert_eq!(r.b.num_mianzi, 2);
-        assert_eq!(r.b.num_dazi, 0);
-        assert_eq!(r.b.num_duizi, 0);
-        assert_eq!(r.b.num_gulipai, 3);
+        let r = count_shupai_block(&mut single_color_bingpai);
+        assert_eq!(r[0].0, 1);
+        assert_eq!(r[0].1, 3);
+        assert_eq!(r[0].2, 0);
+        assert_eq!(r[0].3, 0);
+        assert_eq!(r[1].0, 2);
+        assert_eq!(r[1].1, 0);
+        assert_eq!(r[1].2, 0);
+        assert_eq!(r[1].3, 3);
     }
 }
