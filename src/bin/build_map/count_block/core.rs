@@ -21,7 +21,7 @@ pub(super) fn to_flag(single_color_bingpai: &[u8]) -> SingleColorTileFlag {
 
 pub(super) struct ShupaiBlockCountImpl {
     pub(super) num_mianzi: u8,
-    pub(super) num_dazi: u8,
+    pub(super) num_mianzi_candidate: u8,
     pub(super) num_duizi: u8,
     pub(super) num_gulipai: u8,
     pub(super) gulipai: SingleColorTileFlag,
@@ -35,7 +35,7 @@ impl ShupaiBlockCountImpl {
     pub(super) fn to_entry(&self) -> ShupaiBlockCount {
         (
             self.num_mianzi,
-            self.num_dazi,
+            self.num_mianzi_candidate,
             self.num_duizi,
             self.num_gulipai,
             self.gulipai.load(),

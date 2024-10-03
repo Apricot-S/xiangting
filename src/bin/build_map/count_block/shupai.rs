@@ -127,7 +127,7 @@ fn count_shupai_block_impl(
         return ShupaiBlockCountPatternImpl {
             a: ShupaiBlockCountImpl {
                 num_mianzi: 0,
-                num_dazi: 0,
+                num_mianzi_candidate: 0,
                 num_duizi: 0,
                 num_gulipai,
                 gulipai,
@@ -138,7 +138,7 @@ fn count_shupai_block_impl(
             },
             b: ShupaiBlockCountImpl {
                 num_mianzi: 0,
-                num_dazi: 0,
+                num_mianzi_candidate: 0,
                 num_duizi: 0,
                 num_gulipai,
                 gulipai,
@@ -154,18 +154,32 @@ fn count_shupai_block_impl(
 
     #[inline]
     fn update_max(max: &mut ShupaiBlockCountPatternImpl, r: ShupaiBlockCountPatternImpl) {
-        if (r.a.num_gulipai < max.a.num_gulipai)
-            || (r.a.num_gulipai == max.a.num_gulipai)
-                && ((r.a.num_dazi + r.a.num_duizi) < (max.a.num_dazi + max.a.num_duizi))
-        {
+        if r.a.num_gulipai < max.a.num_gulipai {
             max.a = r.a;
+        } else if r.a.num_gulipai == max.a.num_gulipai {
+            if r.a.num_mianzi_candidate < max.a.num_mianzi_candidate {
+                max.a = r.a;
+            } else if r.a.num_mianzi_candidate == max.a.num_mianzi_candidate {
+                max.a.num_duizi = std::cmp::max(max.a.num_duizi, r.a.num_duizi);
+                max.a.liangmian_ting |= r.a.liangmian_ting;
+                max.a.biankanzhang_ting |= r.a.biankanzhang_ting;
+                max.a.shuangpeng_ting |= r.a.shuangpeng_ting;
+                max.a.danqi_ting |= r.a.danqi_ting;
+            }
         }
 
-        if (r.b.num_mianzi > max.b.num_mianzi)
-            || ((r.b.num_mianzi == max.b.num_mianzi)
-                && ((r.b.num_dazi + r.b.num_duizi) > (max.b.num_dazi + max.b.num_duizi)))
-        {
+        if r.b.num_mianzi > max.b.num_mianzi {
             max.b = r.b;
+        } else if r.b.num_mianzi == max.b.num_mianzi {
+            if r.b.num_mianzi_candidate > max.b.num_mianzi_candidate {
+                max.b = r.b;
+            } else if r.b.num_mianzi_candidate == max.b.num_mianzi_candidate {
+                max.b.num_duizi = std::cmp::max(max.b.num_duizi, r.b.num_duizi);
+                max.b.liangmian_ting |= r.b.liangmian_ting;
+                max.b.biankanzhang_ting |= r.b.biankanzhang_ting;
+                max.b.shuangpeng_ting |= r.b.shuangpeng_ting;
+                max.b.danqi_ting |= r.b.danqi_ting;
+            }
         }
     }
 
@@ -196,8 +210,8 @@ fn count_shupai_block_impl(
         let mut r = count_shupai_block_impl(single_color_bingpai, n);
         single_color_bingpai.restore_qianzhang_dazi(n);
 
-        r.a.num_dazi += 1;
-        r.b.num_dazi += 1;
+        r.a.num_mianzi_candidate += 1;
+        r.b.num_mianzi_candidate += 1;
 
         r.a.biankanzhang_ting.set(n + 1, true);
         r.b.biankanzhang_ting.set(n + 1, true);
@@ -211,8 +225,8 @@ fn count_shupai_block_impl(
         let mut r = count_shupai_block_impl(single_color_bingpai, n);
         single_color_bingpai.restore_liangmen_dazi(n);
 
-        r.a.num_dazi += 1;
-        r.b.num_dazi += 1;
+        r.a.num_mianzi_candidate += 1;
+        r.b.num_mianzi_candidate += 1;
 
         r.a.biankanzhang_ting.set(n + 2, true);
         r.b.biankanzhang_ting.set(n + 2, true);
@@ -226,8 +240,8 @@ fn count_shupai_block_impl(
         let mut r = count_shupai_block_impl(single_color_bingpai, n);
         single_color_bingpai.restore_liangmen_dazi(n);
 
-        r.a.num_dazi += 1;
-        r.b.num_dazi += 1;
+        r.a.num_mianzi_candidate += 1;
+        r.b.num_mianzi_candidate += 1;
 
         r.a.biankanzhang_ting.set(n - 1, true);
         r.b.biankanzhang_ting.set(n - 1, true);
@@ -241,8 +255,8 @@ fn count_shupai_block_impl(
         let mut r = count_shupai_block_impl(single_color_bingpai, n);
         single_color_bingpai.restore_liangmen_dazi(n);
 
-        r.a.num_dazi += 1;
-        r.b.num_dazi += 1;
+        r.a.num_mianzi_candidate += 1;
+        r.b.num_mianzi_candidate += 1;
 
         // Record only the smaller one. e.g., 1 for 23
         r.a.liangmian_ting.set(n - 1, true);
@@ -258,6 +272,9 @@ fn count_shupai_block_impl(
         single_color_bingpai.remove_duizi(n);
         let mut r = count_shupai_block_impl(single_color_bingpai, n);
         single_color_bingpai.restore_duizi(n);
+
+        r.a.num_mianzi_candidate += 1;
+        r.b.num_mianzi_candidate += 1;
 
         r.a.num_duizi += 1;
         r.b.num_duizi += 1;
@@ -328,6 +345,31 @@ mod tests {
         assert_eq!(r[1].5, 0b000000000);
         assert_eq!(r[1].6, 0b000000000);
         assert_eq!(r[1].7, 0b000000000);
+        assert_eq!(r[1].8, 0b000000000);
+    }
+
+    #[test]
+    fn count_shupai_block_2_closed_and_dual_pair() {
+        let mut shupai_bingpai = [2, 0, 2, 0, 0, 0, 0, 0, 0];
+        let r = count_shupai_block(&mut shupai_bingpai);
+        assert_eq!(r[0].0, 0);
+        assert_eq!(r[0].1, 2);
+        assert_eq!(r[0].2, 2);
+        assert_eq!(r[0].3, 0);
+        assert_eq!(r[0].4, 0b000000000);
+        assert_eq!(r[0].5, 0b000000000);
+        assert_eq!(r[0].6, 0b000000010);
+        assert_eq!(r[0].7, 0b000000101);
+        assert_eq!(r[0].8, 0b000000000);
+
+        assert_eq!(r[1].0, 0);
+        assert_eq!(r[1].1, 2);
+        assert_eq!(r[1].2, 2);
+        assert_eq!(r[1].3, 0);
+        assert_eq!(r[1].4, 0b000000000);
+        assert_eq!(r[1].5, 0b000000000);
+        assert_eq!(r[1].6, 0b000000010);
+        assert_eq!(r[1].7, 0b000000101);
         assert_eq!(r[1].8, 0b000000000);
     }
 }

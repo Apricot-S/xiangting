@@ -13,8 +13,8 @@ pub type ZipaiTable = Table<7>;
 pub type Wanzi19Table = Table<2>;
 
 // shupai_block_count.0 : number of melds
-// shupai_block_count.1 : number of joints
-// shupai_block_count.2 : number of pairs
+// shupai_block_count.1 : number of meld candidates (joints + pairs)
+// shupai_block_count.2 : maximum number of pairs
 // shupai_block_count.3 : number of isolated tiles
 // shupai_block_count.4 : isolated tiles flag
 // shupai_block_count.5 : open wait flag (record only the smaller one. e.g., 1 for 23)
@@ -25,7 +25,7 @@ pub type ShupaiBlockCount = (u8, u8, u8, u8, u16, u16, u16, u16, u16);
 
 pub trait ShupaiBlockCountExt {
     fn num_mianzi(&self) -> u8;
-    fn num_dazi(&self) -> u8;
+    fn num_mianzi_candidate(&self) -> u8;
     fn num_duizi(&self) -> u8;
     fn num_gulipai(&self) -> u8;
     fn gulipai(&self) -> u16;
@@ -41,7 +41,7 @@ impl ShupaiBlockCountExt for ShupaiBlockCount {
         self.0
     }
     #[inline]
-    fn num_dazi(&self) -> u8 {
+    fn num_mianzi_candidate(&self) -> u8 {
         self.1
     }
     #[inline]

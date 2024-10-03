@@ -71,9 +71,11 @@ fn calculate_replacement_number_inner(
             for s in pattern_s {
                 let num_mianzi =
                     num_fulu + m.num_mianzi() + p.num_mianzi() + s.num_mianzi() + z.num_mianzi();
-                let num_dazi = m.num_dazi() + p.num_dazi() + s.num_dazi();
+                let num_mianzi_candidate = m.num_mianzi_candidate()
+                    + p.num_mianzi_candidate()
+                    + s.num_mianzi_candidate()
+                    + z.num_duizi();
                 let num_duizi = m.num_duizi() + p.num_duizi() + s.num_duizi() + z.num_duizi();
-                let num_mianzi_candidate = num_dazi + num_duizi;
                 let mut num_gulipai =
                     m.num_gulipai() + p.num_gulipai() + s.num_gulipai() + z.num_gulipai();
 
@@ -132,9 +134,9 @@ fn calculate_replacement_number_inner_3_player(
         for s in pattern_s {
             let num_mianzi =
                 num_fulu + m.num_mianzi() + p.num_mianzi() + s.num_mianzi() + z.num_mianzi();
-            let num_dazi = p.num_dazi() + s.num_dazi();
+            let num_mianzi_candidate =
+                m.num_duizi() + p.num_mianzi_candidate() + s.num_mianzi_candidate() + z.num_duizi();
             let num_duizi = m.num_duizi() + p.num_duizi() + s.num_duizi() + z.num_duizi();
-            let num_mianzi_candidate = num_dazi + num_duizi;
             let mut num_gulipai =
                 m.num_gulipai() + p.num_gulipai() + s.num_gulipai() + z.num_gulipai();
 
