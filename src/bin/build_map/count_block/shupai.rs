@@ -372,4 +372,29 @@ mod tests {
         assert_eq!(r[1].7, 0b000000101);
         assert_eq!(r[1].8, 0b000000000);
     }
+
+    #[test]
+    fn count_shupai_block_3_sided_open_waits() {
+        let mut shupai_bingpai = [0, 0, 1, 1, 1, 1, 1, 0, 0];
+        let r = count_shupai_block(&mut shupai_bingpai);
+        assert_eq!(r[0].0, 1);
+        assert_eq!(r[0].1, 1);
+        assert_eq!(r[0].2, 0);
+        assert_eq!(r[0].3, 0);
+        assert_eq!(r[1].4, 0b000000000);
+        assert_eq!(r[1].5, 0b000010010);
+        assert_eq!(r[1].6, 0b000000000);
+        assert_eq!(r[1].7, 0b000000000);
+        assert_eq!(r[1].8, 0b000000000);
+
+        assert_eq!(r[1].0, 1);
+        assert_eq!(r[1].1, 1);
+        assert_eq!(r[1].2, 0);
+        assert_eq!(r[1].3, 0);
+        assert_eq!(r[1].4, 0b000000000);
+        assert_eq!(r[1].5, 0b000010010);
+        assert_eq!(r[1].6, 0b000000000);
+        assert_eq!(r[1].7, 0b000000000);
+        assert_eq!(r[1].8, 0b000000000);
+    }
 }
