@@ -48,27 +48,28 @@ pub(in super::super) fn count_19m_block(wanzi_bingpai: &[u8; 9]) -> Wanzi19Block
 #[cfg(test)]
 mod tests {
     use super::*;
+    use xiangting::standard::core::Wanzi19BlockCountExt;
 
     #[test]
     fn count_19m_block_works() {
         let wanzi_bingpai = [4, 0, 0, 0, 0, 0, 0, 0, 2];
         let r = count_19m_block(&wanzi_bingpai);
-        assert_eq!(r.0, 1);
-        assert_eq!(r.1, 1);
-        assert_eq!(r.2, 1);
-        assert_eq!(r.3, 0b000000001);
-        assert_eq!(r.4, 0b100000000);
+        assert_eq!(r.num_mianzi(), 1);
+        assert_eq!(r.num_duizi(), 1);
+        assert_eq!(r.num_gulipai(), 1);
+        assert_eq!(r.gulipai(), 0b000000001);
+        assert_eq!(r.shuangpeng_ting(), 0b100000000);
     }
 
     #[test]
     fn count_19m_block_empty() {
         let wanzi_bingpai = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         let r = count_19m_block(&wanzi_bingpai);
-        assert_eq!(r.0, 0);
-        assert_eq!(r.1, 0);
-        assert_eq!(r.2, 0);
-        assert_eq!(r.3, 0b000000000);
-        assert_eq!(r.4, 0b000000000);
+        assert_eq!(r.num_mianzi(), 0);
+        assert_eq!(r.num_duizi(), 0);
+        assert_eq!(r.num_gulipai(), 0);
+        assert_eq!(r.gulipai(), 0b000000000);
+        assert_eq!(r.shuangpeng_ting(), 0b000000000);
     }
 
     #[test]
@@ -82,10 +83,10 @@ mod tests {
     fn count_19m_block_ignore_2m_to_8m() {
         let wanzi_bingpai = [4, 3, 5, 0, 0, 0, 0, 1, 2];
         let r = count_19m_block(&wanzi_bingpai);
-        assert_eq!(r.0, 1);
-        assert_eq!(r.1, 1);
-        assert_eq!(r.2, 1);
-        assert_eq!(r.3, 0b000000001);
-        assert_eq!(r.4, 0b100000000);
+        assert_eq!(r.num_mianzi(), 1);
+        assert_eq!(r.num_duizi(), 1);
+        assert_eq!(r.num_gulipai(), 1);
+        assert_eq!(r.gulipai(), 0b000000001);
+        assert_eq!(r.shuangpeng_ting(), 0b100000000);
     }
 }

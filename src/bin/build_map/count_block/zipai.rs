@@ -46,27 +46,28 @@ pub(in super::super) fn count_zipai_block(zipai_bingpai: &[u8; 7]) -> ZipaiBlock
 #[cfg(test)]
 mod tests {
     use super::*;
+    use xiangting::standard::core::ZipaiBlockCountExt;
 
     #[test]
     fn count_zipai_block_works() {
         let zipai_bingpai = [1, 0, 3, 1, 2, 4, 0];
         let r = count_zipai_block(&zipai_bingpai);
-        assert_eq!(r.0, 2);
-        assert_eq!(r.1, 1);
-        assert_eq!(r.2, 3);
-        assert_eq!(r.3, 0b0101001);
-        assert_eq!(r.4, 0b0010000);
+        assert_eq!(r.num_mianzi(), 2);
+        assert_eq!(r.num_duizi(), 1);
+        assert_eq!(r.num_gulipai(), 3);
+        assert_eq!(r.gulipai(), 0b0101001);
+        assert_eq!(r.shuangpeng_ting(), 0b0010000);
     }
 
     #[test]
     fn count_zipai_block_empty() {
         let zipai_bingpai = [0, 0, 0, 0, 0, 0, 0];
         let r = count_zipai_block(&zipai_bingpai);
-        assert_eq!(r.0, 0);
-        assert_eq!(r.1, 0);
-        assert_eq!(r.2, 0);
-        assert_eq!(r.3, 0b0000000);
-        assert_eq!(r.4, 0b0000000);
+        assert_eq!(r.num_mianzi(), 0);
+        assert_eq!(r.num_duizi(), 0);
+        assert_eq!(r.num_gulipai(), 0);
+        assert_eq!(r.gulipai(), 0b0000000);
+        assert_eq!(r.shuangpeng_ting(), 0b0000000);
     }
 
     #[test]
