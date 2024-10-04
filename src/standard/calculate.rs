@@ -1008,6 +1008,78 @@ mod tests {
     }
 
     #[test]
+    fn calculate_replacement_number_waiting_for_the_5th_tile_16() {
+        // A form that can be interpreted as either open wait or edge wait
+        let bingpai: Bingpai = [
+            1, 1, 1, 1, 1, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 2, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number_1, 1);
+
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Kezi(2)),
+            Some(FuluMianzi::Gangzi(5)),
+            None,
+            None,
+        ]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        assert_eq!(replacement_number_2, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_waiting_for_the_5th_tile_17() {
+        // A form that can be interpreted as either middle wait or edge wait
+        let bingpai: Bingpai = [
+            1, 2, 1, 1, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 2, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number_1, 1);
+
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Kezi(2)),
+            Some(FuluMianzi::Gangzi(5)),
+            None,
+            None,
+        ]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        assert_eq!(replacement_number_2, 2);
+    }
+
+    #[test]
+    fn calculate_replacement_number_waiting_for_the_5th_tile_18() {
+        // A suit that cannot be a pair or a joint
+        let bingpai: Bingpai = [
+            4, 0, 0, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let num_bingpai: u8 = bingpai.iter().sum();
+        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number_1, 2);
+
+        let fulu_mianzi_list = Some([
+            Some(FuluMianzi::Gangzi(1)),
+            Some(FuluMianzi::Gangzi(2)),
+            Some(FuluMianzi::Gangzi(4)),
+            None,
+        ]);
+        let replacement_number_2 =
+            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        assert_eq!(replacement_number_2, 2);
+    }
+
+    #[test]
     fn calculate_replacement_number_2_isolated_4_tiles_1() {
         let bingpai: Bingpai = [
             4, 1, 0, 1, 0, 0, 4, 0, 0, // m
