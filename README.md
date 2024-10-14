@@ -15,6 +15,12 @@ Documentation:
 
 - [API reference (main branch)](https://Apricot-S.github.io/xiangting/xiangting)
 
+## Installation
+
+```sh
+cargo add --git https://github.com/Apricot-S/xiangting.git
+```
+
 ## Usage
 
 The hand is represented by the number of each tile in an array of `[u8; 34]`. The correspondence between the index and the tile is shown in the table below.
