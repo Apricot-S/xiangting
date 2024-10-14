@@ -10,4 +10,4 @@ if ! [[ "$1" =~ ^0[1-9]$|^1[0-4]$ ]]; then
     exit 1
 fi
 
-cargo test correct_hands_$1 --release --features test -- --ignored
+cargo test correct_hands_$1 --release -- --ignored

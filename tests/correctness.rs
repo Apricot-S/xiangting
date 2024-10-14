@@ -3,15 +3,17 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 #[cfg(feature = "correctness")]
+mod hand_enumerator;
+#[cfg(feature = "correctness")]
 mod nyanten;
 
 #[cfg(feature = "correctness")]
 mod tests {
+    use crate::hand_enumerator::HandEnumerator;
     use crate::nyanten::calculateReplacementNumber;
     use std::fs::OpenOptions;
     use std::io::Write;
     use xiangting::calculate_replacement_number;
-    use xiangting::common::HandEnumerator;
 
     fn verify_correctness(length: usize) -> bool {
         let enumerator = HandEnumerator::new(length).unwrap();
