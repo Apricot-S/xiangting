@@ -64,7 +64,3 @@ pub use shoupai::{FuluMianziList, InvalidShoupaiError};
 #[cfg(feature = "build-map")]
 #[doc(hidden)]
 pub mod standard;
-
-#[cfg(all(not(feature = "build-file"), any(feature = "bench", feature = "test")))]
-#[doc(hidden)]
-pub mod common;

@@ -45,4 +45,3 @@ correctness = []
 [[bench]]
 name = "bench"
 harness = false
-required-features = ["bench"]
