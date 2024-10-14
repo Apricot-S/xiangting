@@ -1,7 +1,7 @@
 [package]
 name = "xiangting"
 description = "A library for calculation of deficiency number (a.k.a. xiangting number, 向聴数)."
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Apricot S."]
 edition = "2021"
 license = "MIT"
@@ -26,13 +26,13 @@ required-features = ["build-map"]
 
 [dependencies]
 bitvec = "1.0.1"
-mt19937 = { version = "2.0.1", optional = true }
-rand = { version = "0.8.5", optional = true }
 thiserror = "1.0.63"
 
 [dev-dependencies]
 criterion = "0.5.1"
 cxx = "1.0.128"
+mt19937 = "2.0.1"
+rand = "0.8.5"
 
 [build-dependencies]
 cxx-build = "1.0.128"
@@ -40,10 +40,7 @@ cxx-build = "1.0.128"
 [features]
 build-file = []
 build-map = ["build-file"]
-bench = ["dep:mt19937", "dep:rand"]
-test = []
-common = ["bench", "test"]
-correctness = ["test"]
+correctness = []
 
 [[bench]]
 name = "bench"

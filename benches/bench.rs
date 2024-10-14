@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+mod random_hand;
+
 use criterion::{criterion_group, criterion_main, Criterion};
-use xiangting::calculate_replacement_number;
-use xiangting::common::{
+use random_hand::{
     create_rng, generate_random_full_flush_pure_hand, generate_random_half_flush_pure_hand,
     generate_random_non_simple_pure_hand, generate_random_pure_hand,
 };
+use xiangting::calculate_replacement_number;
 
 const NUM_HAND: usize = 10_000_000;
 const SAMPLE_SIZE: usize = 10_000;
