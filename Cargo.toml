@@ -14,16 +14,6 @@ categories = ["algorithms"]
 name = "xiangting"
 path = "src/lib.rs"
 
-[[bin]]
-name = "build-table"
-path = "src/bin/build_table.rs"
-required-features = ["build-file"]
-
-[[bin]]
-name = "build-map"
-path = "src/bin/build_map/main.rs"
-required-features = ["build-map"]
-
 [dependencies]
 bitvec = "1.0.1"
 thiserror = "1.0.63"
@@ -41,6 +31,16 @@ cxx-build = "1.0.128"
 build-file = []
 build-map = ["build-file"]
 correctness = []
+
+[[bin]]
+name = "build-table"
+path = "src/bin/build_table.rs"
+required-features = ["build-file"]
+
+[[bin]]
+name = "build-map"
+path = "src/bin/build_map/main.rs"
+required-features = ["build-map"]
 
 [[bench]]
 name = "bench"
