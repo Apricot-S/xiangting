@@ -87,7 +87,7 @@ pub(super) fn get_shupai_replacement_number(
             y + S_TABLE[s][2],
             S_TABLE[s][2],
             winning_hand,
-            replacement_number,
+            result,
         );
         winning_hand[i as usize] -= S_TABLE[s][0] * 2;
         winning_hand[i as usize] -= S_TABLE[s][1] * 3;
@@ -152,7 +152,7 @@ pub(super) fn get_zipai_replacement_number(
             current_num_meld + M_TABLE[s],
             current_num_pair + S_TABLE[s][0],
             winning_hand,
-            replacement_number,
+            result,
         );
         winning_hand[i as usize] -= S_TABLE[s][0] * 2;
         winning_hand[i as usize] -= S_TABLE[s][1] * 3;
@@ -212,7 +212,7 @@ pub(super) fn get_19m_replacement_number(
             current_num_meld + M_TABLE[s],
             current_num_pair + S_TABLE[s][0],
             winning_hand,
-            replacement_number,
+            result,
         );
         winning_hand[i as usize] -= S_TABLE[s][0] * 2;
         winning_hand[i as usize] -= S_TABLE[s][1] * 3;
