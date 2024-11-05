@@ -146,7 +146,6 @@ mod tests {
     use crate::{ClaimedTilePosition, FuluMianzi};
 
     #[test]
-    #[should_panic]
     fn calculate_replacement_number_empty() {
         let bingpai: Bingpai = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -155,7 +154,8 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        assert_eq!(replacement_number, 2); // 1 pairs, 0 melds => min 2
     }
 
     #[test]
