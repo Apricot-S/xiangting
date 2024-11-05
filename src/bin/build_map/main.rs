@@ -12,11 +12,13 @@ use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
-use xiangting::standard::core::{Map, MapValue};
+use xiangting::standard::core::MapValue;
 use xiangting::standard::hash::{hash_19m, hash_shupai, hash_zipai};
 use xiangting::standard::shupai_table::SHUPAI_SIZE;
 use xiangting::standard::wanzi_19_table::WANZI_19_SIZE;
 use xiangting::standard::zipai_table::ZIPAI_SIZE;
+
+type Map = Vec<MapValue>;
 
 fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
     let mut pack = [0u8; 10];

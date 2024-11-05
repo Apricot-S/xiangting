@@ -23,4 +23,3 @@ pub type Wanzi19Table = Table<2>;
 // map_value[8] : 1 pairs, 3 melds
 // map_value[9] : 1 pairs, 4 melds
 pub type MapValue = [u8; 10];
-pub type Map = Vec<MapValue>;
