@@ -34,13 +34,13 @@ pub(super) fn get_shupai_replacement_number(
     mut winning_hand: [u8; 9],
     replacement_number: u8,
 ) -> u8 {
-    assert!(num_meld <= 4);
-    assert!(num_pair <= 1);
-    assert!(i <= 9);
-    assert!(current_num_meld <= num_meld);
-    assert!(current_num_pair <= num_pair);
-    assert!(x <= 4);
-    assert!(y <= 2);
+    debug_assert!(num_meld <= 4);
+    debug_assert!(num_pair <= 1);
+    debug_assert!(i <= 9);
+    debug_assert!(current_num_meld <= num_meld);
+    debug_assert!(current_num_pair <= num_pair);
+    debug_assert!(x <= 4);
+    debug_assert!(y <= 2);
 
     if i >= 9 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
@@ -111,11 +111,11 @@ pub(super) fn get_zipai_replacement_number(
     mut winning_hand: [u8; 7],
     replacement_number: u8,
 ) -> u8 {
-    assert!(num_meld <= 4);
-    assert!(num_pair <= 1);
-    assert!(i <= 7);
-    assert!(current_num_meld <= num_meld);
-    assert!(current_num_pair <= num_pair);
+    debug_assert!(num_meld <= 4);
+    debug_assert!(num_pair <= 1);
+    debug_assert!(i <= 7);
+    debug_assert!(current_num_meld <= num_meld);
+    debug_assert!(current_num_pair <= num_pair);
 
     if i >= 7 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
@@ -171,11 +171,11 @@ pub(super) fn get_19m_replacement_number(
     mut winning_hand: [u8; 9],
     replacement_number: u8,
 ) -> u8 {
-    assert!(num_meld <= 4);
-    assert!(num_pair <= 1);
-    assert!(i <= 16);
-    assert!(current_num_meld <= num_meld);
-    assert!(current_num_pair <= num_pair);
+    debug_assert!(num_meld <= 4);
+    debug_assert!(num_pair <= 1);
+    debug_assert!(i <= 16);
+    debug_assert!(current_num_meld <= num_meld);
+    debug_assert!(current_num_pair <= num_pair);
 
     if i >= 9 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
