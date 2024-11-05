@@ -2,40 +2,111 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-mod count_block;
+mod replacement_number;
 
-use self::count_block::{count_19m_block, count_shupai_block, count_zipai_block};
+use self::replacement_number::{
+    get_19m_replacement_number, get_shupai_replacement_number, get_zipai_replacement_number,
+};
 use std::env;
 use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
-use xiangting::standard::core::{ShupaiMapValue, Wanzi19MapValue, ZipaiMapValue};
 use xiangting::standard::hash::{hash_19m, hash_shupai, hash_zipai};
 use xiangting::standard::shupai_table::SHUPAI_SIZE;
 use xiangting::standard::wanzi_19_table::WANZI_19_SIZE;
 use xiangting::standard::zipai_table::ZIPAI_SIZE;
 
-type ShupaiMap = Vec<ShupaiMapValue>;
-type ZipaiMap = Vec<ZipaiMapValue>;
-type Wanzi19Map = Vec<Wanzi19MapValue>;
+type MapValue = [u8; 10];
+
+type ShupaiMap = Vec<MapValue>;
+type ZipaiMap = Vec<MapValue>;
+type Wanzi19Map = Vec<MapValue>;
+
+fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
+    let mut pack = [0u8; 10];
+    for num_pair in 0..=1 {
+        for num_meld in 0..=4 {
+            const MAX_REPLACEMENT_NUMBER: u8 = 9;
+            const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
+            let min_replacement_number = get_shupai_replacement_number(
+                hand,
+                num_meld,
+                num_pair,
+                0,
+                0,
+                0,
+                0,
+                0,
+                INITIAL_WINNING_HAND,
+                MAX_REPLACEMENT_NUMBER,
+            );
+            pack[(num_meld + num_pair * 5) as usize] = min_replacement_number;
+        }
+    }
+    pack
+}
+
+fn pack_zipai_replacement_numbers(hand: &[u8; 7]) -> MapValue {
+    let mut pack = [0u8; 10];
+    for num_pair in 0..=1 {
+        for num_meld in 0..=4 {
+            const MAX_REPLACEMENT_NUMBER: u8 = 9;
+            const INITIAL_WINNING_HAND: [u8; 7] = [0u8; 7];
+            let min_replacement_number = get_zipai_replacement_number(
+                hand,
+                num_meld,
+                num_pair,
+                0,
+                0,
+                0,
+                INITIAL_WINNING_HAND,
+                MAX_REPLACEMENT_NUMBER,
+            );
+            pack[(num_meld + num_pair * 5) as usize] = min_replacement_number;
+        }
+    }
+    pack
+}
+
+fn pack_19m_replacement_numbers(hand: &[u8; 9]) -> MapValue {
+    let mut pack = [0u8; 10];
+    for num_pair in 0..=1 {
+        for num_meld in 0..=4 {
+            const MAX_REPLACEMENT_NUMBER: u8 = 9;
+            const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
+            let min_replacement_number = get_19m_replacement_number(
+                hand,
+                num_meld,
+                num_pair,
+                0,
+                0,
+                0,
+                INITIAL_WINNING_HAND,
+                MAX_REPLACEMENT_NUMBER,
+            );
+            pack[(num_meld + num_pair * 5) as usize] = min_replacement_number;
+        }
+    }
+    pack
+}
 
 fn create_shupai_entry(hand: &[u8; 9], map: &mut ShupaiMap) {
     let h = hash_shupai(hand);
-    let entry = count_shupai_block(hand);
+    let entry = pack_shupai_replacement_numbers(hand);
     map[h] = entry;
 }
 
 fn create_zipai_entry(hand: &[u8; 7], map: &mut ZipaiMap) {
     let h = hash_zipai(hand);
-    let entry = count_zipai_block(hand);
+    let entry = pack_zipai_replacement_numbers(hand);
     map[h] = entry;
 }
 
 fn create_19m_entry(hand: &[u8; 2], map: &mut Wanzi19Map) {
     let full_hand = [hand[0], 0, 0, 0, 0, 0, 0, 0, hand[1]];
     let h = hash_19m(&full_hand);
-    let entry = count_19m_block(&full_hand);
+    let entry = pack_19m_replacement_numbers(&full_hand);
     map[h] = entry;
 }
 
@@ -120,21 +191,12 @@ fn dump_shupai_map(map: &ShupaiMap, map_path: &Path) -> io::Result<()> {
     )?;
 
     for &entry in map {
-        #[rustfmt::skip]
-        write!(
-            w,
-            "    [({}, {}, {}, {}, 0b{:09b}, 0b{:09b}, 0b{:09b}, 0b{:09b}, 0b{:09b}), ",
-            entry[0].0, entry[0].1, entry[0].2, entry[0].3,
-            entry[0].4, entry[0].5, entry[0].6, entry[0].7, entry[0].8,
-        )?;
-
-        #[rustfmt::skip]
-        writeln!(
-            w,
-            "({}, {}, {}, {}, 0b{:09b}, 0b{:09b}, 0b{:09b}, 0b{:09b}, 0b{:09b})],",
-            entry[1].0, entry[1].1, entry[1].2, entry[1].3,
-            entry[1].4, entry[1].5, entry[1].6, entry[1].7, entry[1].8,
-        )?;
+        write!(w, "    [")?;
+        for (i, pack) in entry.iter().enumerate() {
+            let separator = if i < 9 { ", " } else { "" };
+            write!(w, "{}{}", pack, separator)?;
+        }
+        writeln!(w, "],")?;
     }
 
     writeln!(w, "];")?;
@@ -165,11 +227,12 @@ fn dump_zipai_map(map: &ZipaiMap, map_path: &Path) -> io::Result<()> {
     )?;
 
     for &entry in map {
-        writeln!(
-            w,
-            "    ({}, {}, {}, 0b{:07b}, 0b{:07b}),",
-            entry.0, entry.1, entry.2, entry.3, entry.4,
-        )?;
+        write!(w, "    [")?;
+        for (i, pack) in entry.iter().enumerate() {
+            let separator = if i < 9 { ", " } else { "" };
+            write!(w, "{}{}", pack, separator)?;
+        }
+        writeln!(w, "],")?;
     }
 
     writeln!(w, "];")?;
@@ -200,11 +263,12 @@ fn dump_19m_map(map: &Wanzi19Map, map_path: &Path) -> io::Result<()> {
     )?;
 
     for &entry in map {
-        writeln!(
-            w,
-            "    ({}, {}, {}, 0b{:09b}, 0b{:09b}),",
-            entry.0, entry.1, entry.2, entry.3, entry.4,
-        )?;
+        write!(w, "    [")?;
+        for (i, pack) in entry.iter().enumerate() {
+            let separator = if i < 9 { ", " } else { "" };
+            write!(w, "{}{}", pack, separator)?;
+        }
+        writeln!(w, "],")?;
     }
 
     writeln!(w, "];")?;
@@ -230,7 +294,7 @@ fn main() {
 
     {
         let mut shupai_map = ShupaiMap::new();
-        shupai_map.resize(SHUPAI_SIZE, [(0, 0, 0, 0, 0, 0, 0, 0, 0); 2]);
+        shupai_map.resize(SHUPAI_SIZE, [0; 10]);
         let mut hand = [0u8; 9];
         build_shupai_map(&mut hand, 0, 0, &mut shupai_map);
 
@@ -239,7 +303,7 @@ fn main() {
 
     {
         let mut zipai_map = ZipaiMap::new();
-        zipai_map.resize(ZIPAI_SIZE, (0, 0, 0, 0, 0));
+        zipai_map.resize(ZIPAI_SIZE, [0; 10]);
         let mut hand = [0u8; 7];
         build_zipai_map(&mut hand, 0, 0, &mut zipai_map);
 
@@ -248,7 +312,7 @@ fn main() {
 
     {
         let mut wanzi_19_map = Wanzi19Map::new();
-        wanzi_19_map.resize(WANZI_19_SIZE, (0, 0, 0, 0, 0));
+        wanzi_19_map.resize(WANZI_19_SIZE, [0; 10]);
         let mut hand = [0u8; 2];
         build_19m_map(&mut hand, 0, 0, &mut wanzi_19_map);
 
