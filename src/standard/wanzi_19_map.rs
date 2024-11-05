@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::Wanzi19MapValue;
+use super::core::MapValue;
 use super::wanzi_19_table::WANZI_19_SIZE;
 
 #[rustfmt::skip]
-pub(super) static WANZI_19_MAP: [Wanzi19MapValue; WANZI_19_SIZE] = [
+pub(super) static WANZI_19_MAP: [MapValue; WANZI_19_SIZE] = [
     [0, 3, 6, 9, 9, 2, 5, 9, 9, 9],
     [0, 3, 5, 9, 9, 2, 4, 9, 9, 9],
     [0, 3, 4, 9, 9, 2, 3, 9, 9, 9],

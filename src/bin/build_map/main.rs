@@ -12,16 +12,11 @@ use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
+use xiangting::standard::core::{Map, MapValue};
 use xiangting::standard::hash::{hash_19m, hash_shupai, hash_zipai};
 use xiangting::standard::shupai_table::SHUPAI_SIZE;
 use xiangting::standard::wanzi_19_table::WANZI_19_SIZE;
 use xiangting::standard::zipai_table::ZIPAI_SIZE;
-
-type MapValue = [u8; 10];
-
-type ShupaiMap = Vec<MapValue>;
-type ZipaiMap = Vec<MapValue>;
-type Wanzi19Map = Vec<MapValue>;
 
 fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
     let mut pack = [0u8; 10];
@@ -91,26 +86,26 @@ fn pack_19m_replacement_numbers(hand: &[u8; 9]) -> MapValue {
     pack
 }
 
-fn create_shupai_entry(hand: &[u8; 9], map: &mut ShupaiMap) {
+fn create_shupai_entry(hand: &[u8; 9], map: &mut Map) {
     let h = hash_shupai(hand);
     let entry = pack_shupai_replacement_numbers(hand);
     map[h] = entry;
 }
 
-fn create_zipai_entry(hand: &[u8; 7], map: &mut ZipaiMap) {
+fn create_zipai_entry(hand: &[u8; 7], map: &mut Map) {
     let h = hash_zipai(hand);
     let entry = pack_zipai_replacement_numbers(hand);
     map[h] = entry;
 }
 
-fn create_19m_entry(hand: &[u8; 2], map: &mut Wanzi19Map) {
+fn create_19m_entry(hand: &[u8; 2], map: &mut Map) {
     let full_hand = [hand[0], 0, 0, 0, 0, 0, 0, 0, hand[1]];
     let h = hash_19m(&full_hand);
     let entry = pack_19m_replacement_numbers(&full_hand);
     map[h] = entry;
 }
 
-fn build_shupai_map(hand: &mut [u8; 9], i: usize, n: usize, map: &mut ShupaiMap) {
+fn build_shupai_map(hand: &mut [u8; 9], i: usize, n: usize, map: &mut Map) {
     debug_assert!(i <= 9);
     debug_assert!(n <= 14);
 
@@ -130,7 +125,7 @@ fn build_shupai_map(hand: &mut [u8; 9], i: usize, n: usize, map: &mut ShupaiMap)
     }
 }
 
-fn build_zipai_map(hand: &mut [u8; 7], i: usize, n: usize, map: &mut ZipaiMap) {
+fn build_zipai_map(hand: &mut [u8; 7], i: usize, n: usize, map: &mut Map) {
     debug_assert!(i <= 7);
     debug_assert!(n <= 14);
 
@@ -150,7 +145,7 @@ fn build_zipai_map(hand: &mut [u8; 7], i: usize, n: usize, map: &mut ZipaiMap) {
     }
 }
 
-fn build_19m_map(hand: &mut [u8; 2], i: usize, n: usize, map: &mut Wanzi19Map) {
+fn build_19m_map(hand: &mut [u8; 2], i: usize, n: usize, map: &mut Map) {
     debug_assert!(i <= 2);
     debug_assert!(n <= 8);
 
@@ -170,7 +165,7 @@ fn build_19m_map(hand: &mut [u8; 2], i: usize, n: usize, map: &mut Wanzi19Map) {
     }
 }
 
-fn dump_shupai_map(map: &ShupaiMap, map_path: &Path) -> io::Result<()> {
+fn dump_shupai_map(map: &Map, map_path: &Path) -> io::Result<()> {
     let file = File::create(map_path)?;
     let mut w = BufWriter::new(file);
 
@@ -181,13 +176,13 @@ fn dump_shupai_map(map: &ShupaiMap, map_path: &Path) -> io::Result<()> {
         "// This file is part of https://github.com/Apricot-S/xiangting"
     )?;
     writeln!(w)?;
-    writeln!(w, "use super::core::ShupaiMapValue;")?;
+    writeln!(w, "use super::core::MapValue;")?;
     writeln!(w, "use super::shupai_table::SHUPAI_SIZE;")?;
     writeln!(w)?;
     writeln!(w, "#[rustfmt::skip]")?;
     writeln!(
         w,
-        "pub(super) static SHUPAI_MAP: [ShupaiMapValue; SHUPAI_SIZE] = ["
+        "pub(super) static SHUPAI_MAP: [MapValue; SHUPAI_SIZE] = ["
     )?;
 
     for &entry in map {
@@ -206,7 +201,7 @@ fn dump_shupai_map(map: &ShupaiMap, map_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn dump_zipai_map(map: &ZipaiMap, map_path: &Path) -> io::Result<()> {
+fn dump_zipai_map(map: &Map, map_path: &Path) -> io::Result<()> {
     let file = File::create(map_path)?;
     let mut w = BufWriter::new(file);
 
@@ -217,14 +212,11 @@ fn dump_zipai_map(map: &ZipaiMap, map_path: &Path) -> io::Result<()> {
         "// This file is part of https://github.com/Apricot-S/xiangting"
     )?;
     writeln!(w)?;
-    writeln!(w, "use super::core::ZipaiMapValue;")?;
+    writeln!(w, "use super::core::MapValue;")?;
     writeln!(w, "use super::zipai_table::ZIPAI_SIZE;")?;
     writeln!(w)?;
     writeln!(w, "#[rustfmt::skip]")?;
-    writeln!(
-        w,
-        "pub(super) static ZIPAI_MAP: [ZipaiMapValue; ZIPAI_SIZE] = ["
-    )?;
+    writeln!(w, "pub(super) static ZIPAI_MAP: [MapValue; ZIPAI_SIZE] = [")?;
 
     for &entry in map {
         write!(w, "    [")?;
@@ -242,7 +234,7 @@ fn dump_zipai_map(map: &ZipaiMap, map_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn dump_19m_map(map: &Wanzi19Map, map_path: &Path) -> io::Result<()> {
+fn dump_19m_map(map: &Map, map_path: &Path) -> io::Result<()> {
     let file = File::create(map_path)?;
     let mut w = BufWriter::new(file);
 
@@ -253,13 +245,13 @@ fn dump_19m_map(map: &Wanzi19Map, map_path: &Path) -> io::Result<()> {
         "// This file is part of https://github.com/Apricot-S/xiangting"
     )?;
     writeln!(w)?;
-    writeln!(w, "use super::core::Wanzi19MapValue;")?;
+    writeln!(w, "use super::core::MapValue;")?;
     writeln!(w, "use super::wanzi_19_table::WANZI_19_SIZE;")?;
     writeln!(w)?;
     writeln!(w, "#[rustfmt::skip]")?;
     writeln!(
         w,
-        "pub(super) static WANZI_19_MAP: [Wanzi19MapValue; WANZI_19_SIZE] = ["
+        "pub(super) static WANZI_19_MAP: [MapValue; WANZI_19_SIZE] = ["
     )?;
 
     for &entry in map {
@@ -293,7 +285,7 @@ fn main() {
     let wanzi_19_map_path = Path::new(&args[3]);
 
     {
-        let mut shupai_map = ShupaiMap::new();
+        let mut shupai_map = Map::new();
         shupai_map.resize(SHUPAI_SIZE, [0; 10]);
         let mut hand = [0u8; 9];
         build_shupai_map(&mut hand, 0, 0, &mut shupai_map);
@@ -302,7 +294,7 @@ fn main() {
     }
 
     {
-        let mut zipai_map = ZipaiMap::new();
+        let mut zipai_map = Map::new();
         zipai_map.resize(ZIPAI_SIZE, [0; 10]);
         let mut hand = [0u8; 7];
         build_zipai_map(&mut hand, 0, 0, &mut zipai_map);
@@ -311,7 +303,7 @@ fn main() {
     }
 
     {
-        let mut wanzi_19_map = Wanzi19Map::new();
+        let mut wanzi_19_map = Map::new();
         wanzi_19_map.resize(WANZI_19_SIZE, [0; 10]);
         let mut hand = [0u8; 2];
         build_19m_map(&mut hand, 0, 0, &mut wanzi_19_map);

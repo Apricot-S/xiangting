@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::ZipaiMapValue;
+use super::core::MapValue;
 use super::zipai_table::ZIPAI_SIZE;
 
 #[rustfmt::skip]
-pub(super) static ZIPAI_MAP: [ZipaiMapValue; ZIPAI_SIZE] = [
+pub(super) static ZIPAI_MAP: [MapValue; ZIPAI_SIZE] = [
     [0, 3, 6, 9, 9, 2, 5, 8, 9, 9],
     [0, 3, 6, 9, 9, 2, 5, 8, 9, 9],
     [0, 3, 6, 9, 9, 2, 5, 8, 9, 9],
