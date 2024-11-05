@@ -7,8 +7,6 @@ mod calculate;
 #[cfg(not(feature = "build-file"))]
 mod core;
 #[cfg(not(feature = "build-file"))]
-mod count_block;
-#[cfg(not(feature = "build-file"))]
 mod hash;
 #[cfg(not(feature = "build-file"))]
 mod shupai_map;
