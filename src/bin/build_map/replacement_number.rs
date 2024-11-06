@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+// Combination of the number of blocks containing the target tile
+// S_TABLE[s][0] : Number of pairs
+// S_TABLE[s][1] : Number of triplets
+// S_TABLE[s][2] : Number of sequences
 const S_TABLE: [[u8; 3]; 8] = [
     [0, 0, 0],
     [0, 0, 1],
@@ -12,7 +16,13 @@ const S_TABLE: [[u8; 3]; 8] = [
     [1, 0, 1],
     [1, 0, 2],
 ];
+
+// Number of melds containing the target tile
+// Equal to the sum of S_TABLE[s][1] and S_TABLE[s][2]
 const M_TABLE: [u8; 8] = [0, 1, 2, 1, 2, 0, 1, 2];
+
+// Number of the target tile
+// Equal to the sum of S_TABLE[s][0], S_TABLE[s][1], and S_TABLE[s][2]
 const N_TABLE: [u8; 8] = [0, 1, 2, 3, 4, 2, 3, 4];
 
 fn get_hand_distance<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -> u8 {
