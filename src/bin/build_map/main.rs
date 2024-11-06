@@ -26,7 +26,7 @@ fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
         for num_meld in 0..=4 {
             const MAX_REPLACEMENT_NUMBER: u8 = 9;
             const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
-            let min_replacement_number = get_shupai_replacement_number(
+            let (replacement_number, necesaary_tiles) = get_shupai_replacement_number(
                 hand,
                 num_meld,
                 num_pair,
@@ -37,8 +37,11 @@ fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
                 0,
                 INITIAL_WINNING_HAND,
                 MAX_REPLACEMENT_NUMBER,
+                0,
             );
-            pack[(num_meld + num_pair * 5) as usize].0 = min_replacement_number;
+            let index = (num_meld + num_pair * 5) as usize;
+            pack[index].0 = replacement_number;
+            pack[index].1 = necesaary_tiles;
         }
     }
     pack
@@ -50,7 +53,7 @@ fn pack_zipai_replacement_numbers(hand: &[u8; 7]) -> MapValue {
         for num_meld in 0..=4 {
             const MAX_REPLACEMENT_NUMBER: u8 = 9;
             const INITIAL_WINNING_HAND: [u8; 7] = [0u8; 7];
-            let min_replacement_number = get_zipai_replacement_number(
+            let (replacement_number, necesaary_tiles) = get_zipai_replacement_number(
                 hand,
                 num_meld,
                 num_pair,
@@ -59,8 +62,11 @@ fn pack_zipai_replacement_numbers(hand: &[u8; 7]) -> MapValue {
                 0,
                 INITIAL_WINNING_HAND,
                 MAX_REPLACEMENT_NUMBER,
+                0,
             );
-            pack[(num_meld + num_pair * 5) as usize].0 = min_replacement_number;
+            let index = (num_meld + num_pair * 5) as usize;
+            pack[index].0 = replacement_number;
+            pack[index].1 = necesaary_tiles;
         }
     }
     pack
@@ -72,7 +78,7 @@ fn pack_19m_replacement_numbers(hand: &[u8; 9]) -> MapValue {
         for num_meld in 0..=4 {
             const MAX_REPLACEMENT_NUMBER: u8 = 9;
             const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
-            let min_replacement_number = get_19m_replacement_number(
+            let (replacement_number, necesaary_tiles) = get_19m_replacement_number(
                 hand,
                 num_meld,
                 num_pair,
@@ -81,8 +87,11 @@ fn pack_19m_replacement_numbers(hand: &[u8; 9]) -> MapValue {
                 0,
                 INITIAL_WINNING_HAND,
                 MAX_REPLACEMENT_NUMBER,
+                0,
             );
-            pack[(num_meld + num_pair * 5) as usize].0 = min_replacement_number;
+            let index = (num_meld + num_pair * 5) as usize;
+            pack[index].0 = replacement_number;
+            pack[index].1 = necesaary_tiles;
         }
     }
     pack
@@ -209,7 +218,7 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
         write!(w, "    [")?;
         for (i, pack) in entry.iter().enumerate() {
             let separator = if i < 9 { ", " } else { "" };
-            write!(w, "{}{}", pack.0, separator)?;
+            write!(w, "({}, {}){}", pack.0, pack.1, separator)?;
         }
         writeln!(w, "],")?;
     }

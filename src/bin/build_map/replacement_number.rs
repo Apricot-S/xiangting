@@ -25,11 +25,18 @@ const M_TABLE: [u8; 8] = [0, 1, 2, 1, 2, 0, 1, 2];
 // Equal to the sum of S_TABLE[s][0], S_TABLE[s][1], and S_TABLE[s][2]
 const N_TABLE: [u8; 8] = [0, 1, 2, 3, 4, 2, 3, 4];
 
-fn get_hand_distance<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -> u8 {
-    hand.iter()
-        .zip(winning_hand)
-        .map(|(&h, &w)| w.saturating_sub(h))
-        .sum()
+fn get_hand_distance<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -> (u8, u16) {
+    let mut distance = 0u8;
+    let mut necesaary_tiles = 0u16;
+
+    for (i, (&h, &w)) in hand.iter().zip(winning_hand).enumerate() {
+        if w > h {
+            distance += w - h;
+            necesaary_tiles |= 1 << i;
+        }
+    }
+
+    (distance, necesaary_tiles)
 }
 
 pub(super) fn get_shupai_replacement_number(
@@ -43,7 +50,8 @@ pub(super) fn get_shupai_replacement_number(
     y: u8,
     mut winning_hand: [u8; 9],
     replacement_number: u8,
-) -> u8 {
+    necesaary_tiles: u16,
+) -> (u8, u16) {
     debug_assert!(num_meld <= 4);
     debug_assert!(num_pair <= 1);
     debug_assert!(i <= 9);
@@ -54,17 +62,18 @@ pub(super) fn get_shupai_replacement_number(
 
     if i >= 9 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
-            let distance = get_hand_distance(hand, &winning_hand);
+            let (distance, tiles) = get_hand_distance(hand, &winning_hand);
             if distance < replacement_number {
-                return distance;
+                return (distance, tiles);
             } else if distance == replacement_number {
-                return distance;
+                return (distance, necesaary_tiles | tiles);
             }
         }
-        return replacement_number;
+        return (replacement_number, necesaary_tiles);
     }
 
-    let mut result = replacement_number;
+    let mut distance = replacement_number;
+    let mut tiles = necesaary_tiles;
 
     for s in 0..S_TABLE.len() {
         if current_num_meld + M_TABLE[s] > num_meld {
@@ -87,7 +96,7 @@ pub(super) fn get_shupai_replacement_number(
         }
         winning_hand[i as usize] += S_TABLE[s][1] * 3;
         winning_hand[i as usize] += S_TABLE[s][0] * 2;
-        result = get_shupai_replacement_number(
+        (distance, tiles) = get_shupai_replacement_number(
             hand,
             num_meld,
             num_pair,
@@ -97,7 +106,8 @@ pub(super) fn get_shupai_replacement_number(
             y + S_TABLE[s][2],
             S_TABLE[s][2],
             winning_hand,
-            result,
+            distance,
+            tiles,
         );
         winning_hand[i as usize] -= S_TABLE[s][0] * 2;
         winning_hand[i as usize] -= S_TABLE[s][1] * 3;
@@ -108,7 +118,7 @@ pub(super) fn get_shupai_replacement_number(
         }
     }
 
-    result
+    (distance, tiles)
 }
 
 pub(super) fn get_zipai_replacement_number(
@@ -120,7 +130,8 @@ pub(super) fn get_zipai_replacement_number(
     current_num_pair: u8,
     mut winning_hand: [u8; 7],
     replacement_number: u8,
-) -> u8 {
+    necesaary_tiles: u16,
+) -> (u8, u16) {
     debug_assert!(num_meld <= 4);
     debug_assert!(num_pair <= 1);
     debug_assert!(i <= 7);
@@ -129,17 +140,18 @@ pub(super) fn get_zipai_replacement_number(
 
     if i >= 7 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
-            let distance = get_hand_distance(hand, &winning_hand);
+            let (distance, tiles) = get_hand_distance(hand, &winning_hand);
             if distance < replacement_number {
-                return distance;
+                return (distance, tiles);
             } else if distance == replacement_number {
-                return distance;
+                return (distance, necesaary_tiles | tiles);
             }
         }
-        return replacement_number;
+        return (replacement_number, necesaary_tiles);
     }
 
-    let mut result = replacement_number;
+    let mut distance = replacement_number;
+    let mut tiles = necesaary_tiles;
 
     for s in 0..S_TABLE.len() {
         if current_num_meld + M_TABLE[s] > num_meld {
@@ -154,7 +166,7 @@ pub(super) fn get_zipai_replacement_number(
 
         winning_hand[i as usize] += S_TABLE[s][1] * 3;
         winning_hand[i as usize] += S_TABLE[s][0] * 2;
-        result = get_zipai_replacement_number(
+        (distance, tiles) = get_zipai_replacement_number(
             hand,
             num_meld,
             num_pair,
@@ -162,13 +174,14 @@ pub(super) fn get_zipai_replacement_number(
             current_num_meld + M_TABLE[s],
             current_num_pair + S_TABLE[s][0],
             winning_hand,
-            result,
+            distance,
+            tiles,
         );
         winning_hand[i as usize] -= S_TABLE[s][0] * 2;
         winning_hand[i as usize] -= S_TABLE[s][1] * 3;
     }
 
-    result
+    (distance, tiles)
 }
 
 pub(super) fn get_19m_replacement_number(
@@ -180,7 +193,8 @@ pub(super) fn get_19m_replacement_number(
     current_num_pair: u8,
     mut winning_hand: [u8; 9],
     replacement_number: u8,
-) -> u8 {
+    necesaary_tiles: u16,
+) -> (u8, u16) {
     debug_assert!(num_meld <= 4);
     debug_assert!(num_pair <= 1);
     debug_assert!(i <= 16);
@@ -189,17 +203,18 @@ pub(super) fn get_19m_replacement_number(
 
     if i >= 9 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
-            let distance = get_hand_distance(hand, &winning_hand);
+            let (distance, tiles) = get_hand_distance(hand, &winning_hand);
             if distance < replacement_number {
-                return distance;
+                return (distance, tiles);
             } else if distance == replacement_number {
-                return distance;
+                return (distance, necesaary_tiles | tiles);
             }
         }
-        return replacement_number;
+        return (replacement_number, necesaary_tiles);
     }
 
-    let mut result = replacement_number;
+    let mut distance = replacement_number;
+    let mut tiles = necesaary_tiles;
 
     for s in 0..S_TABLE.len() {
         if current_num_meld + M_TABLE[s] > num_meld {
@@ -214,7 +229,7 @@ pub(super) fn get_19m_replacement_number(
 
         winning_hand[i as usize] += S_TABLE[s][1] * 3;
         winning_hand[i as usize] += S_TABLE[s][0] * 2;
-        result = get_19m_replacement_number(
+        (distance, tiles) = get_19m_replacement_number(
             hand,
             num_meld,
             num_pair,
@@ -222,11 +237,12 @@ pub(super) fn get_19m_replacement_number(
             current_num_meld + M_TABLE[s],
             current_num_pair + S_TABLE[s][0],
             winning_hand,
-            result,
+            distance,
+            tiles,
         );
         winning_hand[i as usize] -= S_TABLE[s][0] * 2;
         winning_hand[i as usize] -= S_TABLE[s][1] * 3;
     }
 
-    result
+    (distance, tiles)
 }
