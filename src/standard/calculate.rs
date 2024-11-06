@@ -8,46 +8,46 @@ use super::shupai_map::SHUPAI_MAP;
 use super::wanzi_19_map::WANZI_19_MAP;
 use super::zipai_map::ZIPAI_MAP;
 use crate::bingpai::Bingpai;
-use crate::constants::NUM_TILE_INDEX;
 use crate::shoupai::{FuluMianziList, FuluMianziListExt};
-use bitvec::prelude::*;
 use std::cmp::min;
 
-type AllTileFlag = BitArr!(for NUM_TILE_INDEX, in u64);
-
-#[inline]
-fn merge_flags(m: u16, p: u16, s: u16, z: u16) -> AllTileFlag {
+/*#[inline]
+fn merge_flags(m: u16, p: u16, s: u16, z: u16) -> u64 {
     let mut all_color: u64 = 0;
     all_color |= m as u64;
     all_color |= (p as u64) << 9;
     all_color |= (s as u64) << 18;
     all_color |= (z as u64) << 27;
-    AllTileFlag::from([all_color; 1])
+    all_color
+}*/
+
+#[inline]
+fn split_flags(all_color: u64) -> (u16, u16, u16, u16) {
+    let m = (all_color & 0b111111111) as u16;
+    let p = ((all_color >> 9) & 0b111111111) as u16;
+    let s = ((all_color >> 18) & 0b111111111) as u16;
+    let z = ((all_color >> 27) & 0b1111111) as u16;
+    (m, p, s, z)
 }
 
-fn count_4_tiles_in_shoupai(
-    bingpai: &Bingpai,
-    fulu_mianzi_list: &Option<FuluMianziList>,
-) -> AllTileFlag {
+fn count_4_tiles_in_shoupai(bingpai: &Bingpai, fulu_mianzi_list: &Option<FuluMianziList>) -> u64 {
     match fulu_mianzi_list {
-        None => {
-            bingpai
-                .iter()
-                .enumerate()
-                .fold(AllTileFlag::ZERO, |mut acc, (i, &num_tile_bingpai)| {
-                    if num_tile_bingpai == 4 {
-                        acc.set(i, true);
-                    }
-                    acc
-                })
-        }
+        None => bingpai
+            .iter()
+            .enumerate()
+            .fold(0, |mut acc, (i, &num_tile_bingpai)| {
+                if num_tile_bingpai == 4 {
+                    acc |= 1 << i;
+                }
+                acc
+            }),
         Some(f) => {
             let fulupai = f.to_fulupai();
             bingpai.iter().zip(fulupai.iter()).enumerate().fold(
-                AllTileFlag::ZERO,
+                0,
                 |mut acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
                     if (num_tile_bingpai + num_tile_fulupai) == 4 {
-                        acc.set(i, true);
+                        acc |= 1 << i;
                     }
                     acc
                 },
@@ -56,21 +56,40 @@ fn count_4_tiles_in_shoupai(
     }
 }
 
-fn add(lhs: &mut MapValue, rhs: &MapValue) {
+fn modify_pack(pack: (u8, u16), four_tiles: u16) -> (u8, u16) {
+    const MAX_REPLACEMENT_NUMBER: u8 = 9;
+    let remaining_necesaary_tiles = pack.1 & !four_tiles;
+
+    if pack.0 != 0 && remaining_necesaary_tiles == 0 {
+        (MAX_REPLACEMENT_NUMBER, 0)
+    } else {
+        (pack.0, remaining_necesaary_tiles)
+    }
+}
+
+fn modify_entry(entry: MapValue, four_tiles: u16) -> MapValue {
+    let mut modified = entry;
+    modified.iter_mut().for_each(|pack| {
+        *pack = modify_pack(*pack, four_tiles);
+    });
+    modified
+}
+
+fn add_partial_replacement_number(lhs: &mut MapValue, rhs: &MapValue) {
     for i in (6..10).rev() {
-        let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
+        let mut r = min(lhs[i].0 + rhs[0].0, lhs[0].0 + rhs[i].0);
         for j in 5..i {
-            r = min(r, min(lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]));
+            r = min(r, min(lhs[j].0 + rhs[i - j].0, lhs[i - j].0 + rhs[j].0));
         }
-        lhs[i] = r;
+        lhs[i].0 = r;
     }
 
     for i in (1..6).rev() {
-        let mut r = lhs[i] + rhs[0];
+        let mut r = lhs[i].0 + rhs[0].0;
         for j in 0..i {
-            r = min(r, lhs[j] + rhs[i - j]);
+            r = min(r, lhs[j].0 + rhs[i - j].0);
         }
-        lhs[i] = r;
+        lhs[i].0 = r;
     }
 }
 
@@ -87,24 +106,29 @@ pub(in super::super) fn calculate_replacement_number(
                 .map_or(0, |f| f.iter().flatten().count()) as u8
     );
 
-    // let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
+    let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
+    let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
 
     let h0 = hash_shupai(&bingpai[0..9]);
-    let mut pack0 = SHUPAI_MAP[h0];
+    let entry0 = SHUPAI_MAP[h0];
+    let mut modified_entry0 = modify_entry(entry0, four_tiles_m);
 
     let h1 = hash_shupai(&bingpai[9..18]);
-    let pack1 = SHUPAI_MAP[h1];
-    add(&mut pack0, &pack1);
+    let entry1 = SHUPAI_MAP[h1];
+    let modified_entry1 = modify_entry(entry1, four_tiles_p);
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry1);
 
     let h2 = hash_shupai(&bingpai[18..27]);
-    let pack2 = SHUPAI_MAP[h2];
-    add(&mut pack0, &pack2);
+    let entry2 = SHUPAI_MAP[h2];
+    let modified_entry2 = modify_entry(entry2, four_tiles_s);
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry2);
 
     let h3 = hash_zipai(&bingpai[27..34]);
-    let pack3 = ZIPAI_MAP[h3];
-    add(&mut pack0, &pack3);
+    let entry3 = ZIPAI_MAP[h3];
+    let modified_entry3 = modify_entry(entry3, four_tiles_z);
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry3);
 
-    pack0[5 + num_required_melds as usize]
+    modified_entry0[5 + num_required_melds as usize].0
 }
 
 pub(in super::super) fn calculate_replacement_number_3_player(
@@ -120,24 +144,29 @@ pub(in super::super) fn calculate_replacement_number_3_player(
                 .map_or(0, |f| f.iter().flatten().count()) as u8
     );
 
-    //let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
+    let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
+    let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
 
     let h0 = hash_19m(&bingpai[0..9]);
-    let mut pack0 = WANZI_19_MAP[h0];
+    let entry0 = WANZI_19_MAP[h0];
+    let mut modified_entry0 = modify_entry(entry0, four_tiles_m);
 
     let h1 = hash_shupai(&bingpai[9..18]);
-    let pack1 = SHUPAI_MAP[h1];
-    add(&mut pack0, &pack1);
+    let entry1 = SHUPAI_MAP[h1];
+    let modified_entry1 = modify_entry(entry1, four_tiles_p);
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry1);
 
     let h2 = hash_shupai(&bingpai[18..27]);
-    let pack2 = SHUPAI_MAP[h2];
-    add(&mut pack0, &pack2);
+    let entry2 = SHUPAI_MAP[h2];
+    let modified_entry2 = modify_entry(entry2, four_tiles_s);
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry2);
 
     let h3 = hash_zipai(&bingpai[27..34]);
-    let pack3 = ZIPAI_MAP[h3];
-    add(&mut pack0, &pack3);
+    let entry3 = ZIPAI_MAP[h3];
+    let modified_entry3 = modify_entry(entry3, four_tiles_z);
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry3);
 
-    pack0[5 + num_required_melds as usize]
+    modified_entry0[5 + num_required_melds as usize].0
 }
 
 #[cfg(test)]
