@@ -281,7 +281,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn calculate_replacement_number_incomplete_hand_4_melds_without_a_pair() {
         let bingpai: Bingpai = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, // m
