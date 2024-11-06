@@ -11,7 +11,7 @@ use random_hand::{
 };
 use xiangting::calculate_replacement_number;
 
-const NUM_HAND: usize = 10_000_000;
+const NUM_HAND: usize = 100_000_000;
 const SAMPLE_SIZE: usize = 10_000;
 const NUM_RESAMPLE: usize = 100_000;
 
