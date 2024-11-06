@@ -21,7 +21,7 @@ use xiangting::standard::zipai_table::ZIPAI_SIZE;
 type Map = Vec<MapValue>;
 
 fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
-    let mut pack = [0u8; 10];
+    let mut pack = [(0u8, 0u16); 10];
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
             const MAX_REPLACEMENT_NUMBER: u8 = 9;
@@ -38,14 +38,14 @@ fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
                 INITIAL_WINNING_HAND,
                 MAX_REPLACEMENT_NUMBER,
             );
-            pack[(num_meld + num_pair * 5) as usize] = min_replacement_number;
+            pack[(num_meld + num_pair * 5) as usize].0 = min_replacement_number;
         }
     }
     pack
 }
 
 fn pack_zipai_replacement_numbers(hand: &[u8; 7]) -> MapValue {
-    let mut pack = [0u8; 10];
+    let mut pack = [(0u8, 0u16); 10];
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
             const MAX_REPLACEMENT_NUMBER: u8 = 9;
@@ -60,14 +60,14 @@ fn pack_zipai_replacement_numbers(hand: &[u8; 7]) -> MapValue {
                 INITIAL_WINNING_HAND,
                 MAX_REPLACEMENT_NUMBER,
             );
-            pack[(num_meld + num_pair * 5) as usize] = min_replacement_number;
+            pack[(num_meld + num_pair * 5) as usize].0 = min_replacement_number;
         }
     }
     pack
 }
 
 fn pack_19m_replacement_numbers(hand: &[u8; 9]) -> MapValue {
-    let mut pack = [0u8; 10];
+    let mut pack = [(0u8, 0u16); 10];
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
             const MAX_REPLACEMENT_NUMBER: u8 = 9;
@@ -82,7 +82,7 @@ fn pack_19m_replacement_numbers(hand: &[u8; 9]) -> MapValue {
                 INITIAL_WINNING_HAND,
                 MAX_REPLACEMENT_NUMBER,
             );
-            pack[(num_meld + num_pair * 5) as usize] = min_replacement_number;
+            pack[(num_meld + num_pair * 5) as usize].0 = min_replacement_number;
         }
     }
     pack
@@ -167,7 +167,9 @@ fn build_19m_map(hand: &mut [u8; 2], i: usize, n: usize, map: &mut Map) {
     }
 }
 
-fn dump_shupai_map(map: &Map, map_path: &Path) -> io::Result<()> {
+fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
+    assert!([9, 7, 2].contains(&N));
+
     let file = File::create(map_path)?;
     let mut w = BufWriter::new(file);
 
@@ -179,88 +181,35 @@ fn dump_shupai_map(map: &Map, map_path: &Path) -> io::Result<()> {
     )?;
     writeln!(w)?;
     writeln!(w, "use super::core::MapValue;")?;
-    writeln!(w, "use super::shupai_table::SHUPAI_SIZE;")?;
-    writeln!(w)?;
-    writeln!(w, "#[rustfmt::skip]")?;
-    writeln!(
-        w,
-        "pub(super) static SHUPAI_MAP: [MapValue; SHUPAI_SIZE] = ["
-    )?;
 
-    for &entry in map {
-        write!(w, "    [")?;
-        for (i, pack) in entry.iter().enumerate() {
-            let separator = if i < 9 { ", " } else { "" };
-            write!(w, "{}{}", pack, separator)?;
-        }
-        writeln!(w, "],")?;
+    match N {
+        9 => writeln!(w, "use super::shupai_table::SHUPAI_SIZE;")?,
+        7 => writeln!(w, "use super::zipai_table::ZIPAI_SIZE;")?,
+        2 => writeln!(w, "use super::wanzi_19_table::WANZI_19_SIZE;")?,
+        _ => unreachable!(),
     }
 
-    writeln!(w, "];")?;
-
-    w.flush()?;
-
-    Ok(())
-}
-
-fn dump_zipai_map(map: &Map, map_path: &Path) -> io::Result<()> {
-    let file = File::create(map_path)?;
-    let mut w = BufWriter::new(file);
-
-    writeln!(w, "// SPDX-FileCopyrightText: 2024 Apricot S.")?;
-    writeln!(w, "// SPDX-License-Identifier: MIT")?;
-    writeln!(
-        w,
-        "// This file is part of https://github.com/Apricot-S/xiangting"
-    )?;
-    writeln!(w)?;
-    writeln!(w, "use super::core::MapValue;")?;
-    writeln!(w, "use super::zipai_table::ZIPAI_SIZE;")?;
     writeln!(w)?;
     writeln!(w, "#[rustfmt::skip]")?;
-    writeln!(w, "pub(super) static ZIPAI_MAP: [MapValue; ZIPAI_SIZE] = [")?;
 
-    for &entry in map {
-        write!(w, "    [")?;
-        for (i, pack) in entry.iter().enumerate() {
-            let separator = if i < 9 { ", " } else { "" };
-            write!(w, "{}{}", pack, separator)?;
-        }
-        writeln!(w, "],")?;
+    match N {
+        9 => writeln!(
+            w,
+            "pub(super) static SHUPAI_MAP: [MapValue; SHUPAI_SIZE] = ["
+        )?,
+        7 => writeln!(w, "pub(super) static ZIPAI_MAP: [MapValue; ZIPAI_SIZE] = [")?,
+        2 => writeln!(
+            w,
+            "pub(super) static WANZI_19_MAP: [MapValue; WANZI_19_SIZE] = ["
+        )?,
+        _ => unreachable!(),
     }
 
-    writeln!(w, "];")?;
-
-    w.flush()?;
-
-    Ok(())
-}
-
-fn dump_19m_map(map: &Map, map_path: &Path) -> io::Result<()> {
-    let file = File::create(map_path)?;
-    let mut w = BufWriter::new(file);
-
-    writeln!(w, "// SPDX-FileCopyrightText: 2024 Apricot S.")?;
-    writeln!(w, "// SPDX-License-Identifier: MIT")?;
-    writeln!(
-        w,
-        "// This file is part of https://github.com/Apricot-S/xiangting"
-    )?;
-    writeln!(w)?;
-    writeln!(w, "use super::core::MapValue;")?;
-    writeln!(w, "use super::wanzi_19_table::WANZI_19_SIZE;")?;
-    writeln!(w)?;
-    writeln!(w, "#[rustfmt::skip]")?;
-    writeln!(
-        w,
-        "pub(super) static WANZI_19_MAP: [MapValue; WANZI_19_SIZE] = ["
-    )?;
-
     for &entry in map {
         write!(w, "    [")?;
         for (i, pack) in entry.iter().enumerate() {
             let separator = if i < 9 { ", " } else { "" };
-            write!(w, "{}{}", pack, separator)?;
+            write!(w, "{}{}", pack.0, separator)?;
         }
         writeln!(w, "],")?;
     }
@@ -288,28 +237,28 @@ fn main() {
 
     {
         let mut shupai_map = Map::new();
-        shupai_map.resize(SHUPAI_SIZE, [0; 10]);
+        shupai_map.resize(SHUPAI_SIZE, [(0, 0); 10]);
         let mut hand = [0u8; 9];
         build_shupai_map(&mut hand, 0, 0, &mut shupai_map);
 
-        dump_shupai_map(&shupai_map, shupai_map_path).expect("Failed to dump shupai map");
+        dump_map::<9>(&shupai_map, shupai_map_path).expect("Failed to dump shupai map");
     }
 
     {
         let mut zipai_map = Map::new();
-        zipai_map.resize(ZIPAI_SIZE, [0; 10]);
+        zipai_map.resize(ZIPAI_SIZE, [(0, 0); 10]);
         let mut hand = [0u8; 7];
         build_zipai_map(&mut hand, 0, 0, &mut zipai_map);
 
-        dump_zipai_map(&zipai_map, zipai_map_path).expect("Failed to dump zipai map");
+        dump_map::<7>(&zipai_map, zipai_map_path).expect("Failed to dump zipai map");
     }
 
     {
         let mut wanzi_19_map = Map::new();
-        wanzi_19_map.resize(WANZI_19_SIZE, [0; 10]);
+        wanzi_19_map.resize(WANZI_19_SIZE, [(0, 0); 10]);
         let mut hand = [0u8; 2];
         build_19m_map(&mut hand, 0, 0, &mut wanzi_19_map);
 
-        dump_19m_map(&wanzi_19_map, wanzi_19_map_path).expect("Failed to dump wanzi 19 map");
+        dump_map::<2>(&wanzi_19_map, wanzi_19_map_path).expect("Failed to dump wanzi 19 map");
     }
 }
