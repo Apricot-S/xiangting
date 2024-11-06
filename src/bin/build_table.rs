@@ -21,7 +21,7 @@ const INIT_ZIPAI_TABLE: ZipaiTableImpl = [[0; 15]; 7];
 const INIT_WANZI_19_TABLE: Wanzi19TableImpl = [[0; 15]; 2];
 
 fn build_table<const N: usize>(i: usize, n: usize, table: &mut TableImpl<N>) -> u32 {
-    assert!(N == 9 || N == 7 || N == 2);
+    assert!([9, 7, 2].contains(&N));
     assert!(i < N);
     assert!(n <= 14);
 
@@ -45,7 +45,7 @@ fn build_table<const N: usize>(i: usize, n: usize, table: &mut TableImpl<N>) -> 
 }
 
 fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Result<()> {
-    assert!(N == 9 || N == 7 || N == 2);
+    assert!([9, 7, 2].contains(&N));
 
     let file = File::create(table_path)?;
     let mut w = BufWriter::new(file);
