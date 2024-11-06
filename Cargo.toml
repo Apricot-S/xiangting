@@ -15,7 +15,6 @@ name = "xiangting"
 path = "src/lib.rs"
 
 [dependencies]
-bitvec = "1.0.1"
 thiserror = "1.0.63"
 
 [dev-dependencies]
