@@ -2,14 +2,11 @@
 
 A library for calculation of deficiency number (a.k.a. xiangting number, 向聴数).
 
-This library is based on the algorithm in [majiang-core/lib/xiangting.js](https://github.com/kobalab/majiang-core/blob/master/lib/xiangting.js).  
+This library is based on the algorithm in [Nyanten](https://github.com/Cryolite/nyanten).  
 However, the following differences apply:
 
-- Calculates the replacement number, which is equal to the deficiency number (a.k.a. xiangting number, 向聴数) plus one.
 - Supports both calculations that include and exclude melds (副露) when considering the four tiles in a hand.
-- The original algorithm miscalculated the deficiency number in some cases. These errors have been corrected in this library, but the calculation speed has deteriorated as a result.
 - Supports three-player mahjong.
-- Does not support short hand or long hand.
 
 Documentation:
 
@@ -60,7 +57,7 @@ fn main() {
 
 In the calculation for a hand with melds (副露), the meld tiles can be included or excluded in the counting of the tiles that exist in four copies within the hand.
 
-If they are not included (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), `None` should be specified for `fulu_mianzi_list`.
+If they are excluded (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), `None` should be specified for `fulu_mianzi_list`.
 
 If they are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be specified for `fulu_mianzi_list`.
 
@@ -112,6 +109,13 @@ fn main() {
     let replacement_number_3p = calculate_replacement_number_3_player(&hand_13, &None);
     assert_eq!(replacement_number_3p.unwrap(), 3u8);
 }
+```
+
+## Build tables and maps (For developers only)
+
+```sh
+xiangting$ scripts/build_table.sh
+xiangting$ scripts/build_map.sh
 ```
 
 ## License

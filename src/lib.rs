@@ -6,14 +6,11 @@
 
 //! A library for calculation of deficiency number (a.k.a. xiangting number, 向聴数).
 //!
-//! This library is based on the algorithm in [majiang-core/lib/xiangting.js](https://github.com/kobalab/majiang-core/blob/master/lib/xiangting.js).
+//! This library is based on the algorithm in [Nyanten](https://github.com/Cryolite/nyanten).
 //! However, the following differences apply:
 //!
-//! - Calculates the replacement number, which is equal to the deficiency number (a.k.a. xiangting number, 向聴数) plus one.
 //! - Supports both calculations that include and exclude melds (副露) when considering the four tiles in a hand.
-//! - The original algorithm miscalculated the deficiency number in some cases. These errors have been corrected in this library, but the calculation speed has deteriorated as a result.
 //! - Supports three-player mahjong.
-//! - Does not support short hand or long hand.
 //!
 //! # Example
 //!
@@ -35,16 +32,32 @@
 //! # }
 //! ```
 
+#[cfg(not(feature = "build-file"))]
 mod bingpai;
+#[cfg(not(feature = "build-file"))]
 mod calculate;
+#[cfg(not(feature = "build-file"))]
 mod constants;
+#[cfg(not(feature = "build-file"))]
 mod fulu_mianzi;
+#[cfg(not(feature = "build-file"))]
 mod qiduizi;
+#[cfg(not(feature = "build-file"))]
 mod shisanyao;
+#[cfg(not(feature = "build-file"))]
 mod shoupai;
+#[cfg(not(feature = "build-file"))]
 mod standard;
 
+#[cfg(not(feature = "build-file"))]
 pub use bingpai::Bingpai;
+#[cfg(not(feature = "build-file"))]
 pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
+#[cfg(not(feature = "build-file"))]
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, InvalidFuluMianziError};
+#[cfg(not(feature = "build-file"))]
 pub use shoupai::{FuluMianziList, InvalidShoupaiError};
+
+#[cfg(feature = "build-map")]
+#[doc(hidden)]
+pub mod standard;
