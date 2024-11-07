@@ -1,7 +1,7 @@
 [package]
 name = "xiangting"
 description = "A library for calculation of deficiency number (a.k.a. xiangting number, 向聴数)."
-version = "1.0.1"
+version = "2.0.0"
 authors = ["Apricot S."]
 edition = "2021"
 license = "MIT"
