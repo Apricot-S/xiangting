@@ -11,16 +11,6 @@ use crate::bingpai::Bingpai;
 use crate::shoupai::{FuluMianziList, FuluMianziListExt};
 use std::cmp::min;
 
-/*#[inline]
-fn merge_flags(m: u16, p: u16, s: u16, z: u16) -> u64 {
-    let mut all_color: u64 = 0;
-    all_color |= m as u64;
-    all_color |= (p as u64) << 9;
-    all_color |= (s as u64) << 18;
-    all_color |= (z as u64) << 27;
-    all_color
-}*/
-
 #[inline]
 fn split_flags(all_color: u64) -> (u16, u16, u16, u16) {
     let m = (all_color & 0b111111111) as u16;
@@ -30,30 +20,17 @@ fn split_flags(all_color: u64) -> (u16, u16, u16, u16) {
     (m, p, s, z)
 }
 
-fn count_4_tiles_in_shoupai(bingpai: &Bingpai, fulu_mianzi_list: &Option<FuluMianziList>) -> u64 {
-    match fulu_mianzi_list {
-        None => bingpai
-            .iter()
-            .enumerate()
-            .fold(0, |mut acc, (i, &num_tile_bingpai)| {
-                if num_tile_bingpai == 4 {
-                    acc |= 1 << i;
-                }
-                acc
-            }),
-        Some(f) => {
-            let fulupai = f.to_fulupai();
-            bingpai.iter().zip(fulupai.iter()).enumerate().fold(
-                0,
-                |mut acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
-                    if (num_tile_bingpai + num_tile_fulupai) == 4 {
-                        acc |= 1 << i;
-                    }
-                    acc
-                },
-            )
-        }
-    }
+fn count_4_tiles_in_shoupai(bingpai: &Bingpai, fulu_mianzi_list: &FuluMianziList) -> u64 {
+    let fulupai = fulu_mianzi_list.to_fulupai();
+    bingpai.iter().zip(fulupai.iter()).enumerate().fold(
+        0,
+        |mut acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
+            if (num_tile_bingpai + num_tile_fulupai) == 4 {
+                acc |= 1 << i;
+            }
+            acc
+        },
+    )
 }
 
 fn modify_pack(pack: (u8, u16), four_tiles: u16) -> (u8, u16) {
@@ -106,26 +83,35 @@ pub(in super::super) fn calculate_replacement_number(
                 .map_or(0, |f| f.iter().flatten().count()) as u8
     );
 
-    let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
-    let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
-
     let h0 = hash_shupai(&bingpai[0..9]);
-    let entry0 = SHUPAI_MAP[h0];
-    let mut modified_entry0 = modify_entry(entry0, four_tiles_m);
-
     let h1 = hash_shupai(&bingpai[9..18]);
-    let entry1 = SHUPAI_MAP[h1];
-    let modified_entry1 = modify_entry(entry1, four_tiles_p);
-    add_partial_replacement_number(&mut modified_entry0, &modified_entry1);
-
     let h2 = hash_shupai(&bingpai[18..27]);
-    let entry2 = SHUPAI_MAP[h2];
-    let modified_entry2 = modify_entry(entry2, four_tiles_s);
-    add_partial_replacement_number(&mut modified_entry0, &modified_entry2);
-
     let h3 = hash_zipai(&bingpai[27..34]);
+
+    let entry0 = SHUPAI_MAP[h0];
+    let entry1 = SHUPAI_MAP[h1];
+    let entry2 = SHUPAI_MAP[h2];
     let entry3 = ZIPAI_MAP[h3];
-    let modified_entry3 = modify_entry(entry3, four_tiles_z);
+
+    let (mut modified_entry0, modified_entry1, modified_entry2, modified_entry3) =
+        match fulu_mianzi_list {
+            None => (entry0, entry1, entry2, entry3),
+            Some(f) => {
+                let four_tiles = count_4_tiles_in_shoupai(&bingpai, f);
+                let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) =
+                    split_flags(four_tiles);
+
+                (
+                    modify_entry(entry0, four_tiles_m),
+                    modify_entry(entry1, four_tiles_p),
+                    modify_entry(entry2, four_tiles_s),
+                    modify_entry(entry3, four_tiles_z),
+                )
+            }
+        };
+
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry1);
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry2);
     add_partial_replacement_number(&mut modified_entry0, &modified_entry3);
 
     modified_entry0[5 + num_required_melds as usize].0
@@ -144,26 +130,35 @@ pub(in super::super) fn calculate_replacement_number_3_player(
                 .map_or(0, |f| f.iter().flatten().count()) as u8
     );
 
-    let four_tiles = count_4_tiles_in_shoupai(&bingpai, fulu_mianzi_list);
-    let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
-
     let h0 = hash_19m(&bingpai[0..9]);
-    let entry0 = WANZI_19_MAP[h0];
-    let mut modified_entry0 = modify_entry(entry0, four_tiles_m);
-
     let h1 = hash_shupai(&bingpai[9..18]);
-    let entry1 = SHUPAI_MAP[h1];
-    let modified_entry1 = modify_entry(entry1, four_tiles_p);
-    add_partial_replacement_number(&mut modified_entry0, &modified_entry1);
-
     let h2 = hash_shupai(&bingpai[18..27]);
-    let entry2 = SHUPAI_MAP[h2];
-    let modified_entry2 = modify_entry(entry2, four_tiles_s);
-    add_partial_replacement_number(&mut modified_entry0, &modified_entry2);
-
     let h3 = hash_zipai(&bingpai[27..34]);
+
+    let entry0 = WANZI_19_MAP[h0];
+    let entry1 = SHUPAI_MAP[h1];
+    let entry2 = SHUPAI_MAP[h2];
     let entry3 = ZIPAI_MAP[h3];
-    let modified_entry3 = modify_entry(entry3, four_tiles_z);
+
+    let (mut modified_entry0, modified_entry1, modified_entry2, modified_entry3) =
+        match fulu_mianzi_list {
+            None => (entry0, entry1, entry2, entry3),
+            Some(f) => {
+                let four_tiles = count_4_tiles_in_shoupai(&bingpai, f);
+                let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) =
+                    split_flags(four_tiles);
+
+                (
+                    modify_entry(entry0, four_tiles_m),
+                    modify_entry(entry1, four_tiles_p),
+                    modify_entry(entry2, four_tiles_s),
+                    modify_entry(entry3, four_tiles_z),
+                )
+            }
+        };
+
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry1);
+    add_partial_replacement_number(&mut modified_entry0, &modified_entry2);
     add_partial_replacement_number(&mut modified_entry0, &modified_entry3);
 
     modified_entry0[5 + num_required_melds as usize].0
