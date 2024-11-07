@@ -13,7 +13,7 @@ pub type ZipaiTable = Table<7>;
 pub type Wanzi19Table = Table<2>;
 
 // map_value[x].0 : replacement number
-// map_value[x].1 : necesaary tiles and unnecessary tiles
+// map_value[x].1 : necesaary tiles
 // [0] : 0 pairs, 0 melds
 // [1] : 0 pairs, 1 melds
 // [2] : 0 pairs, 2 melds
