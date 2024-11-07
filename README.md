@@ -111,6 +111,13 @@ fn main() {
 }
 ```
 
+## Build tables and maps (For developers only)
+
+```sh
+xiangting$ scripts/build_table.sh
+xiangting$ scripts/build_map.sh
+```
+
 ## License
 
 Copyright (c) Apricot S. All rights reserved.
