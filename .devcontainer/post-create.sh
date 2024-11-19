@@ -19,6 +19,7 @@ sudo rm -rf /var/lib/apt/lists/*
 
 sudo chown vscode:vscode /workspaces
 
+sudo chown -R vscode:vscode scripts
 chmod +x scripts/*.sh
 
 # Clone `nyanten`.
