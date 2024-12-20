@@ -29,11 +29,10 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
         for num_meld in 0..=4 {
             let (replacement_number, necessary_tiles) = match N {
                 9 => {
-                    let mut hand9 = [0u8; 9];
-                    hand9.copy_from_slice(&hand[0..9]);
+                    let hand9 = hand.first_chunk::<9>().unwrap();
                     const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
                     get_shupai_replacement_number(
-                        &hand9,
+                        hand9,
                         num_meld,
                         num_pair,
                         0,
@@ -47,11 +46,10 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
                     )
                 }
                 7 => {
-                    let mut hand7 = [0u8; 7];
-                    hand7.copy_from_slice(&hand[0..7]);
+                    let hand7 = hand.first_chunk::<7>().unwrap();
                     const INITIAL_WINNING_HAND: [u8; 7] = [0u8; 7];
                     get_zipai_replacement_number(
-                        &hand7,
+                        hand7,
                         num_meld,
                         num_pair,
                         0,
