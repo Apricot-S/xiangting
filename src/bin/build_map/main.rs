@@ -20,25 +20,65 @@ use xiangting::standard::zipai_table::ZIPAI_SIZE;
 
 type Map = Vec<MapValue>;
 
-fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
+fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
+    assert!([9, 7, 2].contains(&N));
+    const MAX_REPLACEMENT_NUMBER: u8 = 9;
+
     let mut pack = [0u32; 5];
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
-            const MAX_REPLACEMENT_NUMBER: u8 = 9;
-            const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
-            let (replacement_number, necessary_tiles) = get_shupai_replacement_number(
-                hand,
-                num_meld,
-                num_pair,
-                0,
-                0,
-                0,
-                0,
-                0,
-                INITIAL_WINNING_HAND,
-                MAX_REPLACEMENT_NUMBER,
-                0,
-            );
+            let (replacement_number, necessary_tiles) = match N {
+                9 => {
+                    let mut hand9 = [0u8; 9];
+                    hand9.copy_from_slice(&hand[0..9]);
+                    const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
+                    get_shupai_replacement_number(
+                        &hand9,
+                        num_meld,
+                        num_pair,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        INITIAL_WINNING_HAND,
+                        MAX_REPLACEMENT_NUMBER,
+                        0,
+                    )
+                }
+                7 => {
+                    let mut hand7 = [0u8; 7];
+                    hand7.copy_from_slice(&hand[0..7]);
+                    const INITIAL_WINNING_HAND: [u8; 7] = [0u8; 7];
+                    get_zipai_replacement_number(
+                        &hand7,
+                        num_meld,
+                        num_pair,
+                        0,
+                        0,
+                        0,
+                        INITIAL_WINNING_HAND,
+                        MAX_REPLACEMENT_NUMBER,
+                        0,
+                    )
+                }
+                2 => {
+                    let full_hand = [hand[0], 0, 0, 0, 0, 0, 0, 0, hand[1]];
+                    const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
+                    get_19m_replacement_number(
+                        &full_hand,
+                        num_meld,
+                        num_pair,
+                        0,
+                        0,
+                        0,
+                        INITIAL_WINNING_HAND,
+                        MAX_REPLACEMENT_NUMBER,
+                        0,
+                    )
+                }
+                _ => unreachable!(),
+            };
             let shift = if num_pair == 0 { 0 } else { 16 };
             pack[num_meld as usize] |= (replacement_number as u32) << shift;
             pack[num_meld as usize] |= (necessary_tiles as u32) << (shift + 4);
@@ -47,81 +87,28 @@ fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
     pack
 }
 
-fn pack_zipai_replacement_numbers(hand: &[u8; 7]) -> MapValue {
-    let mut pack = [0u32; 5];
-    for num_pair in 0..=1 {
-        for num_meld in 0..=4 {
-            const MAX_REPLACEMENT_NUMBER: u8 = 9;
-            const INITIAL_WINNING_HAND: [u8; 7] = [0u8; 7];
-            let (replacement_number, necessary_tiles) = get_zipai_replacement_number(
-                hand,
-                num_meld,
-                num_pair,
-                0,
-                0,
-                0,
-                INITIAL_WINNING_HAND,
-                MAX_REPLACEMENT_NUMBER,
-                0,
-            );
-            let shift = if num_pair == 0 { 0 } else { 16 };
-            pack[num_meld as usize] |= (replacement_number as u32) << shift;
-            pack[num_meld as usize] |= (necessary_tiles as u32) << (shift + 4);
+fn create_entry<const N: usize>(hand: &[u8; N], map: &mut Map) {
+    assert!([9, 7, 2].contains(&N));
+
+    let h = match N {
+        9 => hash_shupai(hand),
+        7 => hash_zipai(hand),
+        2 => {
+            let full_hand = [hand[0], 0, 0, 0, 0, 0, 0, 0, hand[1]];
+            hash_19m(&full_hand)
         }
-    }
-    pack
+        _ => unreachable!(),
+    };
+    map[h] = pack_replacement_numbers(hand);
 }
 
-fn pack_19m_replacement_numbers(hand: &[u8; 9]) -> MapValue {
-    let mut pack = [0u32; 5];
-    for num_pair in 0..=1 {
-        for num_meld in 0..=4 {
-            const MAX_REPLACEMENT_NUMBER: u8 = 9;
-            const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
-            let (replacement_number, necessary_tiles) = get_19m_replacement_number(
-                hand,
-                num_meld,
-                num_pair,
-                0,
-                0,
-                0,
-                INITIAL_WINNING_HAND,
-                MAX_REPLACEMENT_NUMBER,
-                0,
-            );
-            let shift = if num_pair == 0 { 0 } else { 16 };
-            pack[num_meld as usize] |= (replacement_number as u32) << shift;
-            pack[num_meld as usize] |= (necessary_tiles as u32) << (shift + 4);
-        }
-    }
-    pack
-}
-
-fn create_shupai_entry(hand: &[u8; 9], map: &mut Map) {
-    let h = hash_shupai(hand);
-    let entry = pack_shupai_replacement_numbers(hand);
-    map[h] = entry;
-}
-
-fn create_zipai_entry(hand: &[u8; 7], map: &mut Map) {
-    let h = hash_zipai(hand);
-    let entry = pack_zipai_replacement_numbers(hand);
-    map[h] = entry;
-}
-
-fn create_19m_entry(hand: &[u8; 2], map: &mut Map) {
-    let full_hand = [hand[0], 0, 0, 0, 0, 0, 0, 0, hand[1]];
-    let h = hash_19m(&full_hand);
-    let entry = pack_19m_replacement_numbers(&full_hand);
-    map[h] = entry;
-}
-
-fn build_shupai_map(hand: &mut [u8; 9], i: usize, n: usize, map: &mut Map) {
-    debug_assert!(i <= 9);
+fn build_map<const N: usize>(hand: &mut [u8; N], i: usize, n: usize, map: &mut Map) {
+    debug_assert!([9, 7, 2].contains(&N));
+    debug_assert!(i <= N);
     debug_assert!(n <= 14);
 
-    if i == 9 {
-        create_shupai_entry(hand, map);
+    if i == N {
+        create_entry(hand, map);
         return;
     }
 
@@ -131,47 +118,7 @@ fn build_shupai_map(hand: &mut [u8; 9], i: usize, n: usize, map: &mut Map) {
         }
 
         hand[i] = c as u8;
-        build_shupai_map(hand, i + 1, n + c, map);
-        hand[i] = 0;
-    }
-}
-
-fn build_zipai_map(hand: &mut [u8; 7], i: usize, n: usize, map: &mut Map) {
-    debug_assert!(i <= 7);
-    debug_assert!(n <= 14);
-
-    if i == 7 {
-        create_zipai_entry(hand, map);
-        return;
-    }
-
-    for c in 0..=4 {
-        if n + c > 14 {
-            break;
-        }
-
-        hand[i] = c as u8;
-        build_zipai_map(hand, i + 1, n + c, map);
-        hand[i] = 0;
-    }
-}
-
-fn build_19m_map(hand: &mut [u8; 2], i: usize, n: usize, map: &mut Map) {
-    debug_assert!(i <= 2);
-    debug_assert!(n <= 8);
-
-    if i == 2 {
-        create_19m_entry(hand, map);
-        return;
-    }
-
-    for c in 0..=4 {
-        if n + c > 8 {
-            break;
-        }
-
-        hand[i] = c as u8;
-        build_19m_map(hand, i + 1, n + c, map);
+        build_map(hand, i + 1, n + c, map);
         hand[i] = 0;
     }
 }
@@ -248,7 +195,7 @@ fn main() {
         let mut shupai_map = Map::new();
         shupai_map.resize(SHUPAI_SIZE, [0u32; 5]);
         let mut hand = [0u8; 9];
-        build_shupai_map(&mut hand, 0, 0, &mut shupai_map);
+        build_map(&mut hand, 0, 0, &mut shupai_map);
 
         dump_map::<9>(&shupai_map, shupai_map_path).expect("Failed to dump shupai map");
     }
@@ -257,7 +204,7 @@ fn main() {
         let mut zipai_map = Map::new();
         zipai_map.resize(ZIPAI_SIZE, [0u32; 5]);
         let mut hand = [0u8; 7];
-        build_zipai_map(&mut hand, 0, 0, &mut zipai_map);
+        build_map(&mut hand, 0, 0, &mut zipai_map);
 
         dump_map::<7>(&zipai_map, zipai_map_path).expect("Failed to dump zipai map");
     }
@@ -266,7 +213,7 @@ fn main() {
         let mut wanzi_19_map = Map::new();
         wanzi_19_map.resize(WANZI_19_SIZE, [0u32; 5]);
         let mut hand = [0u8; 2];
-        build_19m_map(&mut hand, 0, 0, &mut wanzi_19_map);
+        build_map(&mut hand, 0, 0, &mut wanzi_19_map);
 
         dump_map::<2>(&wanzi_19_map, wanzi_19_map_path).expect("Failed to dump wanzi 19 map");
     }
