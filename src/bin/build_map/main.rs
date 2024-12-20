@@ -218,7 +218,7 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
         write!(w, "    [")?;
         for (i, pack) in entry.iter().enumerate() {
             let separator = if i < 4 { ", " } else { "" };
-            write!(w, "{}{}", pack, separator)?;
+            write!(w, "0x{:X}{}", pack, separator)?;
         }
         writeln!(w, "],")?;
     }
