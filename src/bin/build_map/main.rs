@@ -21,12 +21,12 @@ use xiangting::standard::zipai_table::ZIPAI_SIZE;
 type Map = Vec<MapValue>;
 
 fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
-    let mut pack = [(0u8, 0u16); 10];
+    let mut pack = [0u32; 5];
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
             const MAX_REPLACEMENT_NUMBER: u8 = 9;
             const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
-            let (replacement_number, necesaary_tiles) = get_shupai_replacement_number(
+            let (replacement_number, necessary_tiles) = get_shupai_replacement_number(
                 hand,
                 num_meld,
                 num_pair,
@@ -39,21 +39,21 @@ fn pack_shupai_replacement_numbers(hand: &[u8; 9]) -> MapValue {
                 MAX_REPLACEMENT_NUMBER,
                 0,
             );
-            let index = (num_meld + num_pair * 5) as usize;
-            pack[index].0 = replacement_number;
-            pack[index].1 = necesaary_tiles;
+            let shift = if num_pair == 0 { 0 } else { 16 };
+            pack[num_meld as usize] |= (replacement_number as u32) << shift;
+            pack[num_meld as usize] |= (necessary_tiles as u32) << (shift + 4);
         }
     }
     pack
 }
 
 fn pack_zipai_replacement_numbers(hand: &[u8; 7]) -> MapValue {
-    let mut pack = [(0u8, 0u16); 10];
+    let mut pack = [0u32; 5];
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
             const MAX_REPLACEMENT_NUMBER: u8 = 9;
             const INITIAL_WINNING_HAND: [u8; 7] = [0u8; 7];
-            let (replacement_number, necesaary_tiles) = get_zipai_replacement_number(
+            let (replacement_number, necessary_tiles) = get_zipai_replacement_number(
                 hand,
                 num_meld,
                 num_pair,
@@ -64,21 +64,21 @@ fn pack_zipai_replacement_numbers(hand: &[u8; 7]) -> MapValue {
                 MAX_REPLACEMENT_NUMBER,
                 0,
             );
-            let index = (num_meld + num_pair * 5) as usize;
-            pack[index].0 = replacement_number;
-            pack[index].1 = necesaary_tiles;
+            let shift = if num_pair == 0 { 0 } else { 16 };
+            pack[num_meld as usize] |= (replacement_number as u32) << shift;
+            pack[num_meld as usize] |= (necessary_tiles as u32) << (shift + 4);
         }
     }
     pack
 }
 
 fn pack_19m_replacement_numbers(hand: &[u8; 9]) -> MapValue {
-    let mut pack = [(0u8, 0u16); 10];
+    let mut pack = [0u32; 5];
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
             const MAX_REPLACEMENT_NUMBER: u8 = 9;
             const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
-            let (replacement_number, necesaary_tiles) = get_19m_replacement_number(
+            let (replacement_number, necessary_tiles) = get_19m_replacement_number(
                 hand,
                 num_meld,
                 num_pair,
@@ -89,9 +89,9 @@ fn pack_19m_replacement_numbers(hand: &[u8; 9]) -> MapValue {
                 MAX_REPLACEMENT_NUMBER,
                 0,
             );
-            let index = (num_meld + num_pair * 5) as usize;
-            pack[index].0 = replacement_number;
-            pack[index].1 = necesaary_tiles;
+            let shift = if num_pair == 0 { 0 } else { 16 };
+            pack[num_meld as usize] |= (replacement_number as u32) << shift;
+            pack[num_meld as usize] |= (necessary_tiles as u32) << (shift + 4);
         }
     }
     pack
@@ -217,8 +217,8 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     for &entry in map {
         write!(w, "    [")?;
         for (i, pack) in entry.iter().enumerate() {
-            let separator = if i < 9 { ", " } else { "" };
-            write!(w, "({}, {}){}", pack.0, pack.1, separator)?;
+            let separator = if i < 4 { ", " } else { "" };
+            write!(w, "{}{}", pack, separator)?;
         }
         writeln!(w, "],")?;
     }
@@ -246,7 +246,7 @@ fn main() {
 
     {
         let mut shupai_map = Map::new();
-        shupai_map.resize(SHUPAI_SIZE, [(0, 0); 10]);
+        shupai_map.resize(SHUPAI_SIZE, [0u32; 5]);
         let mut hand = [0u8; 9];
         build_shupai_map(&mut hand, 0, 0, &mut shupai_map);
 
@@ -255,7 +255,7 @@ fn main() {
 
     {
         let mut zipai_map = Map::new();
-        zipai_map.resize(ZIPAI_SIZE, [(0, 0); 10]);
+        zipai_map.resize(ZIPAI_SIZE, [0u32; 5]);
         let mut hand = [0u8; 7];
         build_zipai_map(&mut hand, 0, 0, &mut zipai_map);
 
@@ -264,7 +264,7 @@ fn main() {
 
     {
         let mut wanzi_19_map = Map::new();
-        wanzi_19_map.resize(WANZI_19_SIZE, [(0, 0); 10]);
+        wanzi_19_map.resize(WANZI_19_SIZE, [0u32; 5]);
         let mut hand = [0u8; 2];
         build_19m_map(&mut hand, 0, 0, &mut wanzi_19_map);
 
