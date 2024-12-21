@@ -44,17 +44,16 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
                 }
                 7 => {
                     let hand7 = hand.first_chunk::<7>().unwrap();
-                    const INITIAL_WINNING_HAND: [u8; 7] = [0u8; 7];
+                    let mut initial_winning_hand: [u8; 7] = [0u8; 7];
                     get_zipai_replacement_number(
                         hand7,
+                        &mut initial_winning_hand,
+                        0,
+                        0,
                         num_meld,
                         num_pair,
                         0,
-                        0,
-                        0,
-                        INITIAL_WINNING_HAND,
                         MAX_REPLACEMENT_NUMBER,
-                        0,
                     )
                 }
                 2 => {
