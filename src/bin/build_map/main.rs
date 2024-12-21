@@ -21,7 +21,7 @@ use xiangting::standard::zipai_table::ZIPAI_SIZE;
 type Map = Vec<MapValue>;
 
 fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
-    assert!([9, 7, 2].contains(&N));
+    debug_assert!([9, 7, 2].contains(&N));
     const MAX_REPLACEMENT_NUMBER: u8 = 9;
 
     let mut pack = [0u32; 5];
@@ -86,7 +86,7 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
 }
 
 fn create_entry<const N: usize>(hand: &[u8; N], map: &mut Map) {
-    assert!([9, 7, 2].contains(&N));
+    debug_assert!([9, 7, 2].contains(&N));
 
     let h = match N {
         9 => hash_shupai(hand),
@@ -122,7 +122,7 @@ fn build_map<const N: usize>(hand: &mut [u8; N], i: usize, n: usize, map: &mut M
 }
 
 fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
-    assert!([9, 7, 2].contains(&N));
+    debug_assert!([9, 7, 2].contains(&N));
 
     let file = File::create(map_path)?;
     let mut w = BufWriter::new(file);
