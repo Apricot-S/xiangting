@@ -114,8 +114,7 @@ fn main() {
 ## Build tables and maps (For developers only)
 
 ```sh
-xiangting$ scripts/build_table.sh
-xiangting$ scripts/build_map.sh
+xiangting$ scripts/build_table.sh && scripts/build_map.sh
 ```
 
 ## License
