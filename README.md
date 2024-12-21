@@ -38,6 +38,8 @@ The hand is represented by the number of each tile in an array of `[u8; 34]`. Th
 | ----- | --------- | ---------- | --------- | ---------- | ---------- | ---------- | -------- |
 | Tile  | East (1z) | South (2z) | West (3z) | North (4z) | White (5z) | Green (6z) | Red (7z) |
 
+Calculates the replacement number, which is equal to the deficiency number (a.k.a. xiangting number, 向聴数) + 1.
+
 ```rust
 use xiangting::calculate_replacement_number;
 
