@@ -105,11 +105,7 @@ pub(super) fn get_shupai_replacement_number(
     }
 
     // Sequences
-    let start_sequence_id = if min_meld_id < NUM_SUIT_IDS {
-        0
-    } else {
-        min_meld_id - NUM_SUIT_IDS
-    };
+    let start_sequence_id = min_meld_id.saturating_sub(NUM_SUIT_IDS);
 
     for sequence_id in start_sequence_id..SEQUENCE_IDS.len() {
         let i = SEQUENCE_IDS[sequence_id];
@@ -118,10 +114,7 @@ pub(super) fn get_shupai_replacement_number(
             continue;
         }
 
-        #[rustfmt::skip]
-        let sequence_distance = if hand[i] <= winning_hand[i] { 1 } else { 0 }
-            + if hand[i + 1] <= winning_hand[i + 1] { 1 } else { 0 }
-            + if hand[i + 2] <= winning_hand[i + 2] { 1 } else { 0 };
+        let sequence_distance = (i..=i + 2).filter(|&i| hand[i] <= winning_hand[i]).count() as u8;
         let new_distance = current_distance + sequence_distance;
 
         if sequence_distance < 3 && new_distance <= upperbound {
