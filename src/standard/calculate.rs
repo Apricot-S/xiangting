@@ -12,7 +12,7 @@ use crate::shoupai::{FuluMianziList, FuluMianziListExt};
 use std::cmp::min;
 
 /// unpacked.0 : Replacement number
-/// unpacked.1 : Necesaary tiles
+/// unpacked.1 : Necessary tiles
 ///
 /// Index:
 /// \[0] : 0 pairs, 0 melds
@@ -82,9 +82,9 @@ fn count_4_tiles_in_shoupai(bingpai: &Bingpai, fulu_mianzi_list: &FuluMianziList
 
 fn modify_number(replacement_number: u8, necessary_tiles: u16, four_tiles: u16) -> u8 {
     const MAX_REPLACEMENT_NUMBER: u8 = 9;
-    let remaining_necesaary_tiles = necessary_tiles & !four_tiles;
+    let remaining_necessary_tiles = necessary_tiles & !four_tiles;
 
-    if replacement_number != 0 && remaining_necesaary_tiles == 0 {
+    if replacement_number != 0 && remaining_necessary_tiles == 0 {
         MAX_REPLACEMENT_NUMBER
     } else {
         replacement_number
