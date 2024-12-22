@@ -196,34 +196,32 @@ pub(super) fn get_zipai_replacement_number(
     }
 
     // Add triplets
-    if min_meld_id < NUM_HONOR_IDS {
-        for i in min_meld_id..NUM_HONOR_IDS {
-            if winning_hand[i] >= 2 {
-                // Can't add a triplet
-                continue;
-            }
+    for i in min_meld_id..NUM_HONOR_IDS {
+        if winning_hand[i] >= 2 {
+            // Can't add a triplet
+            continue;
+        }
 
-            let triplet_distance = if hand[i] <= winning_hand[i] {
-                3
-            } else {
-                (winning_hand[i] + 3).saturating_sub(hand[i])
-            };
-            let new_distance = current_distance + triplet_distance;
+        let triplet_distance = if hand[i] <= winning_hand[i] {
+            3
+        } else {
+            (winning_hand[i] + 3).saturating_sub(hand[i])
+        };
+        let new_distance = current_distance + triplet_distance;
 
-            if triplet_distance < 3 && new_distance <= upperbound {
-                winning_hand[i] += 3;
-                (upperbound, current_necesaary_tiles) = get_zipai_replacement_number(
-                    hand,
-                    winning_hand,
-                    new_distance,
-                    current_necesaary_tiles,
-                    num_left_melds - 1,
-                    num_pair,
-                    i,
-                    upperbound,
-                );
-                winning_hand[i] -= 3;
-            }
+        if triplet_distance < 3 && new_distance <= upperbound {
+            winning_hand[i] += 3;
+            (upperbound, current_necesaary_tiles) = get_zipai_replacement_number(
+                hand,
+                winning_hand,
+                new_distance,
+                current_necesaary_tiles,
+                num_left_melds - 1,
+                num_pair,
+                i,
+                upperbound,
+            );
+            winning_hand[i] -= 3;
         }
     }
 
