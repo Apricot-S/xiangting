@@ -12,16 +12,19 @@ pub type ShupaiTable = Table<9>;
 pub type ZipaiTable = Table<7>;
 pub type Wanzi19Table = Table<2>;
 
-// map_value[x].0 : replacement number
-// map_value[x].1 : necesaary tiles
-// [0] : 0 pairs, 0 melds
-// [1] : 0 pairs, 1 melds
-// [2] : 0 pairs, 2 melds
-// [3] : 0 pairs, 3 melds
-// [4] : 0 pairs, 4 melds
-// [5] : 1 pairs, 0 melds
-// [6] : 1 pairs, 1 melds
-// [7] : 1 pairs, 2 melds
-// [8] : 1 pairs, 3 melds
-// [9] : 1 pairs, 4 melds
-pub type MapValue = [(u8, u16); 10];
+// Each element contains the following structure:
+//
+// [Bits 0-3]: Replacement number without a pair
+// [Bits 4-12]: Necessary tiles without a pair
+// [Bits 13-15]: Unused
+// [Bits 16-19]: Replacement number with a pair
+// [Bits 20-28]: Necessary tiles with a pair
+// [Bits 29-31]: Unused
+//
+// Index:
+// [0]: 0 melds
+// [1]: 1 melds
+// [2]: 2 melds
+// [3]: 3 melds
+// [4]: 4 melds
+pub type MapValue = [u32; 5];
