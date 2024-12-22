@@ -12,26 +12,26 @@ const NUM_HONOR_IDS: usize = 7;
 // 1-7{m,p,s}
 const SEQUENCE_IDS: [usize; 7] = [0, 1, 2, 3, 4, 5, 6];
 
-fn get_necesaary_tiles<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -> u16 {
-    let mut necesaary_tiles = 0u16;
+fn get_necessary_tiles<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -> u16 {
+    let mut necessary_tiles = 0u16;
 
     for (i, (&h, &w)) in hand.iter().zip(winning_hand).enumerate() {
         if w > h {
-            necesaary_tiles |= 1 << i;
+            necessary_tiles |= 1 << i;
         }
     }
 
-    necesaary_tiles
+    necessary_tiles
 }
 
-fn update_upperbound_and_necesaary_tiles<const N: usize>(
+fn update_upperbound_and_necessary_tiles<const N: usize>(
     hand: &[u8; N],
     winning_hand: &mut [u8; N],
     current_distance: u8,
-    current_necesaary_tiles: &mut u16,
+    current_necessary_tiles: &mut u16,
     num_pair: u8,
     upperbound: &mut u8,
-    necesaary_tiles: &mut u16,
+    necessary_tiles: &mut u16,
     i: usize,
 ) {
     if num_pair == 1 {
@@ -53,10 +53,10 @@ fn update_upperbound_and_necesaary_tiles<const N: usize>(
 
     if new_distance < *upperbound {
         *upperbound = new_distance;
-        *current_necesaary_tiles = 0;
-        *necesaary_tiles = get_necesaary_tiles(hand, winning_hand);
+        *current_necessary_tiles = 0;
+        *necessary_tiles = get_necessary_tiles(hand, winning_hand);
     } else if new_distance == *upperbound {
-        *necesaary_tiles |= get_necesaary_tiles(hand, winning_hand);
+        *necessary_tiles |= get_necessary_tiles(hand, winning_hand);
     }
 
     if num_pair == 1 {
@@ -69,29 +69,29 @@ pub(super) fn get_shupai_replacement_number(
     hand: &[u8; 9],
     winning_hand: &mut [u8; 9],
     current_distance: u8,
-    mut current_necesaary_tiles: u16,
+    mut current_necessary_tiles: u16,
     num_left_melds: u8,
     num_pair: u8,
     min_meld_id: usize,
     mut upperbound: u8,
 ) -> (u8, u16) {
     if num_left_melds == 0 {
-        let mut necesaary_tiles = 0u16;
+        let mut necessary_tiles = 0u16;
 
         for i in 0..NUM_SUIT_IDS {
-            update_upperbound_and_necesaary_tiles(
+            update_upperbound_and_necessary_tiles(
                 hand,
                 winning_hand,
                 current_distance,
-                &mut current_necesaary_tiles,
+                &mut current_necessary_tiles,
                 num_pair,
                 &mut upperbound,
-                &mut necesaary_tiles,
+                &mut necessary_tiles,
                 i,
             );
         }
 
-        return (upperbound, current_necesaary_tiles | necesaary_tiles);
+        return (upperbound, current_necessary_tiles | necessary_tiles);
     }
 
     // Add triplets
@@ -111,11 +111,11 @@ pub(super) fn get_shupai_replacement_number(
 
             if triplet_distance < 3 && new_distance <= upperbound {
                 winning_hand[i] += 3;
-                (upperbound, current_necesaary_tiles) = get_shupai_replacement_number(
+                (upperbound, current_necessary_tiles) = get_shupai_replacement_number(
                     hand,
                     winning_hand,
                     new_distance,
-                    current_necesaary_tiles,
+                    current_necessary_tiles,
                     num_left_melds - 1,
                     num_pair,
                     i,
@@ -143,11 +143,11 @@ pub(super) fn get_shupai_replacement_number(
             winning_hand[i] += 1;
             winning_hand[i + 1] += 1;
             winning_hand[i + 2] += 1;
-            (upperbound, current_necesaary_tiles) = get_shupai_replacement_number(
+            (upperbound, current_necessary_tiles) = get_shupai_replacement_number(
                 hand,
                 winning_hand,
                 new_distance,
-                current_necesaary_tiles,
+                current_necessary_tiles,
                 num_left_melds - 1,
                 num_pair,
                 sequence_id + NUM_SUIT_IDS,
@@ -159,36 +159,36 @@ pub(super) fn get_shupai_replacement_number(
         }
     }
 
-    (upperbound, current_necesaary_tiles)
+    (upperbound, current_necessary_tiles)
 }
 
 pub(super) fn get_zipai_replacement_number(
     hand: &[u8; 7],
     winning_hand: &mut [u8; 7],
     current_distance: u8,
-    mut current_necesaary_tiles: u16,
+    mut current_necessary_tiles: u16,
     num_left_melds: u8,
     num_pair: u8,
     min_meld_id: usize,
     mut upperbound: u8,
 ) -> (u8, u16) {
     if num_left_melds == 0 {
-        let mut necesaary_tiles = 0u16;
+        let mut necessary_tiles = 0u16;
 
         for i in 0..NUM_HONOR_IDS {
-            update_upperbound_and_necesaary_tiles(
+            update_upperbound_and_necessary_tiles(
                 hand,
                 winning_hand,
                 current_distance,
-                &mut current_necesaary_tiles,
+                &mut current_necessary_tiles,
                 num_pair,
                 &mut upperbound,
-                &mut necesaary_tiles,
+                &mut necessary_tiles,
                 i,
             );
         }
 
-        return (upperbound, current_necesaary_tiles | necesaary_tiles);
+        return (upperbound, current_necessary_tiles | necessary_tiles);
     }
 
     // Add triplets
@@ -207,11 +207,11 @@ pub(super) fn get_zipai_replacement_number(
 
         if triplet_distance < 3 && new_distance <= upperbound {
             winning_hand[i] += 3;
-            (upperbound, current_necesaary_tiles) = get_zipai_replacement_number(
+            (upperbound, current_necessary_tiles) = get_zipai_replacement_number(
                 hand,
                 winning_hand,
                 new_distance,
-                current_necesaary_tiles,
+                current_necessary_tiles,
                 num_left_melds - 1,
                 num_pair,
                 i,
@@ -221,36 +221,36 @@ pub(super) fn get_zipai_replacement_number(
         }
     }
 
-    (upperbound, current_necesaary_tiles)
+    (upperbound, current_necessary_tiles)
 }
 
 pub(super) fn get_19m_replacement_number(
     hand: &[u8; 9],
     winning_hand: &mut [u8; 9],
     current_distance: u8,
-    mut current_necesaary_tiles: u16,
+    mut current_necessary_tiles: u16,
     num_left_melds: u8,
     num_pair: u8,
     min_meld_id: usize,
     mut upperbound: u8,
 ) -> (u8, u16) {
     if num_left_melds == 0 {
-        let mut necesaary_tiles = 0u16;
+        let mut necessary_tiles = 0u16;
 
         for i in [0, 8] {
-            update_upperbound_and_necesaary_tiles(
+            update_upperbound_and_necessary_tiles(
                 hand,
                 winning_hand,
                 current_distance,
-                &mut current_necesaary_tiles,
+                &mut current_necessary_tiles,
                 num_pair,
                 &mut upperbound,
-                &mut necesaary_tiles,
+                &mut necessary_tiles,
                 i,
             );
         }
 
-        return (upperbound, current_necesaary_tiles | necesaary_tiles);
+        return (upperbound, current_necessary_tiles | necessary_tiles);
     }
 
     // Add triplets
@@ -269,11 +269,11 @@ pub(super) fn get_19m_replacement_number(
 
         if triplet_distance < 3 && new_distance <= upperbound {
             winning_hand[i] += 3;
-            (upperbound, current_necesaary_tiles) = get_19m_replacement_number(
+            (upperbound, current_necessary_tiles) = get_19m_replacement_number(
                 hand,
                 winning_hand,
                 new_distance,
-                current_necesaary_tiles,
+                current_necessary_tiles,
                 num_left_melds - 1,
                 num_pair,
                 i,
@@ -283,5 +283,5 @@ pub(super) fn get_19m_replacement_number(
         }
     }
 
-    (upperbound, current_necesaary_tiles)
+    (upperbound, current_necessary_tiles)
 }
