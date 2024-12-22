@@ -47,7 +47,11 @@ pub(super) fn get_shupai_replacement_number(
                 winning_hand[i] += 2;
             }
 
-            let pair_distance = winning_hand[i].saturating_sub(hand[i]);
+            let pair_distance = if num_pair == 1 {
+                winning_hand[i].saturating_sub(hand[i])
+            } else {
+                0
+            };
             let new_distance = current_distance + pair_distance;
 
             if new_distance < upperbound {
@@ -166,7 +170,11 @@ pub(super) fn get_zipai_replacement_number(
                 winning_hand[i] += 2;
             }
 
-            let pair_distance = winning_hand[i].saturating_sub(hand[i]);
+            let pair_distance = if num_pair == 1 {
+                winning_hand[i].saturating_sub(hand[i])
+            } else {
+                0
+            };
             let new_distance = current_distance + pair_distance;
 
             if new_distance < upperbound {
