@@ -58,17 +58,16 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
                 }
                 2 => {
                     let full_hand = [hand[0], 0, 0, 0, 0, 0, 0, 0, hand[1]];
-                    const INITIAL_WINNING_HAND: [u8; 9] = [0u8; 9];
+                    let mut initial_winning_hand: [u8; 9] = [0u8; 9];
                     get_19m_replacement_number(
                         &full_hand,
+                        &mut initial_winning_hand,
+                        0,
+                        0,
                         num_meld,
                         num_pair,
                         0,
-                        0,
-                        0,
-                        INITIAL_WINNING_HAND,
                         MAX_REPLACEMENT_NUMBER,
-                        0,
                     )
                 }
                 _ => unreachable!(),
