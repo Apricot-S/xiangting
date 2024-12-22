@@ -38,12 +38,12 @@ pub(super) fn get_shupai_replacement_number(
         let mut necesaary_tiles = 0u16;
 
         for i in 0..NUM_SUIT_IDS {
-            if num_pair == 1 && winning_hand[i] > 2 {
-                // Can't add a pair
-                continue;
-            }
-
             if num_pair == 1 {
+                if winning_hand[i] > 2 {
+                    // Can't add a pair
+                    continue;
+                }
+
                 // Add a pair
                 winning_hand[i] += 2;
             }
@@ -161,12 +161,12 @@ pub(super) fn get_zipai_replacement_number(
         let mut necesaary_tiles = 0u16;
 
         for i in 0..NUM_HONOR_IDS {
-            if num_pair == 1 && winning_hand[i] > 2 {
-                // Can't add a pair
-                continue;
-            }
-
             if num_pair == 1 {
+                if winning_hand[i] > 2 {
+                    // Can't add a pair
+                    continue;
+                }
+
                 // Add a pair
                 winning_hand[i] += 2;
             }
