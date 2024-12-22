@@ -24,6 +24,47 @@ fn get_necesaary_tiles<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -
     necesaary_tiles
 }
 
+fn update_upperbound_and_necesaary_tiles<const N: usize>(
+    hand: &[u8; N],
+    winning_hand: &mut [u8; N],
+    current_distance: u8,
+    current_necesaary_tiles: &mut u16,
+    num_pair: u8,
+    upperbound: &mut u8,
+    necesaary_tiles: &mut u16,
+    i: usize,
+) {
+    if num_pair == 1 {
+        if winning_hand[i] > 2 {
+            // Can't add a pair
+            return;
+        }
+
+        // Add a pair
+        winning_hand[i] += 2;
+    }
+
+    let pair_distance = if num_pair == 1 {
+        winning_hand[i].saturating_sub(hand[i])
+    } else {
+        0
+    };
+    let new_distance = current_distance + pair_distance;
+
+    if new_distance < *upperbound {
+        *upperbound = new_distance;
+        *current_necesaary_tiles = 0;
+        *necesaary_tiles = get_necesaary_tiles(hand, winning_hand);
+    } else if new_distance == *upperbound {
+        *necesaary_tiles |= get_necesaary_tiles(hand, winning_hand);
+    }
+
+    if num_pair == 1 {
+        // Remove a pair
+        winning_hand[i] -= 2;
+    }
+}
+
 pub(super) fn get_shupai_replacement_number(
     hand: &[u8; 9],
     winning_hand: &mut [u8; 9],
@@ -38,35 +79,16 @@ pub(super) fn get_shupai_replacement_number(
         let mut necesaary_tiles = 0u16;
 
         for i in 0..NUM_SUIT_IDS {
-            if num_pair == 1 {
-                if winning_hand[i] > 2 {
-                    // Can't add a pair
-                    continue;
-                }
-
-                // Add a pair
-                winning_hand[i] += 2;
-            }
-
-            let pair_distance = if num_pair == 1 {
-                winning_hand[i].saturating_sub(hand[i])
-            } else {
-                0
-            };
-            let new_distance = current_distance + pair_distance;
-
-            if new_distance < upperbound {
-                upperbound = new_distance;
-                current_necesaary_tiles = 0;
-                necesaary_tiles = get_necesaary_tiles(hand, winning_hand);
-            } else if new_distance == upperbound {
-                necesaary_tiles |= get_necesaary_tiles(hand, winning_hand);
-            }
-
-            if num_pair == 1 {
-                // Remove a pair
-                winning_hand[i] -= 2;
-            }
+            update_upperbound_and_necesaary_tiles(
+                hand,
+                winning_hand,
+                current_distance,
+                &mut current_necesaary_tiles,
+                num_pair,
+                &mut upperbound,
+                &mut necesaary_tiles,
+                i,
+            );
         }
 
         return (upperbound, current_necesaary_tiles | necesaary_tiles);
@@ -154,35 +176,16 @@ pub(super) fn get_zipai_replacement_number(
         let mut necesaary_tiles = 0u16;
 
         for i in 0..NUM_HONOR_IDS {
-            if num_pair == 1 {
-                if winning_hand[i] > 2 {
-                    // Can't add a pair
-                    continue;
-                }
-
-                // Add a pair
-                winning_hand[i] += 2;
-            }
-
-            let pair_distance = if num_pair == 1 {
-                winning_hand[i].saturating_sub(hand[i])
-            } else {
-                0
-            };
-            let new_distance = current_distance + pair_distance;
-
-            if new_distance < upperbound {
-                upperbound = new_distance;
-                current_necesaary_tiles = 0;
-                necesaary_tiles = get_necesaary_tiles(hand, winning_hand);
-            } else if new_distance == upperbound {
-                necesaary_tiles |= get_necesaary_tiles(hand, winning_hand);
-            }
-
-            if num_pair == 1 {
-                // Remove a pair
-                winning_hand[i] -= 2;
-            }
+            update_upperbound_and_necesaary_tiles(
+                hand,
+                winning_hand,
+                current_distance,
+                &mut current_necesaary_tiles,
+                num_pair,
+                &mut upperbound,
+                &mut necesaary_tiles,
+                i,
+            );
         }
 
         return (upperbound, current_necesaary_tiles | necesaary_tiles);
@@ -235,35 +238,16 @@ pub(super) fn get_19m_replacement_number(
         let mut necesaary_tiles = 0u16;
 
         for i in [0, 8] {
-            if num_pair == 1 {
-                if winning_hand[i] > 2 {
-                    // Can't add a pair
-                    continue;
-                }
-
-                // Add a pair
-                winning_hand[i] += 2;
-            }
-
-            let pair_distance = if num_pair == 1 {
-                winning_hand[i].saturating_sub(hand[i])
-            } else {
-                0
-            };
-            let new_distance = current_distance + pair_distance;
-
-            if new_distance < upperbound {
-                upperbound = new_distance;
-                current_necesaary_tiles = 0;
-                necesaary_tiles = get_necesaary_tiles(hand, winning_hand);
-            } else if new_distance == upperbound {
-                necesaary_tiles |= get_necesaary_tiles(hand, winning_hand);
-            }
-
-            if num_pair == 1 {
-                // Remove a pair
-                winning_hand[i] -= 2;
-            }
+            update_upperbound_and_necesaary_tiles(
+                hand,
+                winning_hand,
+                current_distance,
+                &mut current_necesaary_tiles,
+                num_pair,
+                &mut upperbound,
+                &mut necesaary_tiles,
+                i,
+            );
         }
 
         return (upperbound, current_necesaary_tiles | necesaary_tiles);
