@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+// Reference:
+// https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
+// https://github.com/gimite/mjai-manue/blob/master/coffee/shanten_analysis.coffee
+
 const NUM_SUIT_IDS: usize = 9;
 const NUM_HONOR_IDS: usize = 7;
 
@@ -20,9 +24,6 @@ fn get_necesaary_tiles<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -
     necesaary_tiles
 }
 
-// Reference:
-// https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
-// https://github.com/gimite/mjai-manue/blob/master/coffee/shanten_analysis.coffee
 pub(super) fn get_shupai_replacement_number(
     hand: &[u8; 9],
     winning_hand: &mut [u8; 9],
