@@ -6,8 +6,8 @@
 // https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
 // https://github.com/gimite/mjai-manue/blob/master/coffee/shanten_analysis.coffee
 
-const NUM_SUIT_IDS: usize = 9;
-const NUM_HONOR_IDS: usize = 7;
+const NUM_SHUPAI_IDS: usize = 9;
+const NUM_ZIPAI_IDS: usize = 7;
 
 // 1-7{m,p,s}
 const SEQUENCE_IDS: [usize; 7] = [0, 1, 2, 3, 4, 5, 6];
@@ -97,7 +97,7 @@ pub(super) fn get_shupai_replacement_number(
                 &mut necessary_tiles,
             );
         } else {
-            for i in 0..NUM_SUIT_IDS {
+            for i in 0..NUM_SHUPAI_IDS {
                 update_upperbound_and_necessary_tiles_1_pair(
                     hand,
                     winning_hand,
@@ -114,8 +114,8 @@ pub(super) fn get_shupai_replacement_number(
     }
 
     // Add triplets
-    if min_meld_id < NUM_SUIT_IDS {
-        for i in min_meld_id..NUM_SUIT_IDS {
+    if min_meld_id < NUM_SHUPAI_IDS {
+        for i in min_meld_id..NUM_SHUPAI_IDS {
             if winning_hand[i] >= 2 {
                 // Can't add a triplet
                 continue;
@@ -145,13 +145,13 @@ pub(super) fn get_shupai_replacement_number(
         }
     }
 
-    // Sequences
-    let start_sequence_id = min_meld_id.saturating_sub(NUM_SUIT_IDS);
+    // Add sequences
+    let start_sequence_id = min_meld_id.saturating_sub(NUM_SHUPAI_IDS);
 
     for sequence_id in start_sequence_id..SEQUENCE_IDS.len() {
         let i = SEQUENCE_IDS[sequence_id];
         if winning_hand[i] == 4 || winning_hand[i + 1] == 4 || winning_hand[i + 2] == 4 {
-            // Can't add a Sequence
+            // Can't add a sequence
             continue;
         }
 
@@ -169,7 +169,7 @@ pub(super) fn get_shupai_replacement_number(
                 current_necessary_tiles,
                 num_left_melds - 1,
                 num_pair,
-                sequence_id + NUM_SUIT_IDS,
+                sequence_id + NUM_SHUPAI_IDS,
                 upperbound,
             );
             winning_hand[i] -= 1;
@@ -204,7 +204,7 @@ pub(super) fn get_zipai_replacement_number(
                 &mut necessary_tiles,
             );
         } else {
-            for i in 0..NUM_HONOR_IDS {
+            for i in 0..NUM_ZIPAI_IDS {
                 update_upperbound_and_necessary_tiles_1_pair(
                     hand,
                     winning_hand,
@@ -221,7 +221,7 @@ pub(super) fn get_zipai_replacement_number(
     }
 
     // Add triplets
-    for i in min_meld_id..NUM_HONOR_IDS {
+    for i in min_meld_id..NUM_ZIPAI_IDS {
         if winning_hand[i] >= 2 {
             // Can't add a triplet
             continue;
@@ -293,7 +293,7 @@ pub(super) fn get_19m_replacement_number(
     }
 
     // Add triplets
-    for i in (min_meld_id..NUM_SUIT_IDS).step_by(8) {
+    for i in (min_meld_id..NUM_SHUPAI_IDS).step_by(8) {
         if winning_hand[i] >= 2 {
             // Can't add a triplet
             continue;
