@@ -27,6 +27,10 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
     let mut pack = [0u32; 5];
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
+            if num_pair == 0 && num_meld == 0 {
+                continue;
+            }
+
             let (replacement_number, necessary_tiles) = match N {
                 9 => {
                     let hand9 = hand.first_chunk::<9>().unwrap();
