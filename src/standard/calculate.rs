@@ -32,7 +32,7 @@ type UnpackedNumbers = [u8; 10];
 fn unpack(pack: &MapValue) -> Unpacked {
     (
         [
-            (pack[0] & 0x0F) as u8,
+            0u8,
             (pack[1] & 0x0F) as u8,
             (pack[2] & 0x0F) as u8,
             (pack[3] & 0x0F) as u8,
@@ -44,7 +44,7 @@ fn unpack(pack: &MapValue) -> Unpacked {
             ((pack[4] >> 16) & 0x0F) as u8,
         ],
         [
-            ((pack[0] >> 4) & 0x01FF) as u16,
+            0u16,
             ((pack[1] >> 4) & 0x01FF) as u16,
             ((pack[2] >> 4) & 0x01FF) as u16,
             ((pack[3] >> 4) & 0x01FF) as u16,
