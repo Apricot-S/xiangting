@@ -13,15 +13,16 @@ const NUM_ZIPAI_IDS: usize = 7;
 const SEQUENCE_IDS: [usize; 7] = [0, 1, 2, 3, 4, 5, 6];
 
 fn get_necessary_tiles<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -> u16 {
-    let mut necessary_tiles = 0u16;
-
-    for (i, (&h, &w)) in hand.iter().zip(winning_hand).enumerate() {
-        if w > h {
-            necessary_tiles |= 1 << i;
-        }
-    }
-
-    necessary_tiles
+    hand.iter()
+        .zip(winning_hand)
+        .enumerate()
+        .fold(0u16, |necessary_tiles, (i, (&h, &w))| {
+            if w > h {
+                necessary_tiles | (1 << i)
+            } else {
+                necessary_tiles
+            }
+        })
 }
 
 fn update_upperbound_and_necessary_tiles_0_pair<const N: usize>(
@@ -150,7 +151,7 @@ pub(super) fn get_shupai_replacement_number(
 
     for sequence_id in start_sequence_id..SEQUENCE_IDS.len() {
         let i = SEQUENCE_IDS[sequence_id];
-        if winning_hand[i] == 4 || winning_hand[i + 1] == 4 || winning_hand[i + 2] == 4 {
+        if winning_hand[i..=i + 2].iter().any(|&c| c == 4) {
             // Can't add a sequence
             continue;
         }
@@ -159,9 +160,7 @@ pub(super) fn get_shupai_replacement_number(
         let new_distance = current_distance + sequence_distance;
 
         if sequence_distance < 3 && new_distance <= upperbound {
-            winning_hand[i] += 1;
-            winning_hand[i + 1] += 1;
-            winning_hand[i + 2] += 1;
+            winning_hand[i..=i + 2].iter_mut().for_each(|c| *c += 1);
             (upperbound, current_necessary_tiles) = get_shupai_replacement_number(
                 hand,
                 winning_hand,
@@ -172,9 +171,7 @@ pub(super) fn get_shupai_replacement_number(
                 sequence_id + NUM_SHUPAI_IDS,
                 upperbound,
             );
-            winning_hand[i] -= 1;
-            winning_hand[i + 1] -= 1;
-            winning_hand[i + 2] -= 1;
+            winning_hand[i..=i + 2].iter_mut().for_each(|c| *c -= 1);
         }
     }
 
