@@ -68,16 +68,17 @@ fn split_flags(all_color: u64) -> (u16, u16, u16, u16) {
 }
 
 fn count_4_tiles_in_shoupai(bingpai: &Bingpai, fulu_mianzi_list: &FuluMianziList) -> u64 {
-    let fulupai = fulu_mianzi_list.to_fulupai();
-    bingpai.iter().zip(fulupai.iter()).enumerate().fold(
-        0,
-        |mut acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
+    bingpai
+        .iter()
+        .zip(fulu_mianzi_list.to_fulupai().iter())
+        .enumerate()
+        .fold(0, |acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
             if (num_tile_bingpai + num_tile_fulupai) == 4 {
-                acc |= 1 << i;
+                acc | (1 << i)
+            } else {
+                acc
             }
-            acc
-        },
-    )
+        })
 }
 
 fn modify_number(replacement_number: u8, necessary_tiles: u16, four_tiles: u16) -> u8 {
