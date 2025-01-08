@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+#[cfg(feature = "correctness")]
 fn main() {
     if std::env::var("CARGO_FEATURE_CORRECTNESS").is_ok() {
         cxx_build::bridge("tests/nyanten.rs")
@@ -16,3 +17,6 @@ fn main() {
         println!("cargo:rerun-if-changed=tests/correctness.rs");
     }
 }
+
+#[cfg(not(feature = "correctness"))]
+fn main() {}

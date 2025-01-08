@@ -24,12 +24,12 @@ mt19937 = "2.0.1"
 rand = "0.8.5"
 
 [build-dependencies]
-cxx-build = "1.0.128"
+cxx-build = { version = "1.0.128", optional = true }
 
 [features]
 build-file = []
 build-map = ["build-file"]
-correctness = []
+correctness = ["dep:cxx-build"]
 
 [[bin]]
 name = "build-table"
