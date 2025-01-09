@@ -102,7 +102,7 @@ fn modify_numbers(entry: Unpacked, four_tiles: u16) -> UnpackedNumbers {
 
 fn add_partial_replacement_number(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
     for i in (5..10).rev() {
-        let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
+        let mut r = min(lhs[i], rhs[i]);
         for j in 5..i {
             r = [r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
                 .iter()
@@ -113,8 +113,9 @@ fn add_partial_replacement_number(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbe
         lhs[i] = r;
     }
 
-    for i in (0..5).rev() {
-        let mut r = lhs[i] + rhs[0];
+    // Skip the case when i = 0, as the inner loop would not run, leading to redundant assignments.
+    for i in (1..5).rev() {
+        let mut r = lhs[i];
         for j in 0..i {
             r = min(r, lhs[j] + rhs[i - j]);
         }
