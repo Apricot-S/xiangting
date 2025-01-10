@@ -1,6 +1,6 @@
 # xiangting
 
-A library for calculating the deficiency number (a.k.a. the xiangting number, 向聴数).
+A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
 
 This library is based on the algorithm in [Nyanten](https://github.com/Cryolite/nyanten).  
 However, it introduces the following additional features:
@@ -40,7 +40,7 @@ The correspondence between the index and the tile is shown in the table below.
 | ----- | --------- | ---------- | --------- | ---------- | ---------- | ---------- | -------- |
 | Tile  | East (1z) | South (2z) | West (3z) | North (4z) | White (5z) | Green (6z) | Red (7z) |
 
-Calculates the replacement number, which is equal to the deficiency number (a.k.a. the xiangting number, 向聴数) + 1.
+Calculates the replacement number, which is equal to the deficiency number (a.k.a. xiangting number, 向聴数) + 1.
 
 ```rust
 use xiangting::calculate_replacement_number;
