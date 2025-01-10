@@ -10,20 +10,14 @@ pub(super) fn calculate_replacement_number(bingpai: &Bingpai, num_bingpai: u8) -
         return u8::MAX;
     }
 
-    let (num_kinds, num_duizi) =
-        bingpai
-            .iter()
-            .fold((0, 0), |(mut num_kinds, mut num_duizi), &num_tile| {
-                if num_tile >= 1 {
-                    num_kinds += 1;
-                }
-                if num_tile >= 2 {
-                    num_duizi += 1;
-                }
-                (num_kinds, num_duizi)
-            });
+    let (num_kinds, num_duizi) = bingpai
+        .iter()
+        .filter(|&&count| count > 0)
+        .fold((0, 0), |(num_kinds, num_duizi), &count| {
+            (num_kinds + 1, num_duizi + (count >= 2) as u8)
+        });
 
-    7 - num_duizi + (if num_kinds < 7 { 7 - num_kinds } else { 0 })
+    7 - num_duizi + 7u8.saturating_sub(num_kinds)
 }
 
 #[cfg(test)]

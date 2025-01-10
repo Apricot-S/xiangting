@@ -7,7 +7,7 @@ use thiserror::Error;
 
 /// 兵牌: Hand excluding melds (a.k.a. pure hand, 純手牌).
 ///
-/// A element of array indicates the number of each tile in the hand.
+/// Each element of the array represents the count of a specific tile in the hand.
 /// The correspondence between the index and the tile is shown in the table below.
 ///
 /// | Index | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   |

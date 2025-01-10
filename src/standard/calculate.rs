@@ -68,16 +68,17 @@ fn split_flags(all_color: u64) -> (u16, u16, u16, u16) {
 }
 
 fn count_4_tiles_in_shoupai(bingpai: &Bingpai, fulu_mianzi_list: &FuluMianziList) -> u64 {
-    let fulupai = fulu_mianzi_list.to_fulupai();
-    bingpai.iter().zip(fulupai.iter()).enumerate().fold(
-        0,
-        |mut acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
+    bingpai
+        .iter()
+        .zip(fulu_mianzi_list.to_fulupai().iter())
+        .enumerate()
+        .fold(0, |acc, (i, (&num_tile_bingpai, &num_tile_fulupai))| {
             if (num_tile_bingpai + num_tile_fulupai) == 4 {
-                acc |= 1 << i;
+                acc | (1 << i)
+            } else {
+                acc
             }
-            acc
-        },
-    )
+        })
 }
 
 fn modify_number(replacement_number: u8, necessary_tiles: u16, four_tiles: u16) -> u8 {
@@ -100,16 +101,21 @@ fn modify_numbers(entry: Unpacked, four_tiles: u16) -> UnpackedNumbers {
 }
 
 fn add_partial_replacement_number(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
-    for i in (6..10).rev() {
-        let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
+    for i in (5..10).rev() {
+        let mut r = min(lhs[i], rhs[i]);
         for j in 5..i {
-            r = min(r, min(lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]));
+            r = [r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
+                .iter()
+                .min()
+                .unwrap()
+                .clone();
         }
         lhs[i] = r;
     }
 
-    for i in (1..6).rev() {
-        let mut r = lhs[i] + rhs[0];
+    // Skip the case when i = 0, as the inner loop would not run, leading to redundant assignments.
+    for i in (1..5).rev() {
+        let mut r = lhs[i];
         for j in 0..i {
             r = min(r, lhs[j] + rhs[i - j]);
         }
@@ -122,12 +128,12 @@ pub(in super::super) fn calculate_replacement_number(
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_required_melds = num_bingpai / 3;
+    let num_required_melds = (num_bingpai / 3) as usize;
     debug_assert!(
         (4 - num_required_melds)
             >= fulu_mianzi_list
                 .as_ref()
-                .map_or(0, |f| f.iter().flatten().count()) as u8
+                .map_or(0, |f| f.iter().flatten().count())
     );
 
     let h0 = hash_shupai(&bingpai[0..9]);
@@ -159,7 +165,7 @@ pub(in super::super) fn calculate_replacement_number(
     add_partial_replacement_number(&mut entry0, &entry2);
     add_partial_replacement_number(&mut entry0, &entry3);
 
-    entry0[5 + num_required_melds as usize]
+    entry0[5 + num_required_melds]
 }
 
 pub(in super::super) fn calculate_replacement_number_3_player(
@@ -167,12 +173,12 @@ pub(in super::super) fn calculate_replacement_number_3_player(
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_required_melds = num_bingpai / 3;
+    let num_required_melds = (num_bingpai / 3) as usize;
     debug_assert!(
         (4 - num_required_melds)
             >= fulu_mianzi_list
                 .as_ref()
-                .map_or(0, |f| f.iter().flatten().count()) as u8
+                .map_or(0, |f| f.iter().flatten().count())
     );
 
     let h0 = hash_19m(&bingpai[0..9]);
@@ -204,7 +210,7 @@ pub(in super::super) fn calculate_replacement_number_3_player(
     add_partial_replacement_number(&mut entry0, &entry2);
     add_partial_replacement_number(&mut entry0, &entry3);
 
-    entry0[5 + num_required_melds as usize]
+    entry0[5 + num_required_melds]
 }
 
 #[cfg(test)]
