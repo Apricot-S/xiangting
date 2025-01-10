@@ -59,7 +59,7 @@ fn main() {
 ```
 
 In the calculation for a hand with melds (副露),
-the meld tiles can be included or excluded when counting tiles to determine if a hand contains four identical ones.
+the melded tiles can be included or excluded when counting tiles to determine if a hand contains four identical ones.
 
 If melds are excluded (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), specify `None` for `fulu_mianzi_list`.
 
