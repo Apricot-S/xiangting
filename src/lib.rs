@@ -4,7 +4,7 @@
 
 #![warn(missing_docs)]
 
-//! A library for calculating the deficiency number (a.k.a. the xiangting number, 向聴数).
+//! A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
 //!
 //! This library is based on the algorithm in [Nyanten](https://github.com/Cryolite/nyanten).  
 //! However, it introduces the following additional features:
