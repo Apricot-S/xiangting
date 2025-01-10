@@ -11,11 +11,12 @@ However, it introduces the following additional features:
 Documentation:
 
 - [API reference (main branch)](https://Apricot-S.github.io/xiangting/xiangting)
+- [API reference (docs.rs)](https://docs.rs/xiangting)
 
 ## Installation
 
 ```sh
-cargo add --git https://github.com/Apricot-S/xiangting.git
+cargo add xiangting
 ```
 
 ## Usage
