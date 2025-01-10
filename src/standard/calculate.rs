@@ -128,12 +128,12 @@ pub(in super::super) fn calculate_replacement_number(
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_required_melds = num_bingpai / 3;
+    let num_required_melds = (num_bingpai / 3) as usize;
     debug_assert!(
         (4 - num_required_melds)
             >= fulu_mianzi_list
                 .as_ref()
-                .map_or(0, |f| f.iter().flatten().count()) as u8
+                .map_or(0, |f| f.iter().flatten().count())
     );
 
     let h0 = hash_shupai(&bingpai[0..9]);
@@ -165,7 +165,7 @@ pub(in super::super) fn calculate_replacement_number(
     add_partial_replacement_number(&mut entry0, &entry2);
     add_partial_replacement_number(&mut entry0, &entry3);
 
-    entry0[5 + num_required_melds as usize]
+    entry0[5 + num_required_melds]
 }
 
 pub(in super::super) fn calculate_replacement_number_3_player(
@@ -173,12 +173,12 @@ pub(in super::super) fn calculate_replacement_number_3_player(
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
-    let num_required_melds = num_bingpai / 3;
+    let num_required_melds = (num_bingpai / 3) as usize;
     debug_assert!(
         (4 - num_required_melds)
             >= fulu_mianzi_list
                 .as_ref()
-                .map_or(0, |f| f.iter().flatten().count()) as u8
+                .map_or(0, |f| f.iter().flatten().count())
     );
 
     let h0 = hash_19m(&bingpai[0..9]);
@@ -210,7 +210,7 @@ pub(in super::super) fn calculate_replacement_number_3_player(
     add_partial_replacement_number(&mut entry0, &entry2);
     add_partial_replacement_number(&mut entry0, &entry3);
 
-    entry0[5 + num_required_melds as usize]
+    entry0[5 + num_required_melds]
 }
 
 #[cfg(test)]
