@@ -1,11 +1,11 @@
 # xiangting
 
-A library for calculation of deficiency number (a.k.a. xiangting number, 向聴数).
+A library for calculating the deficiency number (a.k.a. the xiangting number, 向聴数).
 
 This library is based on the algorithm in [Nyanten](https://github.com/Cryolite/nyanten).  
-However, the following differences apply:
+However, it introduces the following additional features:
 
-- Supports both calculations that include and exclude melds (副露) when considering the four tiles in a hand.
+- Supports rules that include and exclude melded tiles when determining if a hand contains four identical tiles.
 - Supports three-player mahjong.
 
 Documentation:
@@ -20,7 +20,8 @@ cargo add --git https://github.com/Apricot-S/xiangting.git
 
 ## Usage
 
-The hand is represented by the number of each tile in an array of `[u8; 34]`. The correspondence between the index and the tile is shown in the table below.
+The hand is represented as an array of `[u8; 34]`, where each element represents the count of a specific tile.
+The correspondence between the index and the tile is shown in the table below.
 
 | Index | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   |
 | ----- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -38,7 +39,7 @@ The hand is represented by the number of each tile in an array of `[u8; 34]`. Th
 | ----- | --------- | ---------- | --------- | ---------- | ---------- | ---------- | -------- |
 | Tile  | East (1z) | South (2z) | West (3z) | North (4z) | White (5z) | Green (6z) | Red (7z) |
 
-Calculates the replacement number, which is equal to the deficiency number (a.k.a. xiangting number, 向聴数) + 1.
+Calculates the replacement number, which is equal to the deficiency number (a.k.a. the xiangting number, 向聴数) + 1.
 
 ```rust
 use xiangting::calculate_replacement_number;
@@ -57,11 +58,12 @@ fn main() {
 }
 ```
 
-In the calculation for a hand with melds (副露), the meld tiles can be included or excluded in the counting of the tiles that exist in four copies within the hand.
+In the calculation for a hand with melds (副露),
+the melded tiles can be included or excluded when counting tiles to determine if a hand contains four identical ones.
 
-If they are excluded (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), `None` should be specified for `fulu_mianzi_list`.
+If melds are excluded (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), specify `None` for `fulu_mianzi_list`.
 
-If they are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be specified for `fulu_mianzi_list`.
+If melds are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be included in the `fulu_mianzi_list`.
 
 ```rust
 use xiangting::{calculate_replacement_number, ClaimedTilePosition, FuluMianzi};
@@ -91,7 +93,8 @@ fn main() {
 }
 ```
 
-In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) do not exist. Additionally, melded sequences (明順子) cannot be used.
+In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
+Additionally, melded sequences (明順子) are not allowed.
 
 ```rust
 use xiangting::{calculate_replacement_number, calculate_replacement_number_3_player};
