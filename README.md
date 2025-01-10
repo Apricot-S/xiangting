@@ -16,7 +16,7 @@ Documentation:
 ## Installation
 
 ```sh
-cargo add --git https://github.com/Apricot-S/xiangting.git
+cargo add xiangting
 ```
 
 ## Usage
