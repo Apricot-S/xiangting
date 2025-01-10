@@ -4,12 +4,12 @@
 
 #![warn(missing_docs)]
 
-//! A library for calculation of deficiency number (a.k.a. xiangting number, 向聴数).
+//! A library for calculating the deficiency number (a.k.a. the xiangting number, 向聴数).
 //!
-//! This library is based on the algorithm in [Nyanten](https://github.com/Cryolite/nyanten).
-//! However, the following differences apply:
+//! This library is based on the algorithm in [Nyanten](https://github.com/Cryolite/nyanten).  
+//! However, it introduces the following additional features:
 //!
-//! - Supports both calculations that include and exclude melds (副露) when considering the four tiles in a hand.
+//! - Supports rules that include and exclude melded tiles when determining if a hand contains four identical tiles.
 //! - Supports three-player mahjong.
 //!
 //! # Example
