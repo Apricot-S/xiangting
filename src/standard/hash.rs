@@ -42,12 +42,11 @@ pub fn hash_19m(wanzi_bingpai: &[u8]) -> usize {
         .step_by(8)
         .enumerate()
         .fold((0, 0), |(h, n), (i, &c)| {
-            debug_assert!(i == 0 || i == 8);
+            debug_assert!(i < 2);
             debug_assert!(c <= 4);
             debug_assert!(n + c <= 8);
-            let index = if i == 0 { 0 } else { 1 };
             let updated_n = n + c;
-            let updated_h = h + WANZI_19_TABLE[index][updated_n as usize][c as usize];
+            let updated_h = h + WANZI_19_TABLE[i][updated_n as usize][c as usize];
             (updated_h, updated_n)
         });
     hash
