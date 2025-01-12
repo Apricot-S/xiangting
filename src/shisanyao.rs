@@ -13,9 +13,9 @@ pub(super) fn calculate_replacement_number(bingpai: &Bingpai, num_bingpai: u8) -
     const YAOJIUPAI_INDICES: [usize; 13] = [0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33];
     let (num_kinds, has_jiangpai) = YAOJIUPAI_INDICES
         .iter()
-        .map(|&i| bingpai[i])
-        .filter(|&count| count > 0)
-        .fold((0, false), |(num_kinds, has_jiangpai), count| {
+        .map(|&i| &bingpai[i])
+        .filter(|&&count| count > 0)
+        .fold((0, false), |(num_kinds, has_jiangpai), &count| {
             (num_kinds + 1, has_jiangpai || count >= 2)
         });
 
