@@ -124,7 +124,7 @@ fn add_partial_replacement_number(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbe
 }
 
 pub(in super::super) fn calculate_replacement_number(
-    bingpai: Bingpai,
+    bingpai: &Bingpai,
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
@@ -149,7 +149,7 @@ pub(in super::super) fn calculate_replacement_number(
     let (mut entry0, entry1, entry2, entry3) = match fulu_mianzi_list {
         None => (unpacked0.0, unpacked1.0, unpacked2.0, unpacked3.0),
         Some(f) => {
-            let four_tiles = count_4_tiles_in_shoupai(&bingpai, f);
+            let four_tiles = count_4_tiles_in_shoupai(bingpai, f);
             let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
 
             (
@@ -169,7 +169,7 @@ pub(in super::super) fn calculate_replacement_number(
 }
 
 pub(in super::super) fn calculate_replacement_number_3_player(
-    bingpai: Bingpai,
+    bingpai: &Bingpai,
     fulu_mianzi_list: &Option<FuluMianziList>,
     num_bingpai: u8,
 ) -> u8 {
@@ -194,7 +194,7 @@ pub(in super::super) fn calculate_replacement_number_3_player(
     let (mut entry0, entry1, entry2, entry3) = match fulu_mianzi_list {
         None => (unpacked0.0, unpacked1.0, unpacked2.0, unpacked3.0),
         Some(f) => {
-            let four_tiles = count_4_tiles_in_shoupai(&bingpai, f);
+            let four_tiles = count_4_tiles_in_shoupai(bingpai, f);
             let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
 
             (
@@ -227,7 +227,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2); // 1 pairs, 0 melds => min 2
     }
 
@@ -241,7 +241,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        calculate_replacement_number(bingpai, &None, num_bingpai);
+        calculate_replacement_number(&bingpai, &None, num_bingpai);
     }
 
     #[test]
@@ -253,7 +253,7 @@ mod tests {
             1, 1, 1, 1, 1, 1, 1, // z
         ];
         let num_bingpai_1: u8 = bingpai_14.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai_14, &None, num_bingpai_1);
+        let replacement_number_1 = calculate_replacement_number(&bingpai_14, &None, num_bingpai_1);
         assert_eq!(replacement_number_1, 8);
 
         let bingpai_13: Bingpai = [
@@ -263,7 +263,7 @@ mod tests {
             1, 1, 1, 1, 1, 1, 1, // z
         ];
         let num_bingpai_2: u8 = bingpai_13.iter().sum();
-        let replacement_number_2 = calculate_replacement_number(bingpai_13, &None, num_bingpai_2);
+        let replacement_number_2 = calculate_replacement_number(&bingpai_13, &None, num_bingpai_2);
         assert_eq!(replacement_number_2, 9);
     }
 
@@ -276,7 +276,7 @@ mod tests {
             2, 2, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 1);
     }
 
@@ -289,7 +289,7 @@ mod tests {
             2, 3, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 0);
     }
 
@@ -302,12 +302,12 @@ mod tests {
             0, 1, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([Some(FuluMianzi::Kezi(27)), None, None, None]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 1);
     }
 
@@ -321,7 +321,7 @@ mod tests {
             1, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -335,7 +335,7 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -349,7 +349,7 @@ mod tests {
             0, 1, 1, 0, 0, 1, 2, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 3);
     }
 
@@ -362,7 +362,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 2);
 
         let fulu_mianzi_list = Some([
@@ -372,7 +372,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -394,7 +394,7 @@ mod tests {
 
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number, 1);
     }
 
@@ -407,7 +407,7 @@ mod tests {
             1, 1, 1, 1, 1, 1, 1, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 5);
     }
 
@@ -420,7 +420,7 @@ mod tests {
             1, 1, 1, 1, 1, 1, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 5);
     }
 
@@ -433,7 +433,7 @@ mod tests {
             1, 1, 1, 1, 1, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 4);
     }
 
@@ -446,7 +446,7 @@ mod tests {
             1, 1, 1, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 3);
     }
 
@@ -460,7 +460,7 @@ mod tests {
             2, 0, 0, 0, 1, 1, 1, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 3);
     }
 
@@ -474,7 +474,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -487,7 +487,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -501,7 +501,7 @@ mod tests {
             4, 4, 3, 3, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -515,12 +515,12 @@ mod tests {
             1, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([Some(FuluMianzi::Kezi(27)), None, None, None]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -534,12 +534,12 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([Some(FuluMianzi::Gangzi(1)), None, None, None]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -553,12 +553,12 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([Some(FuluMianzi::Gangzi(11)), None, None, None]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -572,12 +572,12 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([Some(FuluMianzi::Gangzi(24)), None, None, None]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -591,7 +591,7 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([
@@ -601,7 +601,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -615,7 +615,7 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([
@@ -625,7 +625,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -639,7 +639,7 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([
@@ -649,7 +649,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -663,7 +663,7 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([
@@ -673,7 +673,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -687,7 +687,7 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([
@@ -697,7 +697,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -712,7 +712,7 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([
@@ -722,7 +722,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 3);
     }
 
@@ -735,7 +735,7 @@ mod tests {
             3, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([
@@ -745,7 +745,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -758,7 +758,7 @@ mod tests {
             2, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 2);
 
         let fulu_mianzi_list = Some([
@@ -768,7 +768,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 4);
     }
 
@@ -782,7 +782,7 @@ mod tests {
             0, 2, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([
@@ -792,7 +792,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -806,7 +806,7 @@ mod tests {
             0, 2, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
         let fulu_mianzi_list = Some([
@@ -816,7 +816,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -830,7 +830,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 2);
 
         let fulu_mianzi_list = Some([
@@ -840,7 +840,7 @@ mod tests {
             None,
         ]);
         let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+            calculate_replacement_number(&bingpai, &fulu_mianzi_list, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -853,7 +853,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -866,7 +866,7 @@ mod tests {
             3, 1, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -879,7 +879,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -892,7 +892,7 @@ mod tests {
             4, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -905,7 +905,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 3);
     }
 
@@ -918,7 +918,7 @@ mod tests {
             4, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -931,7 +931,7 @@ mod tests {
             4, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -944,7 +944,7 @@ mod tests {
             4, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -957,7 +957,7 @@ mod tests {
             4, 4, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -970,7 +970,7 @@ mod tests {
             4, 4, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 3);
     }
 
@@ -983,7 +983,7 @@ mod tests {
             4, 3, 2, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_4p = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_4p = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_4p, 2);
     }
 
@@ -997,7 +997,7 @@ mod tests {
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number_3p =
-            calculate_replacement_number_3_player(bingpai, &None, num_bingpai);
+            calculate_replacement_number_3_player(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_3p, 3);
     }
 
@@ -1010,7 +1010,8 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number_3_player(bingpai, &None, num_bingpai);
+        let replacement_number =
+            calculate_replacement_number_3_player(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -1023,7 +1024,8 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number_3_player(bingpai, &None, num_bingpai);
+        let replacement_number =
+            calculate_replacement_number_3_player(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 
@@ -1036,7 +1038,8 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number = calculate_replacement_number_3_player(bingpai, &None, num_bingpai);
+        let replacement_number =
+            calculate_replacement_number_3_player(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number, 2);
     }
 }
