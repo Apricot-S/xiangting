@@ -90,7 +90,7 @@ pub fn calculate_replacement_number(
         validate_shoupai(bingpai, f)?;
     }
 
-    let r0 = standard::calculate_replacement_number(*bingpai, fulu_mianzi_list, num_bingpai);
+    let r0 = standard::calculate_replacement_number(bingpai, fulu_mianzi_list, num_bingpai);
     let r1 = qiduizi::calculate_replacement_number(bingpai, num_bingpai);
     let r2 = shisanyao::calculate_replacement_number(bingpai, num_bingpai);
     Ok([r0, r1, r2].into_iter().min().unwrap())
@@ -181,7 +181,7 @@ pub fn calculate_replacement_number_3_player(
     }
 
     let r0 =
-        standard::calculate_replacement_number_3_player(*bingpai, fulu_mianzi_list, num_bingpai);
+        standard::calculate_replacement_number_3_player(bingpai, fulu_mianzi_list, num_bingpai);
     let r1 = qiduizi::calculate_replacement_number(bingpai, num_bingpai);
     let r2 = shisanyao::calculate_replacement_number(bingpai, num_bingpai);
     Ok([r0, r1, r2].into_iter().min().unwrap())
