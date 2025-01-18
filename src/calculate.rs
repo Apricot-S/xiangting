@@ -84,12 +84,19 @@ pub fn calculate_replacement_number(
 ) -> Result<u8, InvalidShoupaiError> {
     let num_bingpai = bingpai.count()?;
 
+    debug_assert!(
+        (4 - num_bingpai / 3)
+            >= fulu_mianzi_list
+                .as_ref()
+                .map_or(0, |f| f.iter().flatten().count() as u8)
+    );
+
     let shoupai = match fulu_mianzi_list {
         Some(f) => Some(get_shoupai(bingpai, f)?),
         None => None,
     };
 
-    let r0 = standard::calculate_replacement_number(bingpai, fulu_mianzi_list, num_bingpai);
+    let r0 = standard::calculate_replacement_number(bingpai, &shoupai, num_bingpai);
     let r1 = qiduizi::calculate_replacement_number(bingpai, num_bingpai);
     let r2 = shisanyao::calculate_replacement_number(bingpai, num_bingpai);
     Ok([r0, r1, r2].into_iter().min().unwrap())
@@ -175,13 +182,19 @@ pub fn calculate_replacement_number_3_player(
 ) -> Result<u8, InvalidShoupaiError> {
     let num_bingpai = bingpai.count_3_player()?;
 
+    debug_assert!(
+        (4 - num_bingpai / 3)
+            >= fulu_mianzi_list
+                .as_ref()
+                .map_or(0, |f| f.iter().flatten().count() as u8)
+    );
+
     let shoupai = match fulu_mianzi_list {
         Some(f) => Some(get_shoupai_3_player(bingpai, f)?),
         None => None,
     };
 
-    let r0 =
-        standard::calculate_replacement_number_3_player(bingpai, fulu_mianzi_list, num_bingpai);
+    let r0 = standard::calculate_replacement_number_3_player(bingpai, &shoupai, num_bingpai);
     let r1 = qiduizi::calculate_replacement_number(bingpai, num_bingpai);
     let r2 = shisanyao::calculate_replacement_number(bingpai, num_bingpai);
     Ok([r0, r1, r2].into_iter().min().unwrap())
