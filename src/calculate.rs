@@ -6,9 +6,7 @@ use super::qiduizi;
 use super::shisanyao;
 use super::standard;
 use crate::bingpai::{Bingpai, BingpaiExt};
-use crate::shoupai::{
-    validate_shoupai, validate_shoupai_3_player, FuluMianziList, InvalidShoupaiError,
-};
+use crate::shoupai::{get_shoupai, get_shoupai_3_player, FuluMianziList, InvalidShoupaiError};
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
 /// This function is for 4-player mahjong.
@@ -86,9 +84,10 @@ pub fn calculate_replacement_number(
 ) -> Result<u8, InvalidShoupaiError> {
     let num_bingpai = bingpai.count()?;
 
-    if let Some(f) = fulu_mianzi_list {
-        validate_shoupai(bingpai, f)?;
-    }
+    let shoupai = match fulu_mianzi_list {
+        Some(f) => Some(get_shoupai(bingpai, f)?),
+        None => None,
+    };
 
     let r0 = standard::calculate_replacement_number(bingpai, fulu_mianzi_list, num_bingpai);
     let r1 = qiduizi::calculate_replacement_number(bingpai, num_bingpai);
@@ -176,9 +175,10 @@ pub fn calculate_replacement_number_3_player(
 ) -> Result<u8, InvalidShoupaiError> {
     let num_bingpai = bingpai.count_3_player()?;
 
-    if let Some(f) = fulu_mianzi_list {
-        validate_shoupai_3_player(bingpai, f)?;
-    }
+    let shoupai = match fulu_mianzi_list {
+        Some(f) => Some(get_shoupai_3_player(bingpai, f)?),
+        None => None,
+    };
 
     let r0 =
         standard::calculate_replacement_number_3_player(bingpai, fulu_mianzi_list, num_bingpai);
