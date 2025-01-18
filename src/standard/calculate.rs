@@ -102,11 +102,10 @@ fn add_partial_replacement_number(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbe
     for i in (5..10).rev() {
         let mut r = min(lhs[i], rhs[i]);
         for j in 5..i {
-            r = [r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
+            r = *[r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
                 .iter()
                 .min()
-                .unwrap()
-                .clone();
+                .unwrap();
         }
         lhs[i] = r;
     }
