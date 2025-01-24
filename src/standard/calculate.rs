@@ -828,17 +828,17 @@ mod tests {
             0, 0, 0, 1, 1, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 1);
 
-        let fulu_mianzi_list = Some([
+        let fulu_mianzi_list = [
             Some(FuluMianzi::Kezi(30)),
             Some(FuluMianzi::Kezi(27)),
             Some(FuluMianzi::Kezi(31)),
             Some(FuluMianzi::Kezi(33)),
-        ]);
-        let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        ];
+        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let replacement_number_2 = calculate_replacement_number(&bingpai, &shoupai, num_bingpai);
         assert_eq!(replacement_number_2, 2);
     }
 
@@ -852,17 +852,17 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 2);
 
-        let fulu_mianzi_list = Some([
+        let fulu_mianzi_list = [
             Some(FuluMianzi::Kezi(8)),
             Some(FuluMianzi::Kezi(17)),
             Some(FuluMianzi::Kezi(26)),
             None,
-        ]);
-        let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        ];
+        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let replacement_number_2 = calculate_replacement_number(&bingpai, &shoupai, num_bingpai);
         assert_eq!(replacement_number_2, 3);
     }
 
@@ -876,17 +876,17 @@ mod tests {
             2, 0, 0, 0, 1, 1, 1, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 2);
 
-        let fulu_mianzi_list = Some([
+        let fulu_mianzi_list = [
             Some(FuluMianzi::Kezi(33)),
             Some(FuluMianzi::Kezi(32)),
             Some(FuluMianzi::Kezi(31)),
             None,
-        ]);
-        let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        ];
+        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let replacement_number_2 = calculate_replacement_number(&bingpai, &shoupai, num_bingpai);
         assert_eq!(replacement_number_2, 3);
     }
 
@@ -900,17 +900,17 @@ mod tests {
             1, 0, 1, 0, 2, 1, 0, // z
         ];
         let num_bingpai: u8 = bingpai.iter().sum();
-        let replacement_number_1 = calculate_replacement_number(bingpai, &None, num_bingpai);
+        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 2);
 
-        let fulu_mianzi_list = Some([
+        let fulu_mianzi_list = [
             Some(FuluMianzi::Kezi(27)),
             Some(FuluMianzi::Kezi(29)),
             Some(FuluMianzi::Kezi(32)),
             None,
-        ]);
-        let replacement_number_2 =
-            calculate_replacement_number(bingpai, &fulu_mianzi_list, num_bingpai);
+        ];
+        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let replacement_number_2 = calculate_replacement_number(&bingpai, &shoupai, num_bingpai);
         assert_eq!(replacement_number_2, 3);
     }
 
