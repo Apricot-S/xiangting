@@ -103,6 +103,9 @@ pub enum InvalidFuluMianziError {
     /// The tile and position combination cannot form a valid sequence.
     #[error("a sequence cannot be made with {0} and {1:?}")]
     InvalidShunziCombination(Tile, ClaimedTilePosition),
+    /// This meld cannot be used in 3-player mahjong (2m to 8m or sequence).
+    #[error("{0} cannot be used in 3-player mahjong")]
+    InvalidFuluMianziFor3Player(FuluMianzi),
 }
 
 impl FuluMianzi {
@@ -130,6 +133,25 @@ impl FuluMianzi {
                 Ok(())
             }
         }
+    }
+
+    pub(crate) fn validate_3_player(&self) -> Result<(), InvalidFuluMianziError> {
+        match self {
+            FuluMianzi::Shunzi(_, _) => {
+                return Err(InvalidFuluMianziError::InvalidFuluMianziFor3Player(
+                    self.clone(),
+                ));
+            }
+            FuluMianzi::Kezi(t) | FuluMianzi::Gangzi(t) => {
+                if (1..8).contains(t) {
+                    return Err(InvalidFuluMianziError::InvalidFuluMianziFor3Player(
+                        self.clone(),
+                    ));
+                }
+            }
+        }
+
+        self.validate()
     }
 
     #[inline]

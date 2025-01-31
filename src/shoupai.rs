@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::bingpai::{Bingpai, InvalidBingpaiError};
+use crate::bingpai::{Bingpai, BingpaiExt, InvalidBingpaiError};
 use crate::constants::{MAX_NUM_FULU_MIANZI, MAX_NUM_SAME_TILE, MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
 use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, InvalidFuluMianziError};
 use thiserror::Error;
@@ -67,42 +67,18 @@ impl FuluMianziListExt for FuluMianziList {
 /// Errors that occur when an invalid hand (手牌) is provided.
 #[derive(Debug, Error)]
 pub enum InvalidShoupaiError {
+    /// Contains an invalid pure hand.
+    #[error("hand contains an invalid pure hand ({0})")]
+    InvalidBingpai(#[from] InvalidBingpaiError),
+    /// Contains an invalid meld.
+    #[error("hand contains an invalid meld ({0})")]
+    InvalidFuluMianzi(#[from] InvalidFuluMianziError),
     /// Same tile count exceeds 4.
     #[error("same tile count must be 4 or less but was {0}")]
     ExceedsMaxNumSameTile(u8),
     /// Total tile count exceeds 14.
     #[error("total tile count must be 14 or less but was {0}")]
     ExceedsMaxNumShoupai(u8),
-    /// Hand is empty.
-    #[error("hand is empty")]
-    EmptyShoupai,
-    /// Total tile count is not a multiple of 3 plus 1 or 2.
-    #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
-    InvalidNumShoupai(u8),
-    /// Contains an invalid meld.
-    #[error("hand contains an invalid meld ({0})")]
-    InvalidFuluMianzi(#[from] InvalidFuluMianziError),
-    /// Contains tiles that cannot be used in 3-player mahjong (2m to 8m).
-    #[error(
-        "tile index {0} (must be outside 1 (2m) to 7 (8m)) cannot be used in 3-player mahjong"
-    )]
-    InvalidTileFor3Player(usize),
-    /// Contains a meld that cannot be used in 3-player mahjong (2m to 8m or sequence).
-    #[error("{0} cannot be used in 3-player mahjong")]
-    InvalidFuluMianziFor3Player(FuluMianzi),
-}
-
-#[doc(hidden)]
-impl From<InvalidBingpaiError> for InvalidShoupaiError {
-    fn from(value: InvalidBingpaiError) -> Self {
-        match value {
-            InvalidBingpaiError::EmptyBingpai => Self::EmptyShoupai,
-            InvalidBingpaiError::ExceedsMaxNumBingpai(n) => Self::ExceedsMaxNumShoupai(n),
-            InvalidBingpaiError::ExceedsMaxNumSameTile(n) => Self::ExceedsMaxNumSameTile(n),
-            InvalidBingpaiError::InvalidNumBingpai(n) => Self::InvalidNumShoupai(n),
-            InvalidBingpaiError::InvalidTileFor3Player(i) => Self::InvalidTileFor3Player(i),
-        }
-    }
 }
 
 fn validate_fulu_mianzi_list(fulu_mianzi_list: &FuluMianziList) -> Result<(), InvalidShoupaiError> {
@@ -119,20 +95,8 @@ fn validate_fulu_mianzi_list_3_player(
     fulu_mianzi_list
         .iter()
         .flatten()
-        .try_for_each(|m| match m {
-            FuluMianzi::Shunzi(_, _) => {
-                Err(InvalidShoupaiError::InvalidFuluMianziFor3Player(m.clone()))
-            }
-            FuluMianzi::Kezi(t) | FuluMianzi::Gangzi(t) => {
-                if (1..8).contains(t) {
-                    Err(InvalidShoupaiError::InvalidFuluMianziFor3Player(m.clone()))
-                } else {
-                    Ok(())
-                }
-            }
-        })?;
-
-    validate_fulu_mianzi_list(fulu_mianzi_list)
+        .try_for_each(|m| m.validate_3_player())?;
+    Ok(())
 }
 
 fn count_gangzi(fulu_mianzi_list: &FuluMianziList) -> u8 {
@@ -163,9 +127,6 @@ fn validate_shoupai(shoupai: &Bingpai, num_gangzi: u8) -> Result<(), InvalidShou
     if num_shoupai > (MAX_NUM_SHOUPAI + num_gangzi) {
         return Err(InvalidShoupaiError::ExceedsMaxNumShoupai(num_shoupai));
     }
-    if (num_shoupai - num_gangzi) % 3 == 0 {
-        return Err(InvalidShoupaiError::InvalidNumShoupai(num_shoupai));
-    }
 
     Ok(())
 }
@@ -174,6 +135,8 @@ pub(crate) fn get_shoupai(
     bingpai: &Bingpai,
     fulu_mianzi_list: &FuluMianziList,
 ) -> Result<Bingpai, InvalidShoupaiError> {
+    debug_assert!(bingpai.count().is_ok());
+
     validate_fulu_mianzi_list(fulu_mianzi_list)?;
 
     let fulupai = fulu_mianzi_list.to_fulupai();
@@ -188,6 +151,8 @@ pub(crate) fn get_shoupai_3_player(
     bingpai: &Bingpai,
     fulu_mianzi_list: &FuluMianziList,
 ) -> Result<Bingpai, InvalidShoupaiError> {
+    debug_assert!(bingpai.count_3_player().is_ok());
+
     validate_fulu_mianzi_list_3_player(fulu_mianzi_list)?;
 
     let fulupai = fulu_mianzi_list.to_fulupai();
@@ -325,51 +290,6 @@ mod tests {
     }
 
     #[test]
-    fn invalid_shoupai_menqian_too_many_tiles() {
-        let bingpai: Bingpai = [
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // m
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // p
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // s
-            1, 1, 1, 0, 0, 0, 0, // z
-        ];
-        let menqian = [None, None, None, None];
-        let result = get_shoupai(&bingpai, &menqian).unwrap_err();
-        assert!(matches!(
-            result,
-            InvalidShoupaiError::ExceedsMaxNumShoupai(15)
-        ));
-    }
-
-    #[test]
-    fn invalid_shoupai_menqian_5th_tile() {
-        let bingpai: Bingpai = [
-            5, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // p
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // s
-            1, 0, 0, 0, 0, 0, 0, // z
-        ];
-        let menqian = [None, None, None, None];
-        let result = get_shoupai(&bingpai, &menqian).unwrap_err();
-        assert!(matches!(
-            result,
-            InvalidShoupaiError::ExceedsMaxNumSameTile(5)
-        ));
-    }
-
-    #[test]
-    fn invalid_shoupai_menqian_incomplete_hand() {
-        let bingpai: Bingpai = [
-            4, 4, 4, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
-        let menqian = [None, None, None, None];
-        let result = get_shoupai(&bingpai, &menqian).unwrap_err();
-        assert!(matches!(result, InvalidShoupaiError::InvalidNumShoupai(12)));
-    }
-
-    #[test]
     fn valid_shoupai_fulu() {
         let bingpai: Bingpai = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -413,7 +333,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, 0, 0, // m
             0, 0, 0, 0, 0, 0, 0, 0, 0, // p
             0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 1, 0, 0, 0, 0, // z
+            1, 1, 1, 1, 0, 0, 0, // z
         ];
 
         let kezi_4 = [
@@ -425,7 +345,7 @@ mod tests {
         let result = get_shoupai(&bingpai, &kezi_4).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::ExceedsMaxNumShoupai(15),
+            InvalidShoupaiError::ExceedsMaxNumShoupai(16),
         ));
     }
 
@@ -435,7 +355,7 @@ mod tests {
             0, 0, 0, 0, 0, 0, 0, 0, 0, // m
             0, 0, 0, 0, 0, 0, 0, 0, 0, // p
             0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 1, 0, 0, 0, 0, // z
+            1, 1, 0, 0, 0, 0, 0, // z
         ];
 
         let gangzi_4 = [
@@ -449,25 +369,6 @@ mod tests {
             result,
             InvalidShoupaiError::ExceedsMaxNumSameTile(8),
         ));
-    }
-
-    #[test]
-    fn invalid_shoupai_fulu_incomplete_hand() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 1, 0, 0, 0, 0, // z
-        ];
-
-        let shunzi_3 = [
-            Some(FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)),
-            Some(FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)),
-            Some(FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)),
-            None,
-        ];
-        let result = get_shoupai(&bingpai, &shunzi_3).unwrap_err();
-        assert!(matches!(result, InvalidShoupaiError::InvalidNumShoupai(12)));
     }
 
     #[test]
@@ -551,10 +452,12 @@ mod tests {
         let result = get_shoupai_3_player(&bingpai, &shunzi_1).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
-                0,
-                ClaimedTilePosition::Low
-            ))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
+                    0,
+                    ClaimedTilePosition::Low
+                ))
+            )
         ));
     }
 
@@ -571,14 +474,18 @@ mod tests {
         let result = get_shoupai_3_player(&bingpai, &kezi_2m).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
+            )
         ));
 
         let kezi_8m = [Some(FuluMianzi::Kezi(7)), None, None, None];
         let result = get_shoupai_3_player(&bingpai, &kezi_8m).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(7))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(7))
+            )
         ));
     }
 
@@ -595,14 +502,18 @@ mod tests {
         let result = get_shoupai_3_player(&bingpai, &gangzi_2m).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Gangzi(1))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Gangzi(1))
+            )
         ));
 
         let gangzi_8m = [Some(FuluMianzi::Gangzi(7)), None, None, None];
         let result = get_shoupai_3_player(&bingpai, &gangzi_8m).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Gangzi(7))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Gangzi(7))
+            )
         ));
     }
 }
