@@ -6,9 +6,10 @@
 // https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
 // https://github.com/gimite/mjai-manue/blob/master/coffee/shanten_analysis.coffee
 
+use std::cmp::Ordering;
+
 const NUM_SHUPAI_IDS: usize = 9;
 const NUM_ZIPAI_IDS: usize = 7;
-
 // 1-7{m,p,s}
 const SEQUENCE_IDS: [usize; 7] = [0, 1, 2, 3, 4, 5, 6];
 
@@ -33,12 +34,16 @@ fn update_upperbound_and_necessary_tiles_0_pair<const N: usize>(
     upperbound: &mut u8,
     necessary_tiles: &mut u16,
 ) {
-    if current_distance < *upperbound {
-        *upperbound = current_distance;
-        *current_necessary_tiles = 0;
-        *necessary_tiles = get_necessary_tiles(hand, winning_hand);
-    } else if current_distance == *upperbound {
-        *necessary_tiles |= get_necessary_tiles(hand, winning_hand);
+    match current_distance.cmp(upperbound) {
+        Ordering::Less => {
+            *upperbound = current_distance;
+            *current_necessary_tiles = 0;
+            *necessary_tiles = get_necessary_tiles(hand, winning_hand);
+        }
+        Ordering::Equal => {
+            *necessary_tiles |= get_necessary_tiles(hand, winning_hand);
+        }
+        Ordering::Greater => {}
     }
 }
 
