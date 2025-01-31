@@ -79,9 +79,6 @@ pub enum InvalidShoupaiError {
     /// Contains an invalid meld.
     #[error("hand contains an invalid meld ({0})")]
     InvalidFuluMianzi(#[from] InvalidFuluMianziError),
-    /// Contains a meld that cannot be used in 3-player mahjong (2m to 8m or sequence).
-    #[error("{0} cannot be used in 3-player mahjong")]
-    InvalidFuluMianziFor3Player(FuluMianzi),
 }
 
 fn validate_fulu_mianzi_list(fulu_mianzi_list: &FuluMianziList) -> Result<(), InvalidShoupaiError> {
@@ -98,20 +95,8 @@ fn validate_fulu_mianzi_list_3_player(
     fulu_mianzi_list
         .iter()
         .flatten()
-        .try_for_each(|m| match m {
-            FuluMianzi::Shunzi(_, _) => {
-                Err(InvalidShoupaiError::InvalidFuluMianziFor3Player(m.clone()))
-            }
-            FuluMianzi::Kezi(t) | FuluMianzi::Gangzi(t) => {
-                if (1..8).contains(t) {
-                    Err(InvalidShoupaiError::InvalidFuluMianziFor3Player(m.clone()))
-                } else {
-                    Ok(())
-                }
-            }
-        })?;
-
-    validate_fulu_mianzi_list(fulu_mianzi_list)
+        .try_for_each(|m| m.validate_3_player())?;
+    Ok(())
 }
 
 fn count_gangzi(fulu_mianzi_list: &FuluMianziList) -> u8 {
@@ -467,10 +452,12 @@ mod tests {
         let result = get_shoupai_3_player(&bingpai, &shunzi_1).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
-                0,
-                ClaimedTilePosition::Low
-            ))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
+                    0,
+                    ClaimedTilePosition::Low
+                ))
+            )
         ));
     }
 
@@ -487,14 +474,18 @@ mod tests {
         let result = get_shoupai_3_player(&bingpai, &kezi_2m).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
+            )
         ));
 
         let kezi_8m = [Some(FuluMianzi::Kezi(7)), None, None, None];
         let result = get_shoupai_3_player(&bingpai, &kezi_8m).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(7))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(7))
+            )
         ));
     }
 
@@ -511,14 +502,18 @@ mod tests {
         let result = get_shoupai_3_player(&bingpai, &gangzi_2m).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Gangzi(1))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Gangzi(1))
+            )
         ));
 
         let gangzi_8m = [Some(FuluMianzi::Gangzi(7)), None, None, None];
         let result = get_shoupai_3_player(&bingpai, &gangzi_8m).unwrap_err();
         assert!(matches!(
             result,
-            InvalidShoupaiError::InvalidFuluMianziFor3Player(FuluMianzi::Gangzi(7))
+            InvalidShoupaiError::InvalidFuluMianzi(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Gangzi(7))
+            )
         ));
     }
 }
