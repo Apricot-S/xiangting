@@ -351,4 +351,32 @@ mod tests {
             InvalidShoupaiError::InvalidBingpai(InvalidBingpaiError::EmptyBingpai)
         ));
     }
+
+    #[test]
+    fn calculate_replacement_number_3_player_2m_8m() {
+        let bingpai_2m: Bingpai = [
+            0, 1, 0, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let bingpai_8m: Bingpai = [
+            0, 0, 0, 0, 0, 0, 0, 1, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+
+        let replacement_number_2m = calculate_replacement_number_3_player(&bingpai_2m, &None);
+        let replacement_number_8m = calculate_replacement_number_3_player(&bingpai_8m, &None);
+
+        assert!(matches!(
+            replacement_number_2m.unwrap_err(),
+            InvalidShoupaiError::InvalidBingpai(InvalidBingpaiError::InvalidTileFor3Player(1))
+        ));
+        assert!(matches!(
+            replacement_number_8m.unwrap_err(),
+            InvalidShoupaiError::InvalidBingpai(InvalidBingpaiError::InvalidTileFor3Player(7))
+        ));
+    }
 }
