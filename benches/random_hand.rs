@@ -3,7 +3,7 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use mt19937::MT19937;
-use rand::seq::SliceRandom;
+use rand::seq::{IndexedRandom, SliceRandom};
 use rand::{Rng, SeedableRng};
 
 pub fn create_rng() -> MT19937 {
