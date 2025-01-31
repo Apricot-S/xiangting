@@ -67,18 +67,18 @@ impl FuluMianziListExt for FuluMianziList {
 /// Errors that occur when an invalid hand (手牌) is provided.
 #[derive(Debug, Error)]
 pub enum InvalidShoupaiError {
-    /// Same tile count exceeds 4.
-    #[error("same tile count must be 4 or less but was {0}")]
-    ExceedsMaxNumSameTile(u8),
-    /// Total tile count exceeds 14.
-    #[error("total tile count must be 14 or less but was {0}")]
-    ExceedsMaxNumShoupai(u8),
     /// Contains an invalid pure hand.
     #[error("hand contains an invalid pure hand ({0})")]
     InvalidBingpai(#[from] InvalidBingpaiError),
     /// Contains an invalid meld.
     #[error("hand contains an invalid meld ({0})")]
     InvalidFuluMianzi(#[from] InvalidFuluMianziError),
+    /// Same tile count exceeds 4.
+    #[error("same tile count must be 4 or less but was {0}")]
+    ExceedsMaxNumSameTile(u8),
+    /// Total tile count exceeds 14.
+    #[error("total tile count must be 14 or less but was {0}")]
+    ExceedsMaxNumShoupai(u8),
 }
 
 fn validate_fulu_mianzi_list(fulu_mianzi_list: &FuluMianziList) -> Result<(), InvalidShoupaiError> {
