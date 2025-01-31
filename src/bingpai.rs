@@ -50,19 +50,23 @@ use thiserror::Error;
 /// ```
 pub type Bingpai = [u8; NUM_TILE_INDEX];
 
+/// Errors that occur when an invalid pure hand (純手牌) is provided.
 #[derive(Debug, Error)]
-pub(crate) enum InvalidBingpaiError {
+pub enum InvalidBingpaiError {
+    /// Same tile count exceeds 4.
     #[error("same tile count must be 4 or less but was {0}")]
     ExceedsMaxNumSameTile(u8),
+    /// Total tile count exceeds 14.
     #[error("total tile count must be 14 or less but was {0}")]
     ExceedsMaxNumBingpai(u8),
-    #[error("hand is empty")]
+    /// Pure hand is empty.
+    #[error("pure hand is empty")]
     EmptyBingpai,
+    /// Total tile count is not a multiple of 3 plus 1 or 2.
     #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidNumBingpai(u8),
-    #[error(
-        "tile index {0} (must be outside 1 (2m) to 7 (8m)) cannot be used in 3-player mahjong"
-    )]
+    /// Contains tiles that cannot be used in 3-player mahjong (2m to 8m).
+    #[error("tile index {0} cannot be used in 3-player mahjong")]
     InvalidTileFor3Player(usize),
 }
 

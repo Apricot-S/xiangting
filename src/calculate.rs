@@ -203,6 +203,7 @@ pub fn calculate_replacement_number_3_player(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::bingpai::InvalidBingpaiError;
 
     #[test]
     fn calculate_replacement_number_standard_tenpai() {
@@ -251,7 +252,52 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &None);
         assert!(matches!(
             replacement_number.unwrap_err(),
-            InvalidShoupaiError::EmptyShoupai
+            InvalidShoupaiError::InvalidBingpai(InvalidBingpaiError::EmptyBingpai)
+        ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_too_many_tiles() {
+        let bingpai: Bingpai = [
+            1, 1, 1, 1, 0, 0, 0, 0, 0, // m
+            1, 1, 1, 1, 0, 0, 0, 0, 0, // p
+            1, 1, 1, 1, 0, 0, 0, 0, 0, // s
+            1, 1, 1, 0, 0, 0, 0, // z
+        ];
+        let replacement_number = calculate_replacement_number(&bingpai, &None);
+        assert!(matches!(
+            replacement_number.unwrap_err(),
+            InvalidShoupaiError::InvalidBingpai(InvalidBingpaiError::ExceedsMaxNumBingpai(15))
+        ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_5th_tile() {
+        let bingpai: Bingpai = [
+            5, 0, 0, 0, 0, 0, 0, 0, 0, // m
+            1, 1, 1, 1, 0, 0, 0, 0, 0, // p
+            1, 1, 1, 1, 0, 0, 0, 0, 0, // s
+            1, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let replacement_number = calculate_replacement_number(&bingpai, &None);
+        assert!(matches!(
+            replacement_number.unwrap_err(),
+            InvalidShoupaiError::InvalidBingpai(InvalidBingpaiError::ExceedsMaxNumSameTile(5))
+        ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_incomplete_hand() {
+        let bingpai: Bingpai = [
+            4, 4, 4, 0, 0, 0, 0, 0, 0, // m
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+            0, 0, 0, 0, 0, 0, 0, // z
+        ];
+        let replacement_number = calculate_replacement_number(&bingpai, &None);
+        assert!(matches!(
+            replacement_number.unwrap_err(),
+            InvalidShoupaiError::InvalidBingpai(InvalidBingpaiError::InvalidNumBingpai(12))
         ));
     }
 
@@ -302,7 +348,7 @@ mod tests {
         let replacement_number = calculate_replacement_number_3_player(&bingpai, &None);
         assert!(matches!(
             replacement_number.unwrap_err(),
-            InvalidShoupaiError::EmptyShoupai
+            InvalidShoupaiError::InvalidBingpai(InvalidBingpaiError::EmptyBingpai)
         ));
     }
 }

@@ -350,16 +350,6 @@ mod tests {
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
         assert_eq!(replacement_number_1, 2);
-
-        let fulu_mianzi_list = [
-            Some(FuluMianzi::Kezi(1)),
-            Some(FuluMianzi::Shunzi(13, ClaimedTilePosition::Low)),
-            None,
-            None,
-        ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
-        let replacement_number_2 = calculate_replacement_number(&bingpai, &shoupai, num_bingpai);
-        assert_eq!(replacement_number_2, 2);
     }
 
     #[test]

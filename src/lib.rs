@@ -50,7 +50,7 @@ mod shoupai;
 mod standard;
 
 #[cfg(not(feature = "build-file"))]
-pub use bingpai::Bingpai;
+pub use bingpai::{Bingpai, InvalidBingpaiError};
 #[cfg(not(feature = "build-file"))]
 pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
 #[cfg(not(feature = "build-file"))]
