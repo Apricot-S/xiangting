@@ -6,6 +6,8 @@
 // https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
 // https://github.com/gimite/mjai-manue/blob/master/coffee/shanten_analysis.coffee
 
+#![allow(clippy::too_many_arguments)]
+
 use std::cmp::Ordering;
 
 const NUM_SHUPAI_IDS: usize = 9;
