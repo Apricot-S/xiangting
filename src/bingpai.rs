@@ -87,10 +87,10 @@ impl BingpaiExt for Bingpai {
         if num_bingpai > MAX_NUM_SHOUPAI {
             return Err(InvalidBingpaiError::ExceedsMaxNumBingpai(num_bingpai));
         }
-        if num_bingpai == 0 {
-            return Err(InvalidBingpaiError::EmptyBingpai);
-        }
         if num_bingpai % 3 == 0 {
+            if num_bingpai == 0 {
+                return Err(InvalidBingpaiError::EmptyBingpai);
+            }
             return Err(InvalidBingpaiError::InvalidNumBingpai(num_bingpai));
         }
 
