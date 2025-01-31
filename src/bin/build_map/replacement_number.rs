@@ -156,8 +156,7 @@ pub(super) fn get_shupai_replacement_number(
     // Add sequences
     let start_sequence_id = min_meld_id.saturating_sub(NUM_SHUPAI_IDS);
 
-    for sequence_id in start_sequence_id..SEQUENCE_IDS.len() {
-        let i = SEQUENCE_IDS[sequence_id];
+    for (sequence_id, &i) in SEQUENCE_IDS.iter().enumerate().skip(start_sequence_id) {
         if winning_hand[i..=i + 2].iter().any(|&c| c == 4) {
             // Can't add a sequence
             continue;
