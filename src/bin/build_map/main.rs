@@ -175,6 +175,8 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
 }
 
 fn main() {
+    let start = std::time::Instant::now();
+
     let args: Vec<String> = env::args().collect();
     if args.len() != 4 {
         eprintln!(
@@ -214,4 +216,7 @@ fn main() {
 
         dump_map::<2>(&wanzi_19_map, wanzi_19_map_path).expect("Failed to dump wanzi 19 map");
     }
+
+    let elapsed_time = start.elapsed();
+    println!("elapsed time: {:?}", elapsed_time);
 }
