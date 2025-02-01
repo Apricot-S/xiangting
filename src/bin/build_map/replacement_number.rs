@@ -6,9 +6,12 @@
 // https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
 // https://github.com/gimite/mjai-manue/blob/master/coffee/shanten_analysis.coffee
 
+#![allow(clippy::too_many_arguments)]
+
+use std::cmp::Ordering;
+
 const NUM_SHUPAI_IDS: usize = 9;
 const NUM_ZIPAI_IDS: usize = 7;
-
 // 1-7{m,p,s}
 const SEQUENCE_IDS: [usize; 7] = [0, 1, 2, 3, 4, 5, 6];
 
@@ -33,12 +36,16 @@ fn update_upperbound_and_necessary_tiles_0_pair<const N: usize>(
     upperbound: &mut u8,
     necessary_tiles: &mut u16,
 ) {
-    if current_distance < *upperbound {
-        *upperbound = current_distance;
-        *current_necessary_tiles = 0;
-        *necessary_tiles = get_necessary_tiles(hand, winning_hand);
-    } else if current_distance == *upperbound {
-        *necessary_tiles |= get_necessary_tiles(hand, winning_hand);
+    match current_distance.cmp(upperbound) {
+        Ordering::Less => {
+            *upperbound = current_distance;
+            *current_necessary_tiles = 0;
+            *necessary_tiles = get_necessary_tiles(hand, winning_hand);
+        }
+        Ordering::Equal => {
+            *necessary_tiles |= get_necessary_tiles(hand, winning_hand);
+        }
+        Ordering::Greater => {}
     }
 }
 
@@ -149,8 +156,7 @@ pub(super) fn get_shupai_replacement_number(
     // Add sequences
     let start_sequence_id = min_meld_id.saturating_sub(NUM_SHUPAI_IDS);
 
-    for sequence_id in start_sequence_id..SEQUENCE_IDS.len() {
-        let i = SEQUENCE_IDS[sequence_id];
+    for (sequence_id, &i) in SEQUENCE_IDS.iter().enumerate().skip(start_sequence_id) {
         if winning_hand[i..=i + 2].iter().any(|&c| c == 4) {
             // Can't add a sequence
             continue;

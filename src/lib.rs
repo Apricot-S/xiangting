@@ -6,7 +6,7 @@
 
 //! A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
 //!
-//! This library is based on the algorithm in [Nyanten](https://github.com/Cryolite/nyanten).  
+//! This library is based on the algorithm in [Cryolite's Nyanten](https://github.com/Cryolite/nyanten).  
 //! However, it introduces the following additional features:
 //!
 //! - Supports rules that include and exclude melded tiles when determining if a hand contains four identical tiles.
@@ -50,7 +50,7 @@ mod shoupai;
 mod standard;
 
 #[cfg(not(feature = "build-file"))]
-pub use bingpai::Bingpai;
+pub use bingpai::{Bingpai, InvalidBingpaiError};
 #[cfg(not(feature = "build-file"))]
 pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
 #[cfg(not(feature = "build-file"))]
