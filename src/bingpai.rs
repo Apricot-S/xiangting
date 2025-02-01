@@ -26,7 +26,7 @@ use thiserror::Error;
 /// | ----- | --------- | ---------- | --------- | ---------- | ---------- | ---------- | -------- |
 /// | Tile  | East (1z) | South (2z) | West (3z) | North (4z) | White (5z) | Green (6z) | Red (7z) |
 ///
-/// See also [`InvalidShoupaiError`](crate::InvalidShoupaiError) for more information.
+/// See also [`InvalidBingpaiError`](crate::InvalidBingpaiError) for more information.
 ///
 /// # Examples
 ///
