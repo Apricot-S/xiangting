@@ -48,6 +48,8 @@ mod shisanyao;
 mod shoupai;
 #[cfg(not(feature = "build-file"))]
 mod standard;
+#[cfg(not(feature = "build-file"))]
+mod tile;
 
 #[cfg(not(feature = "build-file"))]
 pub use bingpai::{Bingpai, InvalidBingpaiError};
@@ -57,6 +59,8 @@ pub use calculate::{calculate_replacement_number, calculate_replacement_number_3
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, InvalidFuluMianziError};
 #[cfg(not(feature = "build-file"))]
 pub use shoupai::{FuluMianziList, InvalidShoupaiError};
+#[cfg(not(feature = "build-file"))]
+pub use tile::Tile;
 
 #[cfg(feature = "build-map")]
 #[doc(hidden)]
