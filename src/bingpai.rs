@@ -8,25 +8,9 @@ use thiserror::Error;
 /// 兵牌: Hand excluding melds (a.k.a. pure hand, 純手牌).
 ///
 /// Each element of the array represents the count of a specific tile in the hand.
-/// The correspondence between the index and the tile is shown in the table below.
+/// The correspondence between the index and the tile is the same as [`Tile`](crate::Tile).
 ///
-/// | Index | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   |
-/// | ----- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-/// | Tile  | 1m  | 2m  | 3m  | 4m  | 5m  | 6m  | 7m  | 8m  | 9m  |
-///
-/// | Index | 9   | 10  | 11  | 12  | 13  | 14  | 15  | 16  | 17  |
-/// | ----- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-/// | Tile  | 1p  | 2p  | 3p  | 4p  | 5p  | 6p  | 7p  | 8p  | 9p  |
-///
-/// | Index | 18  | 19  | 20  | 21  | 22  | 23  | 24  | 25  | 26  |
-/// | ----- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-/// | Tile  | 1s  | 2s  | 3s  | 4s  | 5s  | 6s  | 7s  | 8s  | 9s  |
-///
-/// | Index | 27        | 28         | 29        | 30         | 31         | 32         | 33       |
-/// | ----- | --------- | ---------- | --------- | ---------- | ---------- | ---------- | -------- |
-/// | Tile  | East (1z) | South (2z) | West (3z) | North (4z) | White (5z) | Green (6z) | Red (7z) |
-///
-/// See also [`InvalidShoupaiError`](crate::InvalidShoupaiError) for more information.
+/// See also [`InvalidBingpaiError`](crate::InvalidBingpaiError) for more information.
 ///
 /// # Examples
 ///

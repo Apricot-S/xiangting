@@ -3,10 +3,9 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use crate::constants::{MAX_SHUPAI_INDEX, MAX_TILE_INDEX, NUM_TILE_INDEX};
+use crate::tile::Tile;
 use std::fmt;
 use thiserror::Error;
-
-type Tile = u8;
 
 /// Position of the claimed tile in the melded sequence.
 /// Used in [`FuluMianzi::Shunzi`](self::FuluMianzi::Shunzi).
@@ -42,11 +41,6 @@ pub enum ClaimedTilePosition {
 pub enum FuluMianzi {
     /// 順子: Sequence.
     ///
-    /// The first argument represents the index of the tile.
-    /// The second argument represents the position of the claimed tile in the meld.
-    /// The correspondence between the index and the tile is the same as
-    /// [`Bingpai`](crate::Bingpai).
-    ///
     /// # Examples
     ///
     /// ```
@@ -63,10 +57,6 @@ pub enum FuluMianzi {
     Shunzi(Tile, ClaimedTilePosition),
     /// 刻子: Triplet.
     ///
-    /// The argument represents the index of the tile.
-    /// The correspondence between the index and the tile is the same as
-    /// [`Bingpai`](crate::Bingpai).
-    ///
     /// # Examples
     ///
     /// ```
@@ -76,10 +66,6 @@ pub enum FuluMianzi {
     /// ```
     Kezi(Tile),
     /// 槓子: Quad.
-    ///
-    /// The argument represents the index of the tile.
-    /// The correspondence between the index and the tile is the same as
-    /// [`Bingpai`](crate::Bingpai).
     ///
     /// # Examples
     ///
