@@ -163,12 +163,12 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     writeln!(w, "#[rustfmt::skip]")?;
 
     match N {
-        9 => writeln!(
+        9 => write!(
             w,
             "pub(super) static SHUPAI_MAP: [MapValue; SHUPAI_SIZE] = ["
         )?,
-        7 => writeln!(w, "pub(super) static ZIPAI_MAP: [MapValue; ZIPAI_SIZE] = [")?,
-        2 => writeln!(
+        7 => write!(w, "pub(super) static ZIPAI_MAP: [MapValue; ZIPAI_SIZE] = [")?,
+        2 => write!(
             w,
             "pub(super) static WANZI_19_MAP: [MapValue; WANZI_19_SIZE] = ["
         )?,
@@ -176,12 +176,12 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     }
 
     for &entry in map {
-        write!(w, "    [")?;
+        write!(w, "[")?;
         for (i, pack) in entry.iter().enumerate() {
-            let separator = if i < 3 { ", " } else { "" };
+            let separator = if i < 3 { "," } else { "" };
             write!(w, "{}{}", pack, separator)?;
         }
-        writeln!(w, "],")?;
+        write!(w, "],")?;
     }
 
     writeln!(w, "];")?;
