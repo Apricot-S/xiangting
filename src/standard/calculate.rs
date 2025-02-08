@@ -10,20 +10,20 @@ use super::zipai_map::ZIPAI_MAP;
 use crate::bingpai::Bingpai;
 use std::cmp::min;
 
-/// unpacked.0 : Replacement number
-/// unpacked.1 : Necessary tiles
-///
-/// Index:
-/// \[0] : 0 pairs, 0 melds
-/// \[1] : 0 pairs, 1 melds
-/// \[2] : 0 pairs, 2 melds
-/// \[3] : 0 pairs, 3 melds
-/// \[4] : 0 pairs, 4 melds
-/// \[5] : 1 pairs, 0 melds
-/// \[6] : 1 pairs, 1 melds
-/// \[7] : 1 pairs, 2 melds
-/// \[8] : 1 pairs, 3 melds
-/// \[9] : 1 pairs, 4 melds
+// unpacked.0 : Replacement number
+// unpacked.1 : Necessary tiles
+//
+// Index:
+// [0] : 0 pair, 0 melds
+// [1] : 0 pair, 1 melds
+// [2] : 0 pair, 2 melds
+// [3] : 0 pair, 3 melds
+// [4] : 0 pair, 4 melds
+// [5] : 1 pair, 0 melds
+// [6] : 1 pair, 1 melds
+// [7] : 1 pair, 2 melds
+// [8] : 1 pair, 3 melds
+// [9] : 1 pair, 4 melds
 type Unpacked = ([u8; 10], [u16; 10]);
 type UnpackedNumbers = [u8; 10];
 
@@ -32,27 +32,27 @@ fn unpack(pack: &MapValue) -> Unpacked {
     (
         [
             0u8,
-            (pack[1] & 0x0F) as u8,
-            (pack[2] & 0x0F) as u8,
-            (pack[3] & 0x0F) as u8,
-            (pack[4] & 0x0F) as u8,
-            ((pack[0] >> 16) & 0x0F) as u8,
-            ((pack[1] >> 16) & 0x0F) as u8,
-            ((pack[2] >> 16) & 0x0F) as u8,
-            ((pack[3] >> 16) & 0x0F) as u8,
-            ((pack[4] >> 16) & 0x0F) as u8,
+            (pack[0] & 0x0F) as u8,
+            ((pack[0] >> 4) & 0x0F) as u8,
+            ((pack[0] >> (4 * 2)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 3)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 4)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 5)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 6)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 7)) & 0x0F) as u8,
+            ((pack[3] >> (9 * 3)) & 0x0F) as u8,
         ],
         [
             0u16,
-            ((pack[1] >> 4) & 0x01FF) as u16,
-            ((pack[2] >> 4) & 0x01FF) as u16,
-            ((pack[3] >> 4) & 0x01FF) as u16,
-            ((pack[4] >> 4) & 0x01FF) as u16,
-            ((pack[0] >> 20) & 0x01FF) as u16,
-            ((pack[1] >> 20) & 0x01FF) as u16,
-            ((pack[2] >> 20) & 0x01FF) as u16,
-            ((pack[3] >> 20) & 0x01FF) as u16,
-            ((pack[4] >> 20) & 0x01FF) as u16,
+            (pack[1] & 0x01FF) as u16,
+            ((pack[1] >> 9) & 0x01FF) as u16,
+            ((pack[1] >> (9 * 2)) & 0x01FF) as u16,
+            (pack[2] & 0x01FF) as u16,
+            ((pack[2] >> 9) & 0x01FF) as u16,
+            ((pack[2] >> (9 * 2)) & 0x01FF) as u16,
+            (pack[3] & 0x01FF) as u16,
+            ((pack[3] >> 9) & 0x01FF) as u16,
+            ((pack[3] >> (9 * 2)) & 0x01FF) as u16,
         ],
     )
 }
@@ -100,6 +100,9 @@ fn modify_numbers(entry: Unpacked, four_tiles: u16) -> UnpackedNumbers {
 
 fn add_partial_replacement_number(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
     for i in (5..10).rev() {
+        // The original expression is
+        // let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
+        // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
         let mut r = min(lhs[i], rhs[i]);
         for j in 5..i {
             r = *[r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
@@ -112,6 +115,9 @@ fn add_partial_replacement_number(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbe
 
     // Skip the case when i = 0, as the inner loop would not run, leading to redundant assignments.
     for i in (1..5).rev() {
+        // The original expression is
+        // let mut r = lhs[i] + rhs[0];
+        // However, since rhs[0] is always 0, the calculation can be omitted.
         let mut r = lhs[i];
         for j in 0..i {
             r = min(r, lhs[j] + rhs[i - j]);

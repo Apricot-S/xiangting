@@ -14,17 +14,32 @@ pub type Wanzi19Table = Table<2>;
 
 // Each element contains the following structure:
 //
-// [Bits 0-3]: Replacement number without a pair
-// [Bits 4-12]: Necessary tiles without a pair
-// [Bits 13-15]: Unused
-// [Bits 16-19]: Replacement number with a pair
-// [Bits 20-28]: Necessary tiles with a pair
-// [Bits 29-31]: Unused
+// Index [0]:
+//  0- 3 Bits: Replacement number of 0 pair 1 melds
+//  4- 7 Bits: Replacement number of 0 pair 2 melds
+//  8-11 Bits: Replacement number of 0 pair 3 melds
+// 12-15 Bits: Replacement number of 0 pair 4 melds
+// 16-19 Bits: Replacement number of 1 pair 0 melds
+// 20-23 Bits: Replacement number of 1 pair 1 melds
+// 24-27 Bits: Replacement number of 1 pair 2 melds
+// 28-31 Bits: Replacement number of 1 pair 3 melds
 //
-// Index:
-// [0]: 0 melds
-// [1]: 1 melds
-// [2]: 2 melds
-// [3]: 3 melds
-// [4]: 4 melds
-pub type MapValue = [u32; 5];
+// Index [1]:
+//  0- 8 Bits: Necessary tiles of 0 pair 1 melds
+//  9-17 Bits: Necessary tiles of 0 pair 2 melds
+// 18-26 Bits: Necessary tiles of 0 pair 3 melds
+// 27-31 Bits: Unused
+//
+// Index [2]:
+//  0- 8 Bits: Necessary tiles of 0 pair 4 melds
+//  9-17 Bits: Necessary tiles of 1 pair 0 melds
+// 18-26 Bits: Necessary tiles of 1 pair 1 melds
+// 27-31 Bits: Unused
+//
+// Index [3]:
+//  0- 8 Bits: Necessary tiles of 1 pair 2 melds
+//  9-17 Bits: Necessary tiles of 1 pair 3 melds
+// 18-26 Bits: Necessary tiles of 1 pair 4 melds
+// 27-30 Bits: Replacement number of 1 pair 4 melds
+//    31  Bit: Unused
+pub type MapValue = [u32; 4];
