@@ -24,7 +24,7 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
     debug_assert!([9, 7, 2].contains(&N));
     const MAX_REPLACEMENT_NUMBER: u8 = 9;
 
-    let mut pack = [0u32; 5];
+    let mut pack: MapValue = [0u32; 4];
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
             if num_pair == 0 && num_meld == 0 {
@@ -76,9 +76,26 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
                 }
                 _ => unreachable!(),
             };
-            let shift = if num_pair == 0 { 0 } else { 16 };
-            pack[num_meld as usize] |= (replacement_number as u32) << shift;
-            pack[num_meld as usize] |= (necessary_tiles as u32) << (shift + 4);
+
+            match (num_pair, num_meld) {
+                (0, 1) => pack[1] |= necessary_tiles as u32,
+                (0, 2) => pack[1] |= (necessary_tiles as u32) << 9,
+                (0, 3) => pack[1] |= (necessary_tiles as u32) << (9 * 2),
+                (0, 4) => pack[2] |= necessary_tiles as u32,
+                (1, 0) => pack[2] |= (necessary_tiles as u32) << 9,
+                (1, 1) => pack[2] |= (necessary_tiles as u32) << (9 * 2),
+                (1, 2) => pack[3] |= necessary_tiles as u32,
+                (1, 3) => pack[3] |= (necessary_tiles as u32) << 9,
+                (1, 4) => pack[3] |= (necessary_tiles as u32) << (9 * 2),
+                _ => unreachable!(),
+            }
+
+            if num_pair == 1 && num_meld == 4 {
+                pack[3] |= (replacement_number as u32) << (9 * 3);
+            } else {
+                let shift = 4 * (5 * num_pair + num_meld) - 4;
+                pack[0] |= (replacement_number as u32) << shift;
+            }
         }
     }
     pack
@@ -146,12 +163,12 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     writeln!(w, "#[rustfmt::skip]")?;
 
     match N {
-        9 => writeln!(
+        9 => write!(
             w,
             "pub(super) static SHUPAI_MAP: [MapValue; SHUPAI_SIZE] = ["
         )?,
-        7 => writeln!(w, "pub(super) static ZIPAI_MAP: [MapValue; ZIPAI_SIZE] = [")?,
-        2 => writeln!(
+        7 => write!(w, "pub(super) static ZIPAI_MAP: [MapValue; ZIPAI_SIZE] = [")?,
+        2 => write!(
             w,
             "pub(super) static WANZI_19_MAP: [MapValue; WANZI_19_SIZE] = ["
         )?,
@@ -159,12 +176,12 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     }
 
     for &entry in map {
-        write!(w, "    [")?;
+        write!(w, "[")?;
         for (i, pack) in entry.iter().enumerate() {
-            let separator = if i < 4 { ", " } else { "" };
-            write!(w, "0x{:X}{}", pack, separator)?;
+            let separator = if i < 3 { "," } else { "" };
+            write!(w, "{}{}", pack, separator)?;
         }
-        writeln!(w, "],")?;
+        write!(w, "],")?;
     }
 
     writeln!(w, "];")?;
@@ -192,7 +209,7 @@ fn main() {
 
     {
         let mut shupai_map = Map::new();
-        shupai_map.resize(SHUPAI_SIZE, [0u32; 5]);
+        shupai_map.resize(SHUPAI_SIZE, [0u32; 4]);
         let mut hand = [0u8; 9];
         build_map(&mut hand, 0, 0, &mut shupai_map);
 
@@ -201,7 +218,7 @@ fn main() {
 
     {
         let mut zipai_map = Map::new();
-        zipai_map.resize(ZIPAI_SIZE, [0u32; 5]);
+        zipai_map.resize(ZIPAI_SIZE, [0u32; 4]);
         let mut hand = [0u8; 7];
         build_map(&mut hand, 0, 0, &mut zipai_map);
 
@@ -210,7 +227,7 @@ fn main() {
 
     {
         let mut wanzi_19_map = Map::new();
-        wanzi_19_map.resize(WANZI_19_SIZE, [0u32; 5]);
+        wanzi_19_map.resize(WANZI_19_SIZE, [0u32; 4]);
         let mut hand = [0u8; 2];
         build_map(&mut hand, 0, 0, &mut wanzi_19_map);
 
