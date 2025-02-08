@@ -51,3 +51,82 @@ pub fn hash_19m(wanzi_bingpai: &[u8]) -> usize {
         });
     hash
 }
+
+#[cfg(test)]
+mod tests {
+    use super::super::shupai_table::SHUPAI_SIZE;
+    use super::super::wanzi_19_table::WANZI_19_SIZE;
+    use super::super::zipai_table::ZIPAI_SIZE;
+    use super::*;
+
+    fn test_hash<const N: usize>(hand: &[u8; N], check: &mut [u8]) {
+        let h = match N {
+            9 => {
+                let h = hash_shupai(hand);
+                assert!(h < SHUPAI_SIZE, "Out of range.");
+                h
+            }
+            7 => {
+                let h = hash_zipai(hand);
+                assert!(h < ZIPAI_SIZE, "Out of range.");
+                h
+            }
+            2 => {
+                let full_hand = [hand[0], 0, 0, 0, 0, 0, 0, 0, hand[1]];
+                let h = hash_19m(&full_hand);
+                assert!(h < WANZI_19_SIZE, "Out of range.");
+                h
+            }
+            _ => unreachable!(),
+        };
+
+        assert!(check[h] == 0, "Collision.");
+        check[h] += 1;
+    }
+
+    fn build_hand<const N: usize>(i: usize, hand: &mut [u8; N], n: u8, check: &mut [u8]) {
+        assert!([9, 7, 2].contains(&N));
+        assert!(i <= N);
+        assert!(n <= 14);
+
+        if i == N {
+            test_hash(hand, check);
+            return;
+        }
+
+        assert!(hand[i] == 0);
+
+        for c in 0..=4 {
+            if n + c > 14 {
+                break;
+            }
+            hand[i] = c;
+            build_hand(i + 1, hand, n + c, check);
+            hand[i] = 0;
+        }
+    }
+
+    #[test]
+    fn test_hash_shupai() {
+        let mut hand = [0u8; 9];
+        let mut check = [0u8; SHUPAI_SIZE];
+        build_hand(0, &mut hand, 0, &mut check);
+        assert!(check.iter().all(|&c| c == 1), "A logic error.");
+    }
+
+    #[test]
+    fn test_hash_zipai() {
+        let mut hand = [0u8; 7];
+        let mut check = [0u8; ZIPAI_SIZE];
+        build_hand(0, &mut hand, 0, &mut check);
+        assert!(check.iter().all(|&c| c == 1), "A logic error.");
+    }
+
+    #[test]
+    fn test_hash_19m() {
+        let mut hand = [0u8; 2];
+        let mut check = [0u8; WANZI_19_SIZE];
+        build_hand(0, &mut hand, 0, &mut check);
+        assert!(check.iter().all(|&c| c == 1), "A logic error.");
+    }
+}
