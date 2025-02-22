@@ -296,8 +296,6 @@ pub(super) fn get_19m_replacement_number(
         return (upper_bound, necessary_tiles);
     }
 
-    debug_assert!(matches!(current_rank, 0 | 8));
-
     // Sequences cannot be formed with 1m or 9m in three-player mahjong.
     for (d, (&m, &n)) in D_TABLE
         .iter()
