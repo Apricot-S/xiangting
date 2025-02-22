@@ -2,25 +2,84 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-// Reference:
-// https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
-// https://github.com/gimite/mjai-manue/blob/master/coffee/shanten_analysis.coffee
+//! Replacement number calculation algorithm using pruning DFS made efficient by
+//! using Decomposition Elements.
+//!
+//! Reference:
+//!
+//! https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
+//! https://qiita.com/Cryolite/items/75d504c7489426806b87
 
 #![allow(clippy::too_many_arguments)]
 
 use std::cmp::Ordering;
 
-const NUM_SHUPAI_IDS: usize = 9;
-const NUM_ZIPAI_IDS: usize = 7;
-// 1-7{m,p,s}
-const SEQUENCE_IDS: [usize; 7] = [0, 1, 2, 3, 4, 5, 6];
+/// An element that represents the number of blocks (meld, pair) made up of
+/// certain tiles in a winning hand.
+struct DecompositionElement {
+    num_sequence: u8,
+    num_triplet: u8,
+    num_pair: u8,
+}
 
-fn get_necessary_tiles<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -> u16 {
-    hand.iter()
-        .zip(winning_hand)
+/// Table of decomposition elements.
+///
+/// (3, 0, 0) and (4, 0, 0) are not necessary for calculating the partial replacement number.
+/// Combinations with `num_sequence` greater than 2 can be covered by other elements.
+///
+/// Example:
+/// * (123 123 123) contains the same number of tiles as (111) (222) (333).
+/// * (123 123 123 123) contains the same number of tiles as (123 111) (222) (333).
+#[rustfmt::skip]
+const D_TABLE: [DecompositionElement; 8] = [
+    DecompositionElement { num_sequence: 0, num_triplet: 0, num_pair: 0 },
+    DecompositionElement { num_sequence: 0, num_triplet: 0, num_pair: 1 },
+    DecompositionElement { num_sequence: 0, num_triplet: 1, num_pair: 0 },
+    DecompositionElement { num_sequence: 1, num_triplet: 0, num_pair: 0 },
+    DecompositionElement { num_sequence: 1, num_triplet: 0, num_pair: 1 },
+    DecompositionElement { num_sequence: 1, num_triplet: 1, num_pair: 0 },
+    DecompositionElement { num_sequence: 2, num_triplet: 0, num_pair: 0 },
+    DecompositionElement { num_sequence: 2, num_triplet: 0, num_pair: 1 },
+];
+
+/// Table of number of melds included in decomposition elements.
+const M_TABLE: [u8; 8] = [
+    D_TABLE[0].num_sequence + D_TABLE[0].num_triplet,
+    D_TABLE[1].num_sequence + D_TABLE[1].num_triplet,
+    D_TABLE[2].num_sequence + D_TABLE[2].num_triplet,
+    D_TABLE[3].num_sequence + D_TABLE[3].num_triplet,
+    D_TABLE[4].num_sequence + D_TABLE[4].num_triplet,
+    D_TABLE[5].num_sequence + D_TABLE[5].num_triplet,
+    D_TABLE[6].num_sequence + D_TABLE[6].num_triplet,
+    D_TABLE[7].num_sequence + D_TABLE[7].num_triplet,
+];
+
+/// Table of number of tiles included in decomposition elements.
+const N_TABLE: [u8; 8] = [
+    D_TABLE[0].num_sequence + 3 * D_TABLE[0].num_triplet + 2 * D_TABLE[0].num_pair,
+    D_TABLE[1].num_sequence + 3 * D_TABLE[1].num_triplet + 2 * D_TABLE[1].num_pair,
+    D_TABLE[2].num_sequence + 3 * D_TABLE[2].num_triplet + 2 * D_TABLE[2].num_pair,
+    D_TABLE[3].num_sequence + 3 * D_TABLE[3].num_triplet + 2 * D_TABLE[3].num_pair,
+    D_TABLE[4].num_sequence + 3 * D_TABLE[4].num_triplet + 2 * D_TABLE[4].num_pair,
+    D_TABLE[5].num_sequence + 3 * D_TABLE[5].num_triplet + 2 * D_TABLE[5].num_pair,
+    D_TABLE[6].num_sequence + 3 * D_TABLE[6].num_triplet + 2 * D_TABLE[6].num_pair,
+    D_TABLE[7].num_sequence + 3 * D_TABLE[7].num_triplet + 2 * D_TABLE[7].num_pair,
+];
+
+fn get_hand_distance<const N: usize>(target_hand: &[u8; N], hand: &[u8; N]) -> u8 {
+    target_hand
+        .iter()
+        .zip(hand.iter())
+        .fold(0u8, |distance, (&t, &h)| distance + t.saturating_sub(h))
+}
+
+fn get_necessary_tiles<const N: usize>(target_hand: &[u8; N], hand: &[u8; N]) -> u16 {
+    target_hand
+        .iter()
+        .zip(hand.iter())
         .enumerate()
-        .fold(0u16, |necessary_tiles, (i, (&h, &w))| {
-            if w > h {
+        .fold(0u16, |necessary_tiles, (i, (&t, &h))| {
+            if t > h {
                 necessary_tiles | (1 << i)
             } else {
                 necessary_tiles
@@ -28,302 +87,264 @@ fn get_necessary_tiles<const N: usize>(hand: &[u8; N], winning_hand: &[u8; N]) -
         })
 }
 
-fn update_upperbound_and_necessary_tiles_0_pair<const N: usize>(
-    hand: &[u8; N],
-    winning_hand: &mut [u8; N],
-    current_distance: u8,
-    current_necessary_tiles: &mut u16,
-    upperbound: &mut u8,
-    necessary_tiles: &mut u16,
-) {
-    match current_distance.cmp(upperbound) {
-        Ordering::Less => {
-            *upperbound = current_distance;
-            *current_necessary_tiles = 0;
-            *necessary_tiles = get_necessary_tiles(hand, winning_hand);
-        }
-        Ordering::Equal => {
-            *necessary_tiles |= get_necessary_tiles(hand, winning_hand);
-        }
-        Ordering::Greater => {}
-    }
-}
-
-fn update_upperbound_and_necessary_tiles_1_pair<const N: usize>(
-    hand: &[u8; N],
-    winning_hand: &mut [u8; N],
-    current_distance: u8,
-    current_necessary_tiles: &mut u16,
-    upperbound: &mut u8,
-    necessary_tiles: &mut u16,
-    i: usize,
-) {
-    if winning_hand[i] > 2 {
-        // Can't add a pair
-        return;
-    }
-
-    // Add a pair
-    winning_hand[i] += 2;
-
-    let pair_distance = winning_hand[i].saturating_sub(hand[i]);
-    let new_distance = current_distance + pair_distance;
-
-    update_upperbound_and_necessary_tiles_0_pair(
-        hand,
-        winning_hand,
-        new_distance,
-        current_necessary_tiles,
-        upperbound,
-        necessary_tiles,
-    );
-
-    // Remove a pair
-    winning_hand[i] -= 2;
-}
-
 pub(super) fn get_shupai_replacement_number(
     hand: &[u8; 9],
-    winning_hand: &mut [u8; 9],
-    current_distance: u8,
-    mut current_necessary_tiles: u16,
-    num_left_melds: u8,
+    num_meld: u8,
     num_pair: u8,
-    min_meld_id: usize,
-    mut upperbound: u8,
+    current_rank: usize,
+    current_num_meld: u8,
+    current_num_pair: u8,
+    target_hand: &mut [u8; 9],
+    mut upper_bound: u8,
+    mut necessary_tiles: u16,
 ) -> (u8, u16) {
-    if num_left_melds == 0 {
-        let mut necessary_tiles = 0u16;
+    debug_assert!(num_meld <= 4);
+    debug_assert!(num_pair <= 1);
+    debug_assert!(current_rank <= 9);
+    debug_assert!(current_num_meld <= num_meld);
+    debug_assert!(current_num_pair <= num_pair);
+    debug_assert!(target_hand.iter().all(|&c| c <= 4));
+    debug_assert!(necessary_tiles <= 0x1FF);
 
-        if num_pair == 0 {
-            update_upperbound_and_necessary_tiles_0_pair(
-                hand,
-                winning_hand,
-                current_distance,
-                &mut current_necessary_tiles,
-                &mut upperbound,
-                &mut necessary_tiles,
-            );
-        } else {
-            for i in 0..NUM_SHUPAI_IDS {
-                update_upperbound_and_necessary_tiles_1_pair(
-                    hand,
-                    winning_hand,
-                    current_distance,
-                    &mut current_necessary_tiles,
-                    &mut upperbound,
-                    &mut necessary_tiles,
-                    i,
-                );
+    if current_rank == 9 {
+        if current_num_meld == num_meld && current_num_pair == num_pair {
+            let distance = get_hand_distance(target_hand, hand);
+            match distance.cmp(&upper_bound) {
+                Ordering::Less => {
+                    upper_bound = distance;
+                    necessary_tiles = get_necessary_tiles(target_hand, hand);
+                }
+                Ordering::Equal => necessary_tiles |= get_necessary_tiles(target_hand, hand),
+                Ordering::Greater => (),
             }
         }
-
-        return (upperbound, current_necessary_tiles | necessary_tiles);
+        return (upper_bound, necessary_tiles);
     }
 
-    // Add triplets
-    if min_meld_id < NUM_SHUPAI_IDS {
-        for i in min_meld_id..NUM_SHUPAI_IDS {
-            if winning_hand[i] >= 2 {
-                // Can't add a triplet
-                continue;
-            }
-
-            let triplet_distance = if hand[i] <= winning_hand[i] {
-                3
-            } else {
-                (winning_hand[i] + 3).saturating_sub(hand[i])
-            };
-            let new_distance = current_distance + triplet_distance;
-
-            if triplet_distance < 3 && new_distance <= upperbound {
-                winning_hand[i] += 3;
-                (upperbound, current_necessary_tiles) = get_shupai_replacement_number(
-                    hand,
-                    winning_hand,
-                    new_distance,
-                    current_necessary_tiles,
-                    num_left_melds - 1,
-                    num_pair,
-                    i,
-                    upperbound,
-                );
-                winning_hand[i] -= 3;
-            }
+    for (d, (&m, &n)) in D_TABLE.iter().zip(M_TABLE.iter().zip(N_TABLE.iter())) {
+        if current_num_meld + m > num_meld {
+            continue;
         }
-    }
-
-    // Add sequences
-    let start_sequence_id = min_meld_id.saturating_sub(NUM_SHUPAI_IDS);
-
-    for (sequence_id, &i) in SEQUENCE_IDS.iter().enumerate().skip(start_sequence_id) {
-        if winning_hand[i..=i + 2].iter().any(|&c| c == 4) {
-            // Can't add a sequence
+        if current_num_pair + d.num_pair > num_pair {
+            continue;
+        }
+        if current_rank >= 7 && d.num_sequence > 0 {
+            // No sequence may start with 8, 9.
+            continue;
+        }
+        if target_hand[current_rank] + n > 4 {
+            // The number of copies of each tile in the hand must not exceed four.
             continue;
         }
 
-        let sequence_distance = (i..=i + 2).filter(|&i| hand[i] <= winning_hand[i]).count() as u8;
-        let new_distance = current_distance + sequence_distance;
-
-        if sequence_distance < 3 && new_distance <= upperbound {
-            winning_hand[i..=i + 2].iter_mut().for_each(|c| *c += 1);
-            (upperbound, current_necessary_tiles) = get_shupai_replacement_number(
-                hand,
-                winning_hand,
-                new_distance,
-                current_necessary_tiles,
-                num_left_melds - 1,
-                num_pair,
-                sequence_id + NUM_SHUPAI_IDS,
-                upperbound,
-            );
-            winning_hand[i..=i + 2].iter_mut().for_each(|c| *c -= 1);
+        target_hand[current_rank] += n;
+        if current_rank < 7 {
+            target_hand[current_rank + 1] += d.num_sequence;
+            target_hand[current_rank + 2] += d.num_sequence;
         }
+
+        let lower_bound = get_hand_distance(target_hand, hand);
+        if lower_bound <= upper_bound {
+            let (temp_r, temp_n) = get_shupai_replacement_number(
+                hand,
+                num_meld,
+                num_pair,
+                current_rank + 1,
+                current_num_meld + m,
+                current_num_pair + d.num_pair,
+                target_hand,
+                upper_bound,
+                necessary_tiles,
+            );
+
+            match temp_r.cmp(&upper_bound) {
+                Ordering::Less => {
+                    upper_bound = temp_r;
+                    necessary_tiles = temp_n;
+                }
+                Ordering::Equal => necessary_tiles |= temp_n,
+                Ordering::Greater => (),
+            }
+        }
+
+        if current_rank < 7 {
+            target_hand[current_rank + 2] -= d.num_sequence;
+            target_hand[current_rank + 1] -= d.num_sequence;
+        }
+        target_hand[current_rank] -= n;
     }
 
-    (upperbound, current_necessary_tiles)
+    (upper_bound, necessary_tiles)
 }
 
 pub(super) fn get_zipai_replacement_number(
     hand: &[u8; 7],
-    winning_hand: &mut [u8; 7],
-    current_distance: u8,
-    mut current_necessary_tiles: u16,
-    num_left_melds: u8,
+    num_meld: u8,
     num_pair: u8,
-    min_meld_id: usize,
-    mut upperbound: u8,
+    current_rank: usize,
+    current_num_meld: u8,
+    current_num_pair: u8,
+    target_hand: &mut [u8; 7],
+    mut upper_bound: u8,
+    mut necessary_tiles: u16,
 ) -> (u8, u16) {
-    if num_left_melds == 0 {
-        let mut necessary_tiles = 0u16;
+    debug_assert!(num_meld <= 4);
+    debug_assert!(num_pair <= 1);
+    debug_assert!(current_rank <= 7);
+    debug_assert!(current_num_meld <= num_meld);
+    debug_assert!(current_num_pair <= num_pair);
+    debug_assert!(target_hand.iter().all(|&c| c <= 4));
+    debug_assert!(necessary_tiles <= 0x7F);
 
-        if num_pair == 0 {
-            update_upperbound_and_necessary_tiles_0_pair(
-                hand,
-                winning_hand,
-                current_distance,
-                &mut current_necessary_tiles,
-                &mut upperbound,
-                &mut necessary_tiles,
-            );
-        } else {
-            for i in 0..NUM_ZIPAI_IDS {
-                update_upperbound_and_necessary_tiles_1_pair(
-                    hand,
-                    winning_hand,
-                    current_distance,
-                    &mut current_necessary_tiles,
-                    &mut upperbound,
-                    &mut necessary_tiles,
-                    i,
-                );
+    if current_rank == 7 {
+        if current_num_meld == num_meld && current_num_pair == num_pair {
+            let distance = get_hand_distance(target_hand, hand);
+            match distance.cmp(&upper_bound) {
+                Ordering::Less => {
+                    upper_bound = distance;
+                    necessary_tiles = get_necessary_tiles(target_hand, hand);
+                }
+                Ordering::Equal => necessary_tiles |= get_necessary_tiles(target_hand, hand),
+                Ordering::Greater => (),
             }
         }
-
-        return (upperbound, current_necessary_tiles | necessary_tiles);
+        return (upper_bound, necessary_tiles);
     }
 
-    // Add triplets
-    for i in min_meld_id..NUM_ZIPAI_IDS {
-        if winning_hand[i] >= 2 {
-            // Can't add a triplet
+    // Sequences cannot be formed with honors.
+    for (d, (&m, &n)) in D_TABLE
+        .iter()
+        .zip(M_TABLE.iter().zip(N_TABLE.iter()))
+        .take(3)
+    {
+        debug_assert!(d.num_sequence == 0);
+
+        if current_num_meld + m > num_meld {
+            continue;
+        }
+        if current_num_pair + d.num_pair > num_pair {
+            continue;
+        }
+        if target_hand[current_rank] + n > 4 {
+            // The number of copies of each tile in the hand must not exceed four.
             continue;
         }
 
-        let triplet_distance = if hand[i] <= winning_hand[i] {
-            3
-        } else {
-            (winning_hand[i] + 3).saturating_sub(hand[i])
-        };
-        let new_distance = current_distance + triplet_distance;
+        target_hand[current_rank] += n;
 
-        if triplet_distance < 3 && new_distance <= upperbound {
-            winning_hand[i] += 3;
-            (upperbound, current_necessary_tiles) = get_zipai_replacement_number(
+        let lower_bound = get_hand_distance(target_hand, hand);
+        if lower_bound <= upper_bound {
+            let (temp_r, temp_n) = get_zipai_replacement_number(
                 hand,
-                winning_hand,
-                new_distance,
-                current_necessary_tiles,
-                num_left_melds - 1,
+                num_meld,
                 num_pair,
-                i,
-                upperbound,
+                current_rank + 1,
+                current_num_meld + m,
+                current_num_pair + d.num_pair,
+                target_hand,
+                upper_bound,
+                necessary_tiles,
             );
-            winning_hand[i] -= 3;
+
+            match temp_r.cmp(&upper_bound) {
+                Ordering::Less => {
+                    upper_bound = temp_r;
+                    necessary_tiles = temp_n;
+                }
+                Ordering::Equal => necessary_tiles |= temp_n,
+                Ordering::Greater => (),
+            }
         }
+
+        target_hand[current_rank] -= n;
     }
 
-    (upperbound, current_necessary_tiles)
+    (upper_bound, necessary_tiles)
 }
 
 pub(super) fn get_19m_replacement_number(
     hand: &[u8; 9],
-    winning_hand: &mut [u8; 9],
-    current_distance: u8,
-    mut current_necessary_tiles: u16,
-    num_left_melds: u8,
+    num_meld: u8,
     num_pair: u8,
-    min_meld_id: usize,
-    mut upperbound: u8,
+    current_rank: usize,
+    current_num_meld: u8,
+    current_num_pair: u8,
+    target_hand: &mut [u8; 9],
+    mut upper_bound: u8,
+    mut necessary_tiles: u16,
 ) -> (u8, u16) {
-    if num_left_melds == 0 {
-        let mut necessary_tiles = 0u16;
+    debug_assert!(num_meld <= 4);
+    debug_assert!(num_pair <= 1);
+    debug_assert!(matches!(current_rank, 0 | 8 | 16));
+    debug_assert!(current_num_meld <= num_meld);
+    debug_assert!(current_num_pair <= num_pair);
+    debug_assert!(target_hand.iter().all(|&c| c <= 4));
+    debug_assert!(necessary_tiles <= 0x1FF);
 
-        if num_pair == 0 {
-            update_upperbound_and_necessary_tiles_0_pair(
-                hand,
-                winning_hand,
-                current_distance,
-                &mut current_necessary_tiles,
-                &mut upperbound,
-                &mut necessary_tiles,
-            );
-        } else {
-            for i in [0, 8] {
-                update_upperbound_and_necessary_tiles_1_pair(
-                    hand,
-                    winning_hand,
-                    current_distance,
-                    &mut current_necessary_tiles,
-                    &mut upperbound,
-                    &mut necessary_tiles,
-                    i,
-                );
+    if current_rank == 16 {
+        if current_num_meld == num_meld && current_num_pair == num_pair {
+            let distance = get_hand_distance(target_hand, hand);
+            match distance.cmp(&upper_bound) {
+                Ordering::Less => {
+                    upper_bound = distance;
+                    necessary_tiles = get_necessary_tiles(target_hand, hand);
+                }
+                Ordering::Equal => necessary_tiles |= get_necessary_tiles(target_hand, hand),
+                Ordering::Greater => (),
             }
         }
-
-        return (upperbound, current_necessary_tiles | necessary_tiles);
+        return (upper_bound, necessary_tiles);
     }
 
-    // Add triplets
-    for i in (min_meld_id..NUM_SHUPAI_IDS).step_by(8) {
-        if winning_hand[i] >= 2 {
-            // Can't add a triplet
+    debug_assert!(matches!(current_rank, 0 | 8));
+
+    // Sequences cannot be formed with 1m or 9m in three-player mahjong.
+    for (d, (&m, &n)) in D_TABLE
+        .iter()
+        .zip(M_TABLE.iter().zip(N_TABLE.iter()))
+        .take(3)
+    {
+        debug_assert!(d.num_sequence == 0);
+
+        if current_num_meld + m > num_meld {
+            continue;
+        }
+        if current_num_pair + d.num_pair > num_pair {
+            continue;
+        }
+        if target_hand[current_rank] + n > 4 {
+            // The number of copies of each tile in the hand must not exceed four.
             continue;
         }
 
-        let triplet_distance = if hand[i] <= winning_hand[i] {
-            3
-        } else {
-            (winning_hand[i] + 3).saturating_sub(hand[i])
-        };
-        let new_distance = current_distance + triplet_distance;
+        target_hand[current_rank] += n;
 
-        if triplet_distance < 3 && new_distance <= upperbound {
-            winning_hand[i] += 3;
-            (upperbound, current_necessary_tiles) = get_19m_replacement_number(
+        let lower_bound = get_hand_distance(target_hand, hand);
+        if lower_bound <= upper_bound {
+            let (temp_r, temp_n) = get_19m_replacement_number(
                 hand,
-                winning_hand,
-                new_distance,
-                current_necessary_tiles,
-                num_left_melds - 1,
+                num_meld,
                 num_pair,
-                i,
-                upperbound,
+                current_rank + 8,
+                current_num_meld + m,
+                current_num_pair + d.num_pair,
+                target_hand,
+                upper_bound,
+                necessary_tiles,
             );
-            winning_hand[i] -= 3;
+
+            match temp_r.cmp(&upper_bound) {
+                Ordering::Less => {
+                    upper_bound = temp_r;
+                    necessary_tiles = temp_n;
+                }
+                Ordering::Equal => necessary_tiles |= temp_n,
+                Ordering::Greater => (),
+            }
         }
+
+        target_hand[current_rank] -= n;
     }
 
-    (upperbound, current_necessary_tiles)
+    (upper_bound, necessary_tiles)
 }
