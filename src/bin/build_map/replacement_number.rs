@@ -279,7 +279,7 @@ pub(super) fn get_19m_replacement_number(
     debug_assert!(current_num_meld <= num_meld);
     debug_assert!(current_num_pair <= num_pair);
     debug_assert!(target_hand.iter().all(|&c| c <= 4));
-    debug_assert!(necessary_tiles <= 0x1FF);
+    debug_assert!(matches!(necessary_tiles, 0x0 | 0x1 | 0x100 | 0x101));
 
     if current_rank == 16 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
