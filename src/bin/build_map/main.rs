@@ -22,7 +22,7 @@ type Map = Vec<MapValue>;
 
 fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
     debug_assert!([9, 7, 2].contains(&N));
-    const MAX_REPLACEMENT_NUMBER: u8 = 9;
+    const MAX_REPLACEMENT_NUMBER: u8 = 14;
 
     let mut pack: MapValue = [0u32; 4];
     for num_pair in 0..=1 {
