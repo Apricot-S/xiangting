@@ -397,4 +397,98 @@ mod tests {
         assert_eq!(necessary_tiles[8], 0b111111111);
         assert_eq!(necessary_tiles[9], 0b111111111);
     }
+
+    #[test]
+    fn get_zipai_replacement_number_empty() {
+        let hand = [0, 0, 0, 0, 0, 0, 0];
+        let mut replacement_number = [0u8; 10];
+        let mut necessary_tiles = [0u16; 10];
+        for num_pair in 0..=1 {
+            for num_meld in 0..=4 {
+                let mut target = [0u8; 7];
+                let (r, n) = get_zipai_replacement_number(
+                    &hand,
+                    num_meld,
+                    num_pair,
+                    0,
+                    0,
+                    0,
+                    &mut target,
+                    14,
+                    0,
+                );
+                replacement_number[(num_pair * 5 + num_meld) as usize] = r;
+                necessary_tiles[(num_pair * 5 + num_meld) as usize] = n;
+            }
+        }
+
+        assert_eq!(replacement_number[0], 0);
+        assert_eq!(replacement_number[1], 3);
+        assert_eq!(replacement_number[2], 6);
+        assert_eq!(replacement_number[3], 9);
+        assert_eq!(replacement_number[4], 12);
+        assert_eq!(replacement_number[5], 2);
+        assert_eq!(replacement_number[6], 5);
+        assert_eq!(replacement_number[7], 8);
+        assert_eq!(replacement_number[8], 11);
+        assert_eq!(replacement_number[9], 14);
+
+        assert_eq!(necessary_tiles[0], 0);
+        assert_eq!(necessary_tiles[1], 0b1111111);
+        assert_eq!(necessary_tiles[2], 0b1111111);
+        assert_eq!(necessary_tiles[3], 0b1111111);
+        assert_eq!(necessary_tiles[4], 0b1111111);
+        assert_eq!(necessary_tiles[5], 0b1111111);
+        assert_eq!(necessary_tiles[6], 0b1111111);
+        assert_eq!(necessary_tiles[7], 0b1111111);
+        assert_eq!(necessary_tiles[8], 0b1111111);
+        assert_eq!(necessary_tiles[9], 0b1111111);
+    }
+
+    #[test]
+    fn get_19m_replacement_number_empty() {
+        let hand = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let mut replacement_number = [0u8; 10];
+        let mut necessary_tiles = [0u16; 10];
+        for num_pair in 0..=1 {
+            for num_meld in 0..=4 {
+                let mut target = [0u8; 9];
+                let (r, n) = get_19m_replacement_number(
+                    &hand,
+                    num_meld,
+                    num_pair,
+                    0,
+                    0,
+                    0,
+                    &mut target,
+                    14,
+                    0,
+                );
+                replacement_number[(num_pair * 5 + num_meld) as usize] = r;
+                necessary_tiles[(num_pair * 5 + num_meld) as usize] = n;
+            }
+        }
+
+        assert_eq!(replacement_number[0], 0);
+        assert_eq!(replacement_number[1], 3);
+        assert_eq!(replacement_number[2], 6);
+        assert_eq!(replacement_number[3], 14);
+        assert_eq!(replacement_number[4], 14);
+        assert_eq!(replacement_number[5], 2);
+        assert_eq!(replacement_number[6], 5);
+        assert_eq!(replacement_number[7], 14);
+        assert_eq!(replacement_number[8], 14);
+        assert_eq!(replacement_number[9], 14);
+
+        assert_eq!(necessary_tiles[0], 0);
+        assert_eq!(necessary_tiles[1], 0b100000001);
+        assert_eq!(necessary_tiles[2], 0b100000001);
+        assert_eq!(necessary_tiles[3], 0b000000000);
+        assert_eq!(necessary_tiles[4], 0b000000000);
+        assert_eq!(necessary_tiles[5], 0b100000001);
+        assert_eq!(necessary_tiles[6], 0b100000001);
+        assert_eq!(necessary_tiles[7], 0b000000000);
+        assert_eq!(necessary_tiles[8], 0b000000000);
+        assert_eq!(necessary_tiles[9], 0b000000000);
+    }
 }
