@@ -91,10 +91,10 @@ pub fn calculate_replacement_number(
                 .map_or(0, |f| f.iter().flatten().count() as u8)
     );
 
-    let shoupai = match fulu_mianzi_list {
-        Some(f) => Some(get_shoupai(bingpai, f)?),
-        None => None,
-    };
+    let shoupai = fulu_mianzi_list
+        .as_ref()
+        .map(|f| get_shoupai(bingpai, f))
+        .transpose()?;
 
     let r0 = standard::calculate_replacement_number(bingpai, &shoupai, num_bingpai);
     let r1 = qiduizi::calculate_replacement_number(bingpai, num_bingpai);
@@ -189,10 +189,10 @@ pub fn calculate_replacement_number_3_player(
                 .map_or(0, |f| f.iter().flatten().count() as u8)
     );
 
-    let shoupai = match fulu_mianzi_list {
-        Some(f) => Some(get_shoupai_3_player(bingpai, f)?),
-        None => None,
-    };
+    let shoupai = fulu_mianzi_list
+        .as_ref()
+        .map(|f| get_shoupai_3_player(bingpai, f))
+        .transpose()?;
 
     let r0 = standard::calculate_replacement_number_3_player(bingpai, &shoupai, num_bingpai);
     let r1 = qiduizi::calculate_replacement_number(bingpai, num_bingpai);
