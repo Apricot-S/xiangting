@@ -80,7 +80,7 @@ fn count_4_tiles_in_shoupai(shoupai: &Bingpai) -> u64 {
 }
 
 fn modify_number(replacement_number: u8, necessary_tiles: u16, four_tiles: u16) -> u8 {
-    const MAX_REPLACEMENT_NUMBER: u8 = 9;
+    const MAX_REPLACEMENT_NUMBER: u8 = 14;
     let remaining_necessary_tiles = necessary_tiles & !four_tiles;
 
     if replacement_number != 0 && remaining_necessary_tiles == 0 {

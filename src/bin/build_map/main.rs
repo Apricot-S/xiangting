@@ -22,7 +22,7 @@ type Map = Vec<MapValue>;
 
 fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
     debug_assert!([9, 7, 2].contains(&N));
-    const MAX_REPLACEMENT_NUMBER: u8 = 9;
+    const MAX_REPLACEMENT_NUMBER: u8 = 14;
 
     let mut pack: MapValue = [0u32; 4];
     for num_pair in 0..=1 {
@@ -34,44 +34,47 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
             let (replacement_number, necessary_tiles) = match N {
                 9 => {
                     let hand9 = hand.first_chunk::<9>().unwrap();
-                    let mut initial_winning_hand: [u8; 9] = [0u8; 9];
+                    let mut initial_target_hand: [u8; 9] = [0u8; 9];
                     get_shupai_replacement_number(
                         hand9,
-                        &mut initial_winning_hand,
-                        0,
-                        0,
                         num_meld,
                         num_pair,
                         0,
+                        0,
+                        0,
+                        &mut initial_target_hand,
                         MAX_REPLACEMENT_NUMBER,
+                        0,
                     )
                 }
                 7 => {
                     let hand7 = hand.first_chunk::<7>().unwrap();
-                    let mut initial_winning_hand: [u8; 7] = [0u8; 7];
+                    let mut initial_target_hand: [u8; 7] = [0u8; 7];
                     get_zipai_replacement_number(
                         hand7,
-                        &mut initial_winning_hand,
-                        0,
-                        0,
                         num_meld,
                         num_pair,
                         0,
+                        0,
+                        0,
+                        &mut initial_target_hand,
                         MAX_REPLACEMENT_NUMBER,
+                        0,
                     )
                 }
                 2 => {
                     let full_hand = [hand[0], 0, 0, 0, 0, 0, 0, 0, hand[1]];
-                    let mut initial_winning_hand: [u8; 9] = [0u8; 9];
+                    let mut initial_target_hand: [u8; 9] = [0u8; 9];
                     get_19m_replacement_number(
                         &full_hand,
-                        &mut initial_winning_hand,
-                        0,
-                        0,
                         num_meld,
                         num_pair,
                         0,
+                        0,
+                        0,
+                        &mut initial_target_hand,
                         MAX_REPLACEMENT_NUMBER,
+                        0,
                     )
                 }
                 _ => unreachable!(),
