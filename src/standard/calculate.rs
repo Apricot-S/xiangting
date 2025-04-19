@@ -91,11 +91,7 @@ fn modify_number(replacement_number: u8, necessary_tiles: u16, four_tiles: u16) 
 }
 
 fn modify_numbers(entry: Unpacked, four_tiles: u16) -> UnpackedNumbers {
-    let mut modified = entry.0;
-    modified.iter_mut().zip(entry.1).for_each(|(n, t)| {
-        *n = modify_number(*n, t, four_tiles);
-    });
-    modified
+    std::array::from_fn(|i| modify_number(entry.0[i], entry.1[i], four_tiles))
 }
 
 fn add_partial_replacement_number(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
