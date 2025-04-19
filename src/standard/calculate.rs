@@ -67,20 +67,16 @@ fn split_flags(all_color: u64) -> (u16, u16, u16, u16) {
 }
 
 fn count_4_tiles_in_shoupai(shoupai: &Bingpai) -> u64 {
-    shoupai.iter().enumerate().fold(
-        0,
-        |acc, (i, &count)| {
-            if count == 4 {
-                acc | (1 << i)
-            } else {
-                acc
-            }
-        },
-    )
+    shoupai
+        .iter()
+        .enumerate()
+        .filter(|&(_, &count)| count == 4)
+        .map(|(i, _)| 1 << i)
+        .fold(0, |acc, bit| acc | bit)
 }
 
 fn modify_number(replacement_number: u8, necessary_tiles: u16, four_tiles: u16) -> u8 {
-    const MAX_REPLACEMENT_NUMBER: u8 = 9;
+    const MAX_REPLACEMENT_NUMBER: u8 = 14;
     let remaining_necessary_tiles = necessary_tiles & !four_tiles;
 
     if replacement_number != 0 && remaining_necessary_tiles == 0 {
@@ -91,11 +87,7 @@ fn modify_number(replacement_number: u8, necessary_tiles: u16, four_tiles: u16) 
 }
 
 fn modify_numbers(entry: Unpacked, four_tiles: u16) -> UnpackedNumbers {
-    let mut modified = entry.0;
-    modified.iter_mut().zip(entry.1).for_each(|(n, t)| {
-        *n = modify_number(*n, t, four_tiles);
-    });
-    modified
+    std::array::from_fn(|i| modify_number(entry.0[i], entry.1[i], four_tiles))
 }
 
 fn add_partial_replacement_number(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
