@@ -36,22 +36,20 @@ impl FuluMianziListExt for FuluMianziList {
             .flatten()
             .fold([0; NUM_TILE_INDEX], |mut fulupai, m| {
                 match m {
-                    FuluMianzi::Shunzi(tile, position) => {
+                    FuluMianzi::Shunzi(tile, ClaimedTilePosition::Low) => {
                         fulupai[*tile as usize] += 1;
-                        match position {
-                            ClaimedTilePosition::Low => {
-                                fulupai[(*tile + 1) as usize] += 1;
-                                fulupai[(*tile + 2) as usize] += 1;
-                            }
-                            ClaimedTilePosition::Middle => {
-                                fulupai[(*tile - 1) as usize] += 1;
-                                fulupai[(*tile + 1) as usize] += 1;
-                            }
-                            ClaimedTilePosition::High => {
-                                fulupai[(*tile - 2) as usize] += 1;
-                                fulupai[(*tile - 1) as usize] += 1;
-                            }
-                        };
+                        fulupai[(tile + 1) as usize] += 1;
+                        fulupai[(tile + 2) as usize] += 1;
+                    }
+                    FuluMianzi::Shunzi(tile, ClaimedTilePosition::Middle) => {
+                        fulupai[(tile - 1) as usize] += 1;
+                        fulupai[*tile as usize] += 1;
+                        fulupai[(tile + 1) as usize] += 1;
+                    }
+                    FuluMianzi::Shunzi(tile, ClaimedTilePosition::High) => {
+                        fulupai[(tile - 2) as usize] += 1;
+                        fulupai[(tile - 1) as usize] += 1;
+                        fulupai[*tile as usize] += 1;
                     }
                     FuluMianzi::Kezi(tile) => {
                         fulupai[*tile as usize] += 3;
