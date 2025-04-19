@@ -79,7 +79,8 @@ fn get_necessary_tiles<const N: usize>(target_hand: &[u8; N], hand: &[u8; N]) ->
         .iter()
         .zip(hand.iter())
         .enumerate()
-        .filter_map(|(i, (&t, &h))| (t > h).then(|| 1 << i))
+        .filter(|&(_, (&t, &h))| t > h)
+        .map(|(i, _)| 1 << i)
         .fold(0u16, |necessary_tiles, bit| necessary_tiles | bit)
 }
 

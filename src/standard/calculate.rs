@@ -70,7 +70,8 @@ fn count_4_tiles_in_shoupai(shoupai: &Bingpai) -> u64 {
     shoupai
         .iter()
         .enumerate()
-        .filter_map(|(i, &count)| (count == 4).then(|| 1 << i))
+        .filter(|&(_, &count)| count == 4)
+        .map(|(i, _)| 1 << i)
         .fold(0, |acc, bit| acc | bit)
 }
 
