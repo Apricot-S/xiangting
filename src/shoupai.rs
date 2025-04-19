@@ -80,22 +80,22 @@ pub enum InvalidShoupaiError {
     ExceedsMaxNumShoupai(u8),
 }
 
-fn validate_fulu_mianzi_list(fulu_mianzi_list: &FuluMianziList) -> Result<(), InvalidShoupaiError> {
+fn validate_fulu_mianzi_list(
+    fulu_mianzi_list: &FuluMianziList,
+) -> Result<(), InvalidFuluMianziError> {
     fulu_mianzi_list
         .iter()
         .flatten()
-        .try_for_each(|m| m.validate())?;
-    Ok(())
+        .try_for_each(|m| m.validate())
 }
 
 fn validate_fulu_mianzi_list_3_player(
     fulu_mianzi_list: &FuluMianziList,
-) -> Result<(), InvalidShoupaiError> {
+) -> Result<(), InvalidFuluMianziError> {
     fulu_mianzi_list
         .iter()
         .flatten()
-        .try_for_each(|m| m.validate_3_player())?;
-    Ok(())
+        .try_for_each(|m| m.validate_3_player())
 }
 
 fn count_gangzi(fulu_mianzi_list: &FuluMianziList) -> u8 {
