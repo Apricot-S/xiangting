@@ -108,12 +108,7 @@ fn count_gangzi(fulu_mianzi_list: &FuluMianziList) -> u8 {
 }
 
 fn merge_bingpai_and_fulupai(bingpai: &Bingpai, fulupai: &Bingpai) -> Bingpai {
-    let mut shoupai = *bingpai;
-    shoupai
-        .iter_mut()
-        .zip(fulupai.iter())
-        .for_each(|(s, &f)| *s += f);
-    shoupai
+    std::array::from_fn(|i| bingpai[i] + fulupai[i])
 }
 
 fn validate_shoupai(shoupai: &Bingpai, num_gangzi: u8) -> Result<(), InvalidShoupaiError> {
