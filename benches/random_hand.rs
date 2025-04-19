@@ -29,10 +29,7 @@ fn fill_hand(wall: &[u8], hand_length: usize) -> [u8; 34] {
 }
 
 pub fn generate_random_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
-    let mut wall = [0u8; 136];
-    wall.iter_mut()
-        .enumerate()
-        .for_each(|(i, tile)| *tile = (i / 4) as u8);
+    let mut wall: [u8; 136] = std::array::from_fn(|i| (i / 4) as u8);
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);
@@ -43,16 +40,10 @@ pub fn generate_random_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
 pub fn generate_random_half_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
     let color_start = [0, 9, 18].choose(rng).unwrap();
 
-    let mut wall = [0u8; 64];
-    wall.iter_mut().enumerate().for_each(|(i, tile)| {
-        if i < 36 {
-            // Suits
-            *tile = (i / 4 + color_start) as u8;
-        } else {
-            // Honors
-            *tile = ((i - 36) / 4 + 27) as u8;
-        }
-    });
+    let suits: [u8; 36] = std::array::from_fn(|i| (i / 4 + color_start) as u8);
+    let honors: [u8; 28] = std::array::from_fn(|i| (i / 4 + 27) as u8);
+    let mut combined = suits.into_iter().chain(honors.into_iter());
+    let mut wall: [u8; 64] = std::array::from_fn(|_| combined.next().unwrap());
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);
@@ -63,10 +54,7 @@ pub fn generate_random_half_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
 pub fn generate_random_full_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
     let color_start = [0, 9, 18].choose(rng).unwrap();
 
-    let mut wall = [0u8; 36];
-    wall.iter_mut()
-        .enumerate()
-        .for_each(|(i, tile)| *tile = (i / 4 + color_start) as u8);
+    let mut wall: [u8; 36] = std::array::from_fn(|i| (i / 4 + color_start) as u8);
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);
@@ -76,15 +64,7 @@ pub fn generate_random_full_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
 
 pub fn generate_random_non_simple_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
     const NON_SIMPLES: [u8; 13] = [0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33];
-    let mut wall = [0u8; 52];
-    NON_SIMPLES
-        .iter()
-        .cycle()
-        .take(52)
-        .enumerate()
-        .for_each(|(i, &tile)| {
-            wall[i] = tile;
-        });
+    let mut wall: [u8; 52] = std::array::from_fn(|i| NON_SIMPLES[i % 13]);
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);

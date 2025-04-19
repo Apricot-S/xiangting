@@ -67,16 +67,12 @@ fn split_flags(all_color: u64) -> (u16, u16, u16, u16) {
 }
 
 fn count_4_tiles_in_shoupai(shoupai: &Bingpai) -> u64 {
-    shoupai.iter().enumerate().fold(
-        0,
-        |acc, (i, &count)| {
-            if count == 4 {
-                acc | (1 << i)
-            } else {
-                acc
-            }
-        },
-    )
+    shoupai
+        .iter()
+        .enumerate()
+        .filter(|&(_, &count)| count == 4)
+        .map(|(i, _)| 1 << i)
+        .fold(0, |acc, bit| acc | bit)
 }
 
 fn modify_number(replacement_number: u8, necessary_tiles: u16, four_tiles: u16) -> u8 {

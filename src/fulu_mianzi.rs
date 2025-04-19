@@ -123,21 +123,14 @@ impl FuluMianzi {
 
     pub(crate) fn validate_3_player(&self) -> Result<(), InvalidFuluMianziError> {
         match self {
-            FuluMianzi::Shunzi(_, _) => {
-                return Err(InvalidFuluMianziError::InvalidFuluMianziFor3Player(
-                    self.clone(),
-                ));
-            }
-            FuluMianzi::Kezi(t) | FuluMianzi::Gangzi(t) => {
-                if (1..8).contains(t) {
-                    return Err(InvalidFuluMianziError::InvalidFuluMianziFor3Player(
-                        self.clone(),
-                    ));
-                }
-            }
+            FuluMianzi::Shunzi(..) => Err(InvalidFuluMianziError::InvalidFuluMianziFor3Player(
+                self.clone(),
+            )),
+            FuluMianzi::Kezi(t) | FuluMianzi::Gangzi(t) if (1..8).contains(t) => Err(
+                InvalidFuluMianziError::InvalidFuluMianziFor3Player(self.clone()),
+            ),
+            _ => self.validate(),
         }
-
-        self.validate()
     }
 
     #[inline]

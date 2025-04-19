@@ -79,13 +79,9 @@ fn get_necessary_tiles<const N: usize>(target_hand: &[u8; N], hand: &[u8; N]) ->
         .iter()
         .zip(hand.iter())
         .enumerate()
-        .fold(0u16, |necessary_tiles, (i, (&t, &h))| {
-            if t > h {
-                necessary_tiles | (1 << i)
-            } else {
-                necessary_tiles
-            }
-        })
+        .filter(|&(_, (&t, &h))| t > h)
+        .map(|(i, _)| 1 << i)
+        .fold(0u16, |necessary_tiles, bit| necessary_tiles | bit)
 }
 
 pub(super) fn get_shupai_replacement_number(

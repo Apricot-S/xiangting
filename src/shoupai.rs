@@ -32,35 +32,34 @@ pub(crate) trait FuluMianziListExt {
 
 impl FuluMianziListExt for FuluMianziList {
     fn to_fulupai(&self) -> Bingpai {
-        self.iter().fold([0; NUM_TILE_INDEX], |mut fulupai, m| {
-            match m {
-                Some(FuluMianzi::Shunzi(tile, position)) => {
-                    fulupai[*tile as usize] += 1;
-                    match position {
-                        ClaimedTilePosition::Low => {
-                            fulupai[(*tile + 1) as usize] += 1;
-                            fulupai[(*tile + 2) as usize] += 1;
-                        }
-                        ClaimedTilePosition::Middle => {
-                            fulupai[(*tile - 1) as usize] += 1;
-                            fulupai[(*tile + 1) as usize] += 1;
-                        }
-                        ClaimedTilePosition::High => {
-                            fulupai[(*tile - 2) as usize] += 1;
-                            fulupai[(*tile - 1) as usize] += 1;
-                        }
-                    };
+        self.iter()
+            .flatten()
+            .fold([0; NUM_TILE_INDEX], |mut fulupai, m| {
+                match m {
+                    FuluMianzi::Shunzi(tile, ClaimedTilePosition::Low) => {
+                        fulupai[*tile as usize] += 1;
+                        fulupai[(tile + 1) as usize] += 1;
+                        fulupai[(tile + 2) as usize] += 1;
+                    }
+                    FuluMianzi::Shunzi(tile, ClaimedTilePosition::Middle) => {
+                        fulupai[(tile - 1) as usize] += 1;
+                        fulupai[*tile as usize] += 1;
+                        fulupai[(tile + 1) as usize] += 1;
+                    }
+                    FuluMianzi::Shunzi(tile, ClaimedTilePosition::High) => {
+                        fulupai[(tile - 2) as usize] += 1;
+                        fulupai[(tile - 1) as usize] += 1;
+                        fulupai[*tile as usize] += 1;
+                    }
+                    FuluMianzi::Kezi(tile) => {
+                        fulupai[*tile as usize] += 3;
+                    }
+                    FuluMianzi::Gangzi(tile) => {
+                        fulupai[*tile as usize] += 4;
+                    }
                 }
-                Some(FuluMianzi::Kezi(tile)) => {
-                    fulupai[*tile as usize] += 3;
-                }
-                Some(FuluMianzi::Gangzi(tile)) => {
-                    fulupai[*tile as usize] += 4;
-                }
-                None => (),
-            }
-            fulupai
-        })
+                fulupai
+            })
     }
 }
 
@@ -108,20 +107,16 @@ fn count_gangzi(fulu_mianzi_list: &FuluMianziList) -> u8 {
 }
 
 fn merge_bingpai_and_fulupai(bingpai: &Bingpai, fulupai: &Bingpai) -> Bingpai {
-    let mut shoupai = *bingpai;
-    shoupai
-        .iter_mut()
-        .zip(fulupai.iter())
-        .for_each(|(s, &f)| *s += f);
-    shoupai
+    std::array::from_fn(|i| bingpai[i] + fulupai[i])
 }
 
 fn validate_shoupai(shoupai: &Bingpai, num_gangzi: u8) -> Result<(), InvalidShoupaiError> {
     let num_shoupai = shoupai.iter().try_fold(0, |acc, &num_tile| {
         if num_tile > MAX_NUM_SAME_TILE {
-            return Err(InvalidShoupaiError::ExceedsMaxNumSameTile(num_tile));
+            Err(InvalidShoupaiError::ExceedsMaxNumSameTile(num_tile))
+        } else {
+            Ok(acc + num_tile)
         }
-        Ok(acc + num_tile)
     })?;
 
     if num_shoupai > (MAX_NUM_SHOUPAI + num_gangzi) {
