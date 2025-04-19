@@ -40,15 +40,10 @@ pub fn generate_random_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
 pub fn generate_random_half_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
     let color_start = [0, 9, 18].choose(rng).unwrap();
 
-    let mut wall: [u8; 64] = std::array::from_fn(|i| {
-        if i < 36 {
-            // Suits
-            (i / 4 + color_start) as u8
-        } else {
-            // Honors
-            ((i - 36) / 4 + 27) as u8
-        }
-    });
+    let suits: [u8; 36] = std::array::from_fn(|i| (i / 4 + color_start) as u8);
+    let honors: [u8; 28] = std::array::from_fn(|i| (i / 4 + 27) as u8);
+    let mut combined = suits.into_iter().chain(honors.into_iter());
+    let mut wall: [u8; 64] = std::array::from_fn(|_| combined.next().unwrap());
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);
