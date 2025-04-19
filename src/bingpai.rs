@@ -61,34 +61,29 @@ pub(crate) trait BingpaiExt {
 
 impl BingpaiExt for Bingpai {
     fn count(&self) -> Result<u8, InvalidBingpaiError> {
-        let num_bingpai = self.iter().try_fold(0, |acc, &num_tile| {
-            if num_tile > MAX_NUM_SAME_TILE {
-                return Err(InvalidBingpaiError::ExceedsMaxNumSameTile(num_tile));
-            }
-            Ok(acc + num_tile)
-        })?;
+        let num_bingpai = self
+            .iter()
+            .map(|&num_tile| {
+                if num_tile > MAX_NUM_SAME_TILE {
+                    Err(InvalidBingpaiError::ExceedsMaxNumSameTile(num_tile))
+                } else {
+                    Ok(num_tile)
+                }
+            })
+            .try_fold(0u8, |acc, num_tile| num_tile.map(|n| acc + n))?;
 
-        if num_bingpai > MAX_NUM_SHOUPAI {
-            return Err(InvalidBingpaiError::ExceedsMaxNumBingpai(num_bingpai));
+        match num_bingpai {
+            0 => Err(InvalidBingpaiError::EmptyBingpai),
+            n if n > MAX_NUM_SHOUPAI => Err(InvalidBingpaiError::ExceedsMaxNumBingpai(n)),
+            n if n % 3 == 0 => Err(InvalidBingpaiError::InvalidNumBingpai(n)),
+            n => Ok(n),
         }
-        if num_bingpai % 3 == 0 {
-            if num_bingpai == 0 {
-                return Err(InvalidBingpaiError::EmptyBingpai);
-            }
-            return Err(InvalidBingpaiError::InvalidNumBingpai(num_bingpai));
-        }
-
-        Ok(num_bingpai)
     }
 
     fn count_3_player(&self) -> Result<u8, InvalidBingpaiError> {
-        self[1..8].iter().enumerate().try_for_each(|(i, &t)| {
-            if t > 0 {
-                return Err(InvalidBingpaiError::InvalidTileFor3Player(i + 1));
-            }
-            Ok(())
-        })?;
-
+        if let Some(i) = self[1..8].iter().position(|&t| t > 0) {
+            return Err(InvalidBingpaiError::InvalidTileFor3Player(i + 1));
+        }
         self.count()
     }
 }
