@@ -61,16 +61,13 @@ pub(crate) trait BingpaiExt {
 
 impl BingpaiExt for Bingpai {
     fn count(&self) -> Result<u8, InvalidBingpaiError> {
-        let num_bingpai = self
-            .iter()
-            .map(|&num_tile| {
-                if num_tile > MAX_NUM_SAME_TILE {
-                    Err(InvalidBingpaiError::ExceedsMaxNumSameTile(num_tile))
-                } else {
-                    Ok(num_tile)
-                }
-            })
-            .try_fold(0u8, |acc, num_tile| num_tile.map(|n| acc + n))?;
+        let num_bingpai = self.iter().try_fold(0, |acc, &num_tile| {
+            if num_tile > MAX_NUM_SAME_TILE {
+                Err(InvalidBingpaiError::ExceedsMaxNumSameTile(num_tile))
+            } else {
+                Ok(acc + num_tile)
+            }
+        })?;
 
         match num_bingpai {
             0 => Err(InvalidBingpaiError::EmptyBingpai),

@@ -113,9 +113,10 @@ fn merge_bingpai_and_fulupai(bingpai: &Bingpai, fulupai: &Bingpai) -> Bingpai {
 fn validate_shoupai(shoupai: &Bingpai, num_gangzi: u8) -> Result<(), InvalidShoupaiError> {
     let num_shoupai = shoupai.iter().try_fold(0, |acc, &num_tile| {
         if num_tile > MAX_NUM_SAME_TILE {
-            return Err(InvalidShoupaiError::ExceedsMaxNumSameTile(num_tile));
+            Err(InvalidShoupaiError::ExceedsMaxNumSameTile(num_tile))
+        } else {
+            Ok(acc + num_tile)
         }
-        Ok(acc + num_tile)
     })?;
 
     if num_shoupai > (MAX_NUM_SHOUPAI + num_gangzi) {
