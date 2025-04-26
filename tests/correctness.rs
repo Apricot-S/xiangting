@@ -3,107 +3,145 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 #[cfg(feature = "correctness")]
-mod hand_enumerator;
+mod hand_generator;
 #[cfg(feature = "correctness")]
 mod nyanten;
 
 #[cfg(feature = "correctness")]
 mod tests {
-    use crate::hand_enumerator::HandEnumerator;
+    use crate::hand_generator::{build_table, decode, NUM_HANDS};
     use crate::nyanten::calculateReplacementNumber;
-    use std::fs::OpenOptions;
+    use std::fs::File;
     use std::io::Write;
+    use std::{env, thread, usize};
     use xiangting::calculate_replacement_number;
 
-    fn verify_correctness(length: usize) -> bool {
-        let enumerator = HandEnumerator::new(length).unwrap();
-        let file_name = format!("./mismatch_{}.txt", length);
+    fn verify_correctness<const N: usize>() -> bool {
+        let num_threads = env::var("NUM_THREADS")
+            .ok()
+            .and_then(|s| s.parse::<usize>().ok())
+            .unwrap_or(1)
+            .try_into()
+            .unwrap();
 
-        let result = enumerator.into_iter().try_for_each(|hand| {
-            let result_nyanten =
-                unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(34)) };
-            let result_xiangting = calculate_replacement_number(&hand, &None).unwrap();
+        if NUM_HANDS[N - 1] % num_threads != 0 {
+            panic!(
+                "NUM_HANDS[{}] ({}) is not evenly divisible by NUM_THREADS ({}).",
+                N - 1,
+                NUM_HANDS[N - 1],
+                num_threads,
+            );
+        }
 
-            if result_xiangting != result_nyanten {
-                let mut file = OpenOptions::new()
-                    .append(true)
-                    .create(true)
-                    .open(&file_name)
-                    .unwrap();
+        let chunk_size = NUM_HANDS[N - 1] / num_threads;
+        let mut handles = Vec::new();
 
-                writeln!(
-                    file,
-                    "Hand: {:?}, Nyanten: {}, xiangting: {}",
-                    hand, result_nyanten, result_xiangting,
-                )
-                .unwrap();
+        let table = build_table::<N>();
 
-                return Err(());
+        for i in 0..num_threads {
+            let begin = i * chunk_size;
+            let end = begin + chunk_size;
+
+            let handle = thread::spawn(move || {
+                for hash in begin..end {
+                    let hand = decode(hash, &table);
+                    let result_nyanten =
+                        unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(34)) };
+                    let result_xiangting = calculate_replacement_number(&hand, &None).unwrap();
+
+                    if result_xiangting != result_nyanten {
+                        return Some(format!(
+                            "Hand: {:?}, Nyanten: {}, Xiangting: {}\n",
+                            hand, result_nyanten, result_xiangting,
+                        ));
+                    }
+                }
+
+                None
+            });
+
+            handles.push(handle);
+        }
+
+        let results: Vec<_> = handles.into_iter().map(|handle| handle.join()).collect();
+        if results.iter().any(|result| result.is_err()) {
+            eprintln!("Test failed due to a thread panic.");
+            return false;
+        }
+
+        let mismatches: Vec<_> = results
+            .into_iter()
+            .filter_map(|result| result.ok())
+            .flatten()
+            .collect();
+
+        if !mismatches.is_empty() {
+            let file_name = format!("./mismatch_{}.txt", N - 1);
+            if let Ok(mut file) = File::create(&file_name) {
+                let _ = file.write_all(mismatches.join("").as_bytes());
             }
+        }
 
-            Ok(())
-        });
-
-        result.is_ok()
+        mismatches.is_empty()
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_01() {
-        assert!(verify_correctness(1));
+        assert!(verify_correctness::<2>())
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_02() {
-        assert!(verify_correctness(2));
+        assert!(verify_correctness::<3>())
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_04() {
-        assert!(verify_correctness(4));
+        assert!(verify_correctness::<5>())
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_05() {
-        assert!(verify_correctness(5));
+        assert!(verify_correctness::<6>())
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_07() {
-        assert!(verify_correctness(7));
+        assert!(verify_correctness::<8>())
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_08() {
-        assert!(verify_correctness(8));
+        assert!(verify_correctness::<9>())
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_10() {
-        assert!(verify_correctness(10));
+        assert!(verify_correctness::<11>())
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_11() {
-        assert!(verify_correctness(11));
+        assert!(verify_correctness::<12>())
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_13() {
-        assert!(verify_correctness(13));
+        assert!(verify_correctness::<14>())
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_14() {
-        assert!(verify_correctness(14));
+        assert!(verify_correctness::<15>())
     }
 }
