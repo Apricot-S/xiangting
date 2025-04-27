@@ -6,7 +6,7 @@
 //!
 //! Reference:
 //!
-//! https://gist.github.com/tomohxx/7d1e897e31092c8a55ef118888686b10
+//! https://gist.github.com/tomohxx/fc0b72e3fe68744a6ac56a64a41ab8d7
 
 use std::cmp::min;
 use xiangting::Bingpai;
