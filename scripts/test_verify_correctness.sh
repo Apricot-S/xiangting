@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 <01-14>"
+    echo "Usage: NUM_THREADS=<1-N> $0 <01-14>"
     exit 1
 fi
 
