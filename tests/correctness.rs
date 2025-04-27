@@ -51,7 +51,7 @@ mod tests {
 
                     if result_xiangting != result_nyanten {
                         return Some(format!(
-                            "Hand: {:?}, Nyanten: {}, Xiangting: {}\n",
+                            "Hand: {:?}, Nyanten: {}, xiangting: {}\n",
                             hand, result_nyanten, result_xiangting,
                         ));
                     }
@@ -65,8 +65,7 @@ mod tests {
 
         let results: Vec<_> = handles.into_iter().map(|handle| handle.join()).collect();
         if results.iter().any(|result| result.is_err()) {
-            eprintln!("Test failed due to a thread panic.");
-            return false;
+            panic!("Test failed due to a thread panic.");
         }
 
         let mismatches: Vec<_> = results
@@ -76,10 +75,10 @@ mod tests {
             .collect();
 
         if !mismatches.is_empty() {
-            let file_name = format!("./mismatch_{}.txt", N - 1);
-            if let Ok(mut file) = File::create(&file_name) {
-                let _ = file.write_all(mismatches.join("").as_bytes());
-            }
+            let file_name = format!("./mismatches_{}.txt", N - 1);
+            let mut file = File::create(&file_name).expect("Failed to create file.");
+            file.write_all(mismatches.join("").as_bytes())
+                .expect("Failed to write to file.");
         }
 
         mismatches.is_empty()
@@ -88,60 +87,60 @@ mod tests {
     #[test]
     #[ignore]
     fn verify_correctness_01() {
-        assert!(verify_correctness::<2>())
+        assert!(verify_correctness::<2>(), "There were mismatches.")
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_02() {
-        assert!(verify_correctness::<3>())
+        assert!(verify_correctness::<3>(), "There were mismatches.")
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_04() {
-        assert!(verify_correctness::<5>())
+        assert!(verify_correctness::<5>(), "There were mismatches.")
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_05() {
-        assert!(verify_correctness::<6>())
+        assert!(verify_correctness::<6>(), "There were mismatches.")
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_07() {
-        assert!(verify_correctness::<8>())
+        assert!(verify_correctness::<8>(), "There were mismatches.")
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_08() {
-        assert!(verify_correctness::<9>())
+        assert!(verify_correctness::<9>(), "There were mismatches.")
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_10() {
-        assert!(verify_correctness::<11>())
+        assert!(verify_correctness::<11>(), "There were mismatches.")
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_11() {
-        assert!(verify_correctness::<12>())
+        assert!(verify_correctness::<12>(), "There were mismatches.")
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_13() {
-        assert!(verify_correctness::<14>())
+        assert!(verify_correctness::<14>(), "There were mismatches.")
     }
 
     #[test]
     #[ignore]
     fn verify_correctness_14() {
-        assert!(verify_correctness::<15>())
+        assert!(verify_correctness::<15>(), "There were mismatches.")
     }
 }
