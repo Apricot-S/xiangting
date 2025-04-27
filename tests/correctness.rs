@@ -49,7 +49,7 @@ mod tests {
                         unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(34)) };
                     let result_xiangting = calculate_replacement_number(&hand, &None).unwrap();
 
-                    if result_xiangting != result_nyanten {
+                    if result_nyanten != result_xiangting {
                         return Some(format!(
                             "Hand: {:?}, Nyanten: {}, xiangting: {}\n",
                             hand, result_nyanten, result_xiangting,
