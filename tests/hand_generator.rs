@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-//! Hand generation by decoding from Nyanten's hash value.
+//! Hand generation by decoding the hash value of the N-tile version of Nyanten.
 //!
 //! Reference:
 //!
