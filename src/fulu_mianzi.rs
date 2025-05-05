@@ -9,7 +9,7 @@ use thiserror::Error;
 
 /// Position of the claimed tile in the melded sequence.
 /// Used in [`FuluMianzi::Shunzi`](self::FuluMianzi::Shunzi).
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ClaimedTilePosition {
     /// The claimed tile is the lowest in the sequence.
     /// For example, claiming a 3 to form a sequence of 3-4-5.
