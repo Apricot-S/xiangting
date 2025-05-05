@@ -37,7 +37,7 @@ pub enum ClaimedTilePosition {
 /// // 7-777s (Kan 7s)
 /// let gangzi = FuluMianzi::Gangzi(24);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum FuluMianzi {
     /// 順子: Sequence.
     ///
