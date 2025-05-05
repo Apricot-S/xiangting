@@ -26,11 +26,41 @@ use thiserror::Error;
 /// ```
 pub type FuluMianziList = [Option<FuluMianzi>; MAX_NUM_FULU_MIANZI];
 
-pub(crate) trait FuluMianziListExt {
+/// Errors that occur when an invalid hand (手牌) is provided.
+#[derive(Debug, Error)]
+pub enum InvalidShoupaiError {
+    /// Contains an invalid pure hand.
+    #[error("hand contains an invalid pure hand ({0})")]
+    InvalidBingpai(#[from] InvalidBingpaiError),
+    /// Contains an invalid meld.
+    #[error("hand contains an invalid meld ({0})")]
+    InvalidFuluMianzi(#[from] InvalidFuluMianziError),
+    /// Same tile count exceeds 4.
+    #[error("same tile count must be 4 or less but was {0}")]
+    ExceedsMaxNumSameTile(u8),
+    /// Total tile count exceeds 14.
+    #[error("total tile count must be 14 or less but was {0}")]
+    ExceedsMaxNumShoupai(u8),
+}
+
+trait FuluMianziListExt {
+    fn validate(&self) -> Result<(), InvalidFuluMianziError>;
+    fn validate_3_player(&self) -> Result<(), InvalidFuluMianziError>;
     fn to_fulupai(&self) -> Bingpai;
+    fn count_gangzi(&self) -> u8;
 }
 
 impl FuluMianziListExt for FuluMianziList {
+    fn validate(&self) -> Result<(), InvalidFuluMianziError> {
+        self.iter().flatten().try_for_each(|m| m.validate())
+    }
+
+    fn validate_3_player(&self) -> Result<(), InvalidFuluMianziError> {
+        self.iter()
+            .flatten()
+            .try_for_each(|m| m.validate_3_player())
+    }
+
     fn to_fulupai(&self) -> Bingpai {
         self.iter()
             .flatten()
@@ -61,49 +91,13 @@ impl FuluMianziListExt for FuluMianziList {
                 fulupai
             })
     }
-}
 
-/// Errors that occur when an invalid hand (手牌) is provided.
-#[derive(Debug, Error)]
-pub enum InvalidShoupaiError {
-    /// Contains an invalid pure hand.
-    #[error("hand contains an invalid pure hand ({0})")]
-    InvalidBingpai(#[from] InvalidBingpaiError),
-    /// Contains an invalid meld.
-    #[error("hand contains an invalid meld ({0})")]
-    InvalidFuluMianzi(#[from] InvalidFuluMianziError),
-    /// Same tile count exceeds 4.
-    #[error("same tile count must be 4 or less but was {0}")]
-    ExceedsMaxNumSameTile(u8),
-    /// Total tile count exceeds 14.
-    #[error("total tile count must be 14 or less but was {0}")]
-    ExceedsMaxNumShoupai(u8),
-}
-
-fn validate_fulu_mianzi_list(
-    fulu_mianzi_list: &FuluMianziList,
-) -> Result<(), InvalidFuluMianziError> {
-    fulu_mianzi_list
-        .iter()
-        .flatten()
-        .try_for_each(|m| m.validate())
-}
-
-fn validate_fulu_mianzi_list_3_player(
-    fulu_mianzi_list: &FuluMianziList,
-) -> Result<(), InvalidFuluMianziError> {
-    fulu_mianzi_list
-        .iter()
-        .flatten()
-        .try_for_each(|m| m.validate_3_player())
-}
-
-fn count_gangzi(fulu_mianzi_list: &FuluMianziList) -> u8 {
-    fulu_mianzi_list
-        .iter()
-        .flatten()
-        .filter(|m| matches!(*m, FuluMianzi::Gangzi(_)))
-        .count() as u8
+    fn count_gangzi(&self) -> u8 {
+        self.iter()
+            .flatten()
+            .filter(|m| matches!(*m, FuluMianzi::Gangzi(_)))
+            .count() as u8
+    }
 }
 
 fn merge_bingpai_and_fulupai(bingpai: &Bingpai, fulupai: &Bingpai) -> Bingpai {
@@ -132,11 +126,11 @@ pub(crate) fn get_shoupai(
 ) -> Result<Bingpai, InvalidShoupaiError> {
     debug_assert!(bingpai.count().is_ok());
 
-    validate_fulu_mianzi_list(fulu_mianzi_list)?;
+    fulu_mianzi_list.validate()?;
 
     let fulupai = fulu_mianzi_list.to_fulupai();
     let shoupai = merge_bingpai_and_fulupai(bingpai, &fulupai);
-    let num_gangzi = count_gangzi(fulu_mianzi_list);
+    let num_gangzi = fulu_mianzi_list.count_gangzi();
     validate_shoupai(&shoupai, num_gangzi)?;
 
     Ok(shoupai)
@@ -148,11 +142,11 @@ pub(crate) fn get_shoupai_3_player(
 ) -> Result<Bingpai, InvalidShoupaiError> {
     debug_assert!(bingpai.count_3_player().is_ok());
 
-    validate_fulu_mianzi_list_3_player(fulu_mianzi_list)?;
+    fulu_mianzi_list.validate_3_player()?;
 
     let fulupai = fulu_mianzi_list.to_fulupai();
     let shoupai = merge_bingpai_and_fulupai(bingpai, &fulupai);
-    let num_gangzi = count_gangzi(fulu_mianzi_list);
+    let num_gangzi = fulu_mianzi_list.count_gangzi();
     validate_shoupai(&shoupai, num_gangzi)?;
 
     Ok(shoupai)
