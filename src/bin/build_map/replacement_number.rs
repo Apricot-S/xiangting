@@ -71,7 +71,8 @@ fn get_hand_distance<const N: usize>(target_hand: &[u8; N], hand: &[u8; N]) -> u
     target_hand
         .iter()
         .zip(hand.iter())
-        .fold(0u8, |distance, (&t, &h)| distance + t.saturating_sub(h))
+        .map(|(&t, &h)| t.saturating_sub(h))
+        .sum()
 }
 
 fn get_necessary_tiles<const N: usize>(target_hand: &[u8; N], hand: &[u8; N]) -> u16 {
