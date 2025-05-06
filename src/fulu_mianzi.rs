@@ -9,7 +9,7 @@ use thiserror::Error;
 
 /// Position of the claimed tile in the melded sequence.
 /// Used in [`FuluMianzi::Shunzi`](self::FuluMianzi::Shunzi).
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ClaimedTilePosition {
     /// The claimed tile is the lowest in the sequence.
     /// For example, claiming a 3 to form a sequence of 3-4-5.
@@ -37,7 +37,7 @@ pub enum ClaimedTilePosition {
 /// // 7-777s (Kan 7s)
 /// let gangzi = FuluMianzi::Gangzi(24);
 /// ```
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum FuluMianzi {
     /// 順子: Sequence.
     ///
