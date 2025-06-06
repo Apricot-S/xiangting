@@ -49,9 +49,10 @@ mod shoupai;
 #[cfg(not(feature = "build-file"))]
 mod standard;
 #[cfg(not(feature = "build-file"))]
-mod test_utils;
-#[cfg(not(feature = "build-file"))]
 mod tile;
+
+#[cfg(all(test, not(feature = "build-file")))]
+mod test_utils;
 
 #[cfg(not(feature = "build-file"))]
 pub use bingpai::{Bingpai, InvalidBingpaiError};
