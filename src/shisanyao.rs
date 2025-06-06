@@ -25,15 +25,11 @@ pub(super) fn calculate_replacement_number(bingpai: &Bingpai, num_bingpai: u8) -
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_utils::BingpaiExtForTest;
 
     #[test]
     fn calculate_replacement_number_no_terminals_and_honors() {
-        let bingpai: Bingpai = [
-            0, 1, 1, 1, 2, 0, 0, 0, 0, // m
-            0, 0, 1, 1, 1, 0, 0, 0, 0, // p
-            0, 0, 0, 1, 1, 1, 1, 1, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("23455m345p45678s");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 14);
@@ -41,12 +37,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_without_pair() {
-        let bingpai: Bingpai = [
-            1, 0, 0, 0, 0, 0, 0, 1, 1, // m
-            1, 1, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 1, 0, 1, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("189m12p249s12345z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 5);
@@ -54,12 +45,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_with_pair() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 1, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 1, 0, 0, 0, 0, 0, 0, 2, // s
-            1, 1, 1, 1, 1, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("119m12p299s12345z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 4);
@@ -67,12 +53,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_tenpai() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
+        let bingpai = Bingpai::from_code("11m19p19s1234567z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 1);
@@ -80,12 +61,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_tenpai_13_wait() {
-        let bingpai: Bingpai = [
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
+        let bingpai = Bingpai::from_code("19m19p19s1234567z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 1);
@@ -93,12 +69,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_win() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
+        let bingpai = Bingpai::from_code("119m19p19s1234567z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 0);
@@ -106,22 +77,12 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_incomplete_hand() {
-        let bingpai_12: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
+        let bingpai_12 = Bingpai::from_code("9m19p19s1234567z");
         let num_bingpai_12: u8 = bingpai_12.iter().sum();
         let replacement_number_12 = calculate_replacement_number(&bingpai_12, num_bingpai_12);
         assert_eq!(replacement_number_12, u8::MAX);
 
-        let bingpai_13: Bingpai = [
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
+        let bingpai_13 = Bingpai::from_code("19m19p19s1234567z");
         let replacement_number_13 = calculate_replacement_number(&bingpai_13, 12);
         assert_eq!(replacement_number_13, u8::MAX);
     }
