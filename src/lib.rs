@@ -49,6 +49,8 @@ mod shoupai;
 #[cfg(not(feature = "build-file"))]
 mod standard;
 #[cfg(not(feature = "build-file"))]
+mod test_utils;
+#[cfg(not(feature = "build-file"))]
 mod tile;
 
 #[cfg(not(feature = "build-file"))]
