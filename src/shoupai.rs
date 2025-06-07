@@ -156,15 +156,11 @@ pub(crate) fn get_shoupai_3_player(
 mod tests {
     use super::*;
     use crate::fulu_mianzi::FuluMianzi;
+    use crate::test_utils::BingpaiExtForTest;
 
     #[test]
     fn to_fulupai_menqian() {
-        let fulupai_menqian_1: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let fulupai_menqian_1 = Bingpai::from_code("");
         let menqian = [None, None, None, None];
         let fulupai_menqian_2 = menqian.to_fulupai();
         assert_eq!(fulupai_menqian_1, fulupai_menqian_2);
@@ -172,12 +168,7 @@ mod tests {
 
     #[test]
     fn to_fulupai_3_fulu() {
-        let fulupai_3_chi_1: Bingpai = [
-            2, 2, 2, 0, 0, 0, 0, 0, 0, // m
-            1, 1, 1, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let fulupai_3_chi_1 = Bingpai::from_code("112233m123p");
         let shunzi_3 = [
             Some(FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)),
             Some(FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)),
@@ -187,12 +178,7 @@ mod tests {
         let fulupai_3_chi_2 = shunzi_3.to_fulupai();
         assert_eq!(fulupai_3_chi_1, fulupai_3_chi_2);
 
-        let fulupai_3_peng_1: Bingpai = [
-            0, 3, 3, 3, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let fulupai_3_peng_1 = Bingpai::from_code("222333444m");
         let kezi_3 = [
             None,
             Some(FuluMianzi::Kezi(1)),
@@ -202,12 +188,7 @@ mod tests {
         let fulupai_3_peng_2 = kezi_3.to_fulupai();
         assert_eq!(fulupai_3_peng_1, fulupai_3_peng_2);
 
-        let fulupai_3_gang_1: Bingpai = [
-            4, 0, 4, 4, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let fulupai_3_gang_1 = Bingpai::from_code("111133334444m");
         let gangzi_3 = [
             Some(FuluMianzi::Gangzi(0)),
             None,
@@ -220,12 +201,7 @@ mod tests {
 
     #[test]
     fn to_fulupai_4_fulu() {
-        let fulupai_4_chi_1: Bingpai = [
-            1, 1, 1, 1, 1, 1, 1, 1, 1, // m
-            1, 1, 1, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let fulupai_4_chi_1 = Bingpai::from_code("123456789m123p");
         let shunzi_4 = [
             Some(FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)),
             Some(FuluMianzi::Shunzi(3, ClaimedTilePosition::Low)),
@@ -235,12 +211,7 @@ mod tests {
         let fulupai_4_chi_2 = shunzi_4.to_fulupai();
         assert_eq!(fulupai_4_chi_1, fulupai_4_chi_2);
 
-        let fulupai_4_peng_1: Bingpai = [
-            3, 3, 3, 3, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let fulupai_4_peng_1 = Bingpai::from_code("111222333444m");
         let kezi_4 = [
             Some(FuluMianzi::Kezi(0)),
             Some(FuluMianzi::Kezi(1)),
@@ -250,12 +221,7 @@ mod tests {
         let fulupai_4_peng_2 = kezi_4.to_fulupai();
         assert_eq!(fulupai_4_peng_1, fulupai_4_peng_2);
 
-        let fulupai_4_gang_1: Bingpai = [
-            4, 4, 4, 4, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let fulupai_4_gang_1 = Bingpai::from_code("1111222233334444m");
         let gangzi_4 = [
             Some(FuluMianzi::Gangzi(0)),
             Some(FuluMianzi::Gangzi(1)),
@@ -268,24 +234,14 @@ mod tests {
 
     #[test]
     fn valid_shoupai_menqian() {
-        let bingpai: Bingpai = [
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // m
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // p
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // s
-            1, 1, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("1234m1234p1234s11z");
         let menqian = [None, None, None, None];
         assert_eq!(get_shoupai(&bingpai, &menqian).unwrap(), bingpai);
     }
 
     #[test]
     fn valid_shoupai_fulu() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("12z");
 
         let kezi_4 = [
             Some(FuluMianzi::Kezi(0)),
@@ -293,12 +249,7 @@ mod tests {
             Some(FuluMianzi::Kezi(2)),
             Some(FuluMianzi::Kezi(3)),
         ];
-        let shoupai_kezi_4: Bingpai = [
-            3, 3, 3, 3, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 0, 0, 0, 0, 0, // z
-        ];
+        let shoupai_kezi_4 = Bingpai::from_code("111222333444m12z");
         assert_eq!(get_shoupai(&bingpai, &kezi_4).unwrap(), shoupai_kezi_4);
 
         let gangzi_4 = [
@@ -307,23 +258,13 @@ mod tests {
             Some(FuluMianzi::Gangzi(2)),
             Some(FuluMianzi::Gangzi(3)),
         ];
-        let shoupai_gangzi_4: Bingpai = [
-            4, 4, 4, 4, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 0, 0, 0, 0, 0, // z
-        ];
+        let shoupai_gangzi_4 = Bingpai::from_code("1111222233334444m12z");
         assert_eq!(get_shoupai(&bingpai, &gangzi_4).unwrap(), shoupai_gangzi_4);
     }
 
     #[test]
     fn invalid_shoupai_fulu_too_many_tiles() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 1, 1, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("1234z");
 
         let kezi_4 = [
             Some(FuluMianzi::Kezi(0)),
@@ -340,12 +281,7 @@ mod tests {
 
     #[test]
     fn invalid_shoupai_fulu_5th_tile() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("12z");
 
         let gangzi_4 = [
             Some(FuluMianzi::Gangzi(0)),
@@ -362,12 +298,7 @@ mod tests {
 
     #[test]
     fn invalid_shoupai_fulu_invalid_mianzi() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 1, 1, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("1234z");
 
         let shunzi_3 = [
             Some(FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)),
@@ -381,12 +312,7 @@ mod tests {
 
     #[test]
     fn valid_shoupai_3_player_fulu() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("12z");
 
         let kezi_4 = [
             Some(FuluMianzi::Kezi(0)),
@@ -394,12 +320,7 @@ mod tests {
             Some(FuluMianzi::Kezi(9)),
             Some(FuluMianzi::Kezi(33)),
         ];
-        let shoupai_kezi_4: Bingpai = [
-            3, 0, 0, 0, 0, 0, 0, 0, 3, // m
-            3, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 0, 0, 0, 0, 3, // z
-        ];
+        let shoupai_kezi_4 = Bingpai::from_code("111999m111p12777z");
         assert_eq!(
             get_shoupai_3_player(&bingpai, &kezi_4).unwrap(),
             shoupai_kezi_4
@@ -411,12 +332,7 @@ mod tests {
             Some(FuluMianzi::Gangzi(9)),
             Some(FuluMianzi::Gangzi(33)),
         ];
-        let shoupai_gangzi_4: Bingpai = [
-            4, 0, 0, 0, 0, 0, 0, 0, 4, // m
-            4, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            1, 1, 0, 0, 0, 0, 4, // z
-        ];
+        let shoupai_gangzi_4 = Bingpai::from_code("11119999m1111p127777z");
         assert_eq!(
             get_shoupai_3_player(&bingpai, &gangzi_4).unwrap(),
             shoupai_gangzi_4
@@ -425,12 +341,7 @@ mod tests {
 
     #[test]
     fn invalid_shoupai_3_player_fulu_shunzi() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            3, 3, 3, 2, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("11122233344z");
 
         let shunzi_1 = [
             Some(FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)),
@@ -452,12 +363,7 @@ mod tests {
 
     #[test]
     fn invalid_shoupai_3_player_fulu_invalid_kezi() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            3, 3, 3, 2, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("11122233344z");
 
         let kezi_2m = [Some(FuluMianzi::Kezi(1)), None, None, None];
         let result = get_shoupai_3_player(&bingpai, &kezi_2m).unwrap_err();
@@ -480,12 +386,7 @@ mod tests {
 
     #[test]
     fn invalid_shoupai_3_player_fulu_invalid_gangzi() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            3, 3, 3, 2, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("11122233344z");
 
         let gangzi_2m = [Some(FuluMianzi::Gangzi(1)), None, None, None];
         let result = get_shoupai_3_player(&bingpai, &gangzi_2m).unwrap_err();

@@ -204,51 +204,32 @@ pub fn calculate_replacement_number_3_player(
 mod tests {
     use super::*;
     use crate::bingpai::InvalidBingpaiError;
+    use crate::test_utils::BingpaiExtForTest;
 
     #[test]
     fn calculate_replacement_number_standard_tenpai() {
-        let bingpai: Bingpai = [
-            1, 1, 1, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 1, 1, 1, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 1, 1, 1, // s
-            2, 2, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("123m456p789s1122z");
         let replacement_number = calculate_replacement_number(&bingpai, &None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_shisanyao_tenpai() {
-        let bingpai: Bingpai = [
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
+        let bingpai = Bingpai::from_code("19m19p19s1234567z");
         let replacement_number = calculate_replacement_number(&bingpai, &None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_qiduizi_tenpai() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 2, 0, // m
-            0, 1, 0, 0, 0, 0, 0, 2, 0, // p
-            0, 0, 0, 0, 2, 0, 0, 0, 0, // s
-            2, 0, 0, 0, 0, 0, 2, // z
-        ];
+        let bingpai = Bingpai::from_code("1188m288p55s1177z");
         let replacement_number = calculate_replacement_number(&bingpai, &None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_empty_bingpai() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("");
         let replacement_number = calculate_replacement_number(&bingpai, &None);
         assert!(matches!(
             replacement_number.unwrap_err(),
@@ -258,12 +239,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_too_many_tiles() {
-        let bingpai: Bingpai = [
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // m
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // p
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // s
-            1, 1, 1, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("1234m1234p1234s123z");
         let replacement_number = calculate_replacement_number(&bingpai, &None);
         assert!(matches!(
             replacement_number.unwrap_err(),
@@ -273,12 +249,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_5th_tile() {
-        let bingpai: Bingpai = [
-            5, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // p
-            1, 1, 1, 1, 0, 0, 0, 0, 0, // s
-            1, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("11111m1234p1234s1z");
         let replacement_number = calculate_replacement_number(&bingpai, &None);
         assert!(matches!(
             replacement_number.unwrap_err(),
@@ -288,12 +259,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_incomplete_hand() {
-        let bingpai: Bingpai = [
-            4, 4, 4, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("111122223333m");
         let replacement_number = calculate_replacement_number(&bingpai, &None);
         assert!(matches!(
             replacement_number.unwrap_err(),
@@ -303,48 +269,28 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_3_player_standard_tenpai() {
-        let bingpai: Bingpai = [
-            3, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 1, 1, 1, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 1, 1, 1, // s
-            2, 2, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("111m456p789s1122z");
         let replacement_number = calculate_replacement_number_3_player(&bingpai, &None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_shisanyao_tenpai() {
-        let bingpai: Bingpai = [
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
+        let bingpai = Bingpai::from_code("19m19p19s1234567z");
         let replacement_number = calculate_replacement_number_3_player(&bingpai, &None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_qiduizi_tenpai() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 0, 2, // m
-            0, 1, 0, 0, 0, 0, 0, 2, 0, // p
-            0, 0, 0, 0, 2, 0, 0, 0, 0, // s
-            2, 0, 0, 0, 0, 0, 2, // z
-        ];
+        let bingpai = Bingpai::from_code("1199m288p55s1177z");
         let replacement_number = calculate_replacement_number_3_player(&bingpai, &None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_empty_bingpai() {
-        let bingpai: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("");
         let replacement_number = calculate_replacement_number_3_player(&bingpai, &None);
         assert!(matches!(
             replacement_number.unwrap_err(),
@@ -354,18 +300,8 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_3_player_2m_8m() {
-        let bingpai_2m: Bingpai = [
-            0, 1, 0, 0, 0, 0, 0, 0, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
-        let bingpai_8m: Bingpai = [
-            0, 0, 0, 0, 0, 0, 0, 1, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-            0, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai_2m = Bingpai::from_code("2m");
+        let bingpai_8m = Bingpai::from_code("8m");
 
         let replacement_number_2m = calculate_replacement_number_3_player(&bingpai_2m, &None);
         let replacement_number_8m = calculate_replacement_number_3_player(&bingpai_8m, &None);
