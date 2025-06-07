@@ -23,15 +23,11 @@ pub(super) fn calculate_replacement_number(bingpai: &Bingpai, num_bingpai: u8) -
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_utils::BingpaiExtForTest;
 
     #[test]
     fn calculate_replacement_number_without_pair() {
-        let bingpai: Bingpai = [
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // m
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // p
-            1, 0, 0, 0, 0, 0, 0, 0, 1, // s
-            1, 1, 1, 1, 1, 1, 1, // z
-        ];
+        let bingpai = Bingpai::from_code("19m19p19s1234567z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 7);
@@ -39,12 +35,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_with_quadruple() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 2, 0, // m
-            0, 1, 0, 0, 0, 0, 0, 2, 0, // p
-            0, 0, 0, 0, 2, 0, 0, 0, 0, // s
-            4, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("1188m288p55s1111z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 3);
@@ -52,12 +43,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_with_triplet() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 2, 0, // m
-            0, 1, 1, 0, 0, 0, 0, 2, 0, // p
-            0, 0, 0, 0, 2, 0, 0, 0, 0, // s
-            3, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("1188m2388p55s111z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 2);
@@ -65,12 +51,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_with_2_triplets() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 2, 0, // m
-            0, 1, 0, 0, 0, 0, 0, 2, 0, // p
-            0, 0, 0, 0, 3, 0, 0, 0, 0, // s
-            3, 0, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("1188m288p555s111z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 3);
@@ -78,12 +59,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_tenpai() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 2, 0, // m
-            0, 1, 0, 0, 0, 0, 0, 2, 0, // p
-            0, 0, 0, 0, 2, 0, 0, 0, 0, // s
-            2, 0, 0, 0, 0, 0, 2, // z
-        ];
+        let bingpai = Bingpai::from_code("1188m288p55s1177z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 1);
@@ -91,12 +67,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_win() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 2, 0, // m
-            0, 2, 0, 0, 0, 0, 0, 2, 0, // p
-            0, 0, 0, 0, 2, 0, 0, 0, 0, // s
-            2, 0, 0, 0, 0, 0, 2, // z
-        ];
+        let bingpai = Bingpai::from_code("1188m2288p55s1177z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, 0);
@@ -104,12 +75,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_incomplete_hand() {
-        let bingpai: Bingpai = [
-            2, 0, 0, 0, 0, 0, 0, 2, 0, // m
-            0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-            0, 0, 0, 0, 2, 0, 0, 0, 0, // s
-            2, 2, 0, 0, 0, 0, 0, // z
-        ];
+        let bingpai = Bingpai::from_code("1188m55s1122z");
         let num_bingpai: u8 = bingpai.iter().sum();
         let replacement_number = calculate_replacement_number(&bingpai, num_bingpai);
         assert_eq!(replacement_number, u8::MAX);
