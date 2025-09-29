@@ -19,6 +19,8 @@ mod calculate;
 #[cfg(not(feature = "build-file"))]
 mod constants;
 #[cfg(not(feature = "build-file"))]
+mod fulu_mianzi;
+#[cfg(not(feature = "build-file"))]
 mod tile;
 
 #[cfg(all(test, not(feature = "build-file")))]
@@ -26,4 +28,5 @@ mod test_utils;
 
 pub use bingpai::{Bingpai, BingpaiError};
 pub use calculate::{XiangtingError, calculate_replacement_number};
+pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 pub use tile::Tile;
