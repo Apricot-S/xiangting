@@ -13,6 +13,10 @@
 //! - Supports three-player mahjong.
 
 #[cfg(not(feature = "build-file"))]
+mod bingpai;
+#[cfg(not(feature = "build-file"))]
+mod constants;
+#[cfg(not(feature = "build-file"))]
 mod tile;
 
 #[cfg(all(test, not(feature = "build-file")))]
@@ -20,12 +24,10 @@ mod test_utils;
 
 use thiserror::Error;
 
+pub use bingpai::Bingpai;
 pub use tile::Tile;
 
-pub(crate) const NUM_TILE_INDEX: usize = 3 * 9 + 4 + 3;
 pub(crate) const MAX_NUM_SHOUPAI: u8 = 14;
-
-pub type Bingpai = [Tile; NUM_TILE_INDEX];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FuluMianzi {}
