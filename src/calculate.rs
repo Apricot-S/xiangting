@@ -63,14 +63,14 @@ mod tests {
     }
 
     #[test]
-    fn calculate_replacement_number_err_15_tiles_bingpai() {
-        let bingpai = Bingpai::from_code("123456789m123456z");
+    fn calculate_replacement_number_err_5_same_tiles_bingpai() {
+        let bingpai = Bingpai::from_code("11111m");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(BingpaiError::TooManyTiles {
-                max: 14,
-                count: 15
+            Err(XiangtingError::Bingpai(BingpaiError::TooManyCopies {
+                tile: 0,
+                count: 5
             }))
         ));
     }
