@@ -13,7 +13,7 @@ Documentation:
 - [API reference (main branch)](https://Apricot-S.github.io/xiangting/xiangting)
 - [API reference (docs.rs)](https://docs.rs/xiangting)
 
-Reference:
+## References
 
 - [[麻雀]シャンテン数計算アルゴリズム #C++ - Qiita](https://qiita.com/tomohxx/items/75b5f771285e1334c0a5)
 - [Theoretical Background of Nyanten (Efficient Computation of Shanten/Deficiency Numbers) #麻雀 - Qiita](https://qiita.com/Cryolite/items/75d504c7489426806b87)
