@@ -41,7 +41,7 @@ pub enum XiangtingError {
 #[derive(Debug, Error)]
 pub enum BingpaiError {
     #[error("total tile count must be {max} or less but was {count}")]
-    ExceedsMaxTileCount { max: u8, count: u8 },
+    TooManyTiles { max: u8, count: u8 },
     #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidTileCount(u8),
 }
@@ -52,7 +52,7 @@ pub fn calculate_replacement_number(
 ) -> Result<u8, XiangtingError> {
     let num_bingpai: u8 = bingpai.iter().sum();
     if num_bingpai > MAX_NUM_SHOUPAI {
-        return Err(XiangtingError::Bingpai(BingpaiError::ExceedsMaxTileCount {
+        return Err(XiangtingError::Bingpai(BingpaiError::TooManyTiles {
             max: MAX_NUM_SHOUPAI,
             count: num_bingpai,
         }));
@@ -111,7 +111,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(BingpaiError::ExceedsMaxTileCount {
+            Err(XiangtingError::Bingpai(BingpaiError::TooManyTiles {
                 max: 14,
                 count: 15
             }))
