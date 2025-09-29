@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::constants::NUM_TILE_INDEX;
+use crate::constants::{MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
+use thiserror::Error;
 
 /// 兵牌: Hand excluding melds (a.k.a. pure hand, 純手牌).
 ///
@@ -32,3 +33,29 @@ use crate::constants::NUM_TILE_INDEX;
 /// ];
 /// ```
 pub type Bingpai = [u8; NUM_TILE_INDEX];
+
+#[derive(Debug, Error)]
+pub enum BingpaiError {
+    #[error("total tile count must be {max} or less but was {count}")]
+    TooManyTiles { max: u8, count: u8 },
+    #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
+    InvalidTileCount(u8),
+}
+
+pub(crate) trait BingpaiExt {
+    fn count(&self) -> Result<u8, BingpaiError>;
+}
+
+impl BingpaiExt for Bingpai {
+    fn count(&self) -> Result<u8, BingpaiError> {
+        let num_bingpai: u8 = self.iter().sum();
+        match num_bingpai {
+            n if n > MAX_NUM_SHOUPAI => Err(BingpaiError::TooManyTiles {
+                max: MAX_NUM_SHOUPAI,
+                count: n,
+            }),
+            n if n % 3 == 0 => Err(BingpaiError::InvalidTileCount(n)),
+            n => Ok(n),
+        }
+    }
+}
