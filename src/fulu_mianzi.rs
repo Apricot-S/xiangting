@@ -85,7 +85,7 @@ pub enum FuluMianziError {
     #[error("tile index must be between 0 and 33 but was {0}")]
     IndexOutOfRange(Tile),
     /// An attempt was made to create a sequence using honors (字牌).
-    #[error("a sequence cannot be made with honors ({0})")]
+    #[error("a sequence cannot be made with honors: {0}")]
     ShunziWithZipai(Tile),
     /// The tile and position combination cannot form a valid sequence.
     #[error("a sequence cannot be made with {0} and {1:?}")]
@@ -97,15 +97,27 @@ pub enum FuluMianziError {
 
 impl FuluMianzi {
     pub(crate) fn to_tile_counts(&self) -> Result<Bingpai, FuluMianziError> {
-        let tile = match self {
-            FuluMianzi::Shunzi(t, _) => t,
-            FuluMianzi::Kezi(t) => t,
-            FuluMianzi::Gangzi(t) => t,
-        };
-        if *tile > MAX_TILE_INDEX {
-            return Err(FuluMianziError::IndexOutOfRange(*tile));
-        }
+        self.validate()?;
         Ok([0; 34])
+    }
+
+    fn validate(&self) -> Result<(), FuluMianziError> {
+        match self {
+            FuluMianzi::Shunzi(t, p) => {
+                if *t > MAX_SHUPAI_INDEX {
+                    if *t > MAX_TILE_INDEX {
+                        return Err(FuluMianziError::IndexOutOfRange(*t));
+                    }
+                    return Err(FuluMianziError::ShunziWithZipai(*t));
+                }
+            }
+            FuluMianzi::Kezi(t) | FuluMianzi::Gangzi(t) => {
+                if *t > MAX_TILE_INDEX {
+                    return Err(FuluMianziError::IndexOutOfRange(*t));
+                }
+            }
+        }
+        Ok(())
     }
 }
 

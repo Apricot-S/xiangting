@@ -31,6 +31,7 @@ pub fn calculate_replacement_number(
 mod tests {
     use super::*;
     use crate::Bingpai;
+    use crate::ClaimedTilePosition;
     use crate::FuluMianzi;
     use crate::test_utils::BingpaiExtForTest;
 
@@ -90,6 +91,19 @@ mod tests {
             replacement_number,
             Err(XiangtingError::FuluMianzi(
                 FuluMianziError::IndexOutOfRange(34)
+            ))
+        ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_err_fulu_shunzi_with_zipai() {
+        let bingpai = Bingpai::from_code("1p");
+        let fulu_mianzi_list = [FuluMianzi::Shunzi(27, ClaimedTilePosition::Low)];
+        let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::FuluMianzi(
+                FuluMianziError::ShunziWithZipai(27)
             ))
         ));
     }
