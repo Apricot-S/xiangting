@@ -14,3 +14,5 @@
 
 #[cfg(not(feature = "build-file"))]
 mod tile;
+
+pub use tile::Tile;
