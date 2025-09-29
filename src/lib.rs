@@ -15,6 +15,9 @@
 #[cfg(not(feature = "build-file"))]
 mod tile;
 
+#[cfg(all(test, not(feature = "build-file")))]
+mod test_utils;
+
 use thiserror::Error;
 
 pub use tile::Tile;
@@ -47,11 +50,13 @@ pub fn calculate_replacement_number(
 
 #[cfg(test)]
 mod tests {
+    use super::Bingpai;
+    use super::test_utils::BingpaiExtForTest;
     use super::*;
 
     #[test]
     fn calculate_replacement_number_empty_bingpai() {
-        let bingpai = [0; 34];
+        let bingpai = Bingpai::from_code("");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
