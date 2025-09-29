@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::constants::{MAX_NUM_SHOUPAI, NUM_TILE_INDEX};
+use crate::constants::{MAX_NUM_SHOUPAI, MAX_TILE_COPIES, NUM_TILE_INDEX};
 use crate::tile::Tile;
 use thiserror::Error;
 
@@ -53,7 +53,7 @@ impl BingpaiExt for Bingpai {
     fn count(&self) -> Result<u8, BingpaiError> {
         self.iter()
             .enumerate()
-            .find(|(_, c)| **c > 4)
+            .find(|(_, c)| **c > MAX_TILE_COPIES)
             .map(|(i, &c)| BingpaiError::TooManyCopies {
                 tile: i as Tile,
                 count: c,
