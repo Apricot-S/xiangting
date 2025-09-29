@@ -23,6 +23,7 @@ use thiserror::Error;
 pub use tile::Tile;
 
 pub(crate) const NUM_TILE_INDEX: usize = 3 * 9 + 4 + 3;
+pub(crate) const MAX_NUM_SHOUPAI: u8 = 14;
 
 pub type Bingpai = [Tile; NUM_TILE_INDEX];
 
@@ -37,6 +38,8 @@ pub enum XiangtingError {
 
 #[derive(Debug, Error)]
 pub enum BingpaiError {
+    #[error("total tile count must be {max} or less but was {count}")]
+    ExceedsMaxTileCount { max: u8, count: u8 },
     #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidTileCount(u8),
 }
@@ -45,7 +48,19 @@ pub fn calculate_replacement_number(
     bingpai: &Bingpai,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
-    Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(0)))
+    let num_bingpai: u8 = bingpai.iter().sum();
+    if num_bingpai > MAX_NUM_SHOUPAI {
+        return Err(XiangtingError::Bingpai(BingpaiError::ExceedsMaxTileCount {
+            max: MAX_NUM_SHOUPAI,
+            count: num_bingpai,
+        }));
+    }
+    if num_bingpai % 3 == 0 {
+        return Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(
+            num_bingpai,
+        )));
+    }
+    Ok(0)
 }
 
 #[cfg(test)]
@@ -55,12 +70,49 @@ mod tests {
     use super::*;
 
     #[test]
-    fn calculate_replacement_number_empty_bingpai() {
+    fn calculate_replacement_number_err_empty_bingpai() {
         let bingpai = Bingpai::from_code("");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(0)))
+        ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_ok_1_tile_bingpai() {
+        let bingpai = Bingpai::from_code("1m");
+        let replacement_number = calculate_replacement_number(&bingpai, None);
+        assert!(replacement_number.is_ok());
+    }
+
+    #[test]
+    fn calculate_replacement_number_ok_2_tiles_bingpai() {
+        let bingpai = Bingpai::from_code("2p3s");
+        let replacement_number = calculate_replacement_number(&bingpai, None);
+        assert!(replacement_number.is_ok());
+    }
+
+    #[test]
+    fn calculate_replacement_number_err_3_tiles_bingpai() {
+        let bingpai = Bingpai::from_code("2p3s7z");
+        let replacement_number = calculate_replacement_number(&bingpai, None);
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(3)))
+        ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_err_15_tiles_bingpai() {
+        let bingpai = Bingpai::from_code("123456789m123456z");
+        let replacement_number = calculate_replacement_number(&bingpai, None);
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::Bingpai(BingpaiError::ExceedsMaxTileCount {
+                max: 14,
+                count: 15
+            }))
         ));
     }
 }
