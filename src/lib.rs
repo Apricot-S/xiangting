@@ -46,22 +46,29 @@ pub enum BingpaiError {
     InvalidTileCount(u8),
 }
 
+pub(crate) trait BingpaiExt {
+    fn count(&self) -> Result<u8, BingpaiError>;
+}
+
+impl BingpaiExt for Bingpai {
+    fn count(&self) -> Result<u8, BingpaiError> {
+        let num_bingpai: u8 = self.iter().sum();
+        match num_bingpai {
+            n if n > MAX_NUM_SHOUPAI => Err(BingpaiError::TooManyTiles {
+                max: MAX_NUM_SHOUPAI,
+                count: n,
+            }),
+            n if n % 3 == 0 => Err(BingpaiError::InvalidTileCount(n)),
+            n => Ok(n),
+        }
+    }
+}
+
 pub fn calculate_replacement_number(
     bingpai: &Bingpai,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
-    let num_bingpai: u8 = bingpai.iter().sum();
-    if num_bingpai > MAX_NUM_SHOUPAI {
-        return Err(XiangtingError::Bingpai(BingpaiError::TooManyTiles {
-            max: MAX_NUM_SHOUPAI,
-            count: num_bingpai,
-        }));
-    }
-    if num_bingpai % 3 == 0 {
-        return Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(
-            num_bingpai,
-        )));
-    }
+    let num_bingpai = bingpai.count()?;
     Ok(0)
 }
 
