@@ -60,8 +60,8 @@ fn main() {
         2, 3, 0, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number = calculate_replacement_number(&hand_14, &None);
-    assert_eq!(replacement_number.unwrap(), 0u8);
+    let replacement_number = calculate_replacement_number(&hand_14, None);
+    assert_eq!(replacement_number, Ok(0u8));
 }
 ```
 
@@ -86,17 +86,16 @@ fn main() {
 
     // 456p 7777s 111z
     let melds = [
-        Some(FuluMianzi::Shunzi(12, ClaimedTilePosition::Low)),
-        Some(FuluMianzi::Gangzi(24)),
-        Some(FuluMianzi::Kezi(27)),
-        None,
+        FuluMianzi::Shunzi(12, ClaimedTilePosition::Low),
+        FuluMianzi::Gangzi(24),
+        FuluMianzi::Kezi(27),
     ];
 
-    let replacement_number_wo_melds = calculate_replacement_number(&hand_4, &None);
-    assert_eq!(replacement_number_wo_melds.unwrap(), 1u8);
+    let replacement_number_wo_melds = calculate_replacement_number(&hand_4, None);
+    assert_eq!(replacement_number_wo_melds, Ok(1u8));
 
-    let replacement_number_w_melds = calculate_replacement_number(&hand_4, &Some(melds));
-    assert_eq!(replacement_number_w_melds.unwrap(), 2u8);
+    let replacement_number_w_melds = calculate_replacement_number(&hand_4, Some(&melds));
+    assert_eq!(replacement_number_w_melds, Ok(2u8));
 }
 ```
 
@@ -115,11 +114,11 @@ fn main() {
         4, 3, 2, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number_4p = calculate_replacement_number(&hand_13, &None);
-    assert_eq!(replacement_number_4p.unwrap(), 2u8);
+    let replacement_number_4p = calculate_replacement_number(&hand_13, None);
+    assert_eq!(replacement_number_4p, Ok(2u8));
 
-    let replacement_number_3p = calculate_replacement_number_3_player(&hand_13, &None);
-    assert_eq!(replacement_number_3p.unwrap(), 3u8);
+    let replacement_number_3p = calculate_replacement_number_3_player(&hand_13, None);
+    assert_eq!(replacement_number_3p, Ok(3u8));
 }
 ```
 
