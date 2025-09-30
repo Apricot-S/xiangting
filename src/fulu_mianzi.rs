@@ -233,6 +233,72 @@ mod tests {
     }
 
     #[test]
+    fn validate_err_shunzi_8m_910m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(7, ClaimedTilePosition::Low).validate(),
+            Err(FuluMianziError::InvalidShunziCombination(
+                7,
+                ClaimedTilePosition::Low
+            ))
+        ));
+    }
+
+    #[test]
+    fn validate_err_shunzi_9m_1011m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(8, ClaimedTilePosition::Low).validate(),
+            Err(FuluMianziError::InvalidShunziCombination(
+                8,
+                ClaimedTilePosition::Low
+            ))
+        ));
+    }
+
+    #[test]
+    fn validate_err_shunzi_1m_02m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(0, ClaimedTilePosition::Middle).validate(),
+            Err(FuluMianziError::InvalidShunziCombination(
+                0,
+                ClaimedTilePosition::Middle
+            ))
+        ));
+    }
+
+    #[test]
+    fn validate_err_shunzi_9m_810m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(8, ClaimedTilePosition::Middle).validate(),
+            Err(FuluMianziError::InvalidShunziCombination(
+                8,
+                ClaimedTilePosition::Middle
+            ))
+        ));
+    }
+
+    #[test]
+    fn validate_err_shunzi_1m_minus10m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(0, ClaimedTilePosition::High).validate(),
+            Err(FuluMianziError::InvalidShunziCombination(
+                0,
+                ClaimedTilePosition::High
+            ))
+        ));
+    }
+
+    #[test]
+    fn validate_err_shunzi_2m_01m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(1, ClaimedTilePosition::High).validate(),
+            Err(FuluMianziError::InvalidShunziCombination(
+                1,
+                ClaimedTilePosition::High
+            ))
+        ));
+    }
+
+    #[test]
     fn validate_err_kezi() {
         assert!(matches!(
             FuluMianzi::Kezi(34).validate(),
