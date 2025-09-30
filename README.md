@@ -29,6 +29,8 @@ cargo add xiangting
 
 ## Usage
 
+### Basic Usage
+
 The hand is represented as an array of `[u8; 34]`, where each element represents the count of a specific tile.
 The correspondence between the index and the tile is shown in the table below.
 
@@ -67,6 +69,8 @@ fn main() {
 }
 ```
 
+### Handling Melds
+
 In the calculation for a hand with melds (副露),
 the melded tiles can be included or excluded when counting tiles to determine if a hand contains four identical ones.
 
@@ -100,6 +104,8 @@ fn main() {
     assert_eq!(replacement_number_w_melds, Ok(2u8));
 }
 ```
+
+### Support for Three-Player Mahjong
 
 In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
 Additionally, melded sequences (明順子) are not allowed.
