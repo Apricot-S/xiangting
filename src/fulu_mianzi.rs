@@ -233,6 +233,22 @@ mod tests {
     }
 
     #[test]
+    fn validate_err_shunzi_8z() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(34, ClaimedTilePosition::Low).validate(),
+            Err(FuluMianziError::IndexOutOfRange(34))
+        ));
+    }
+
+    #[test]
+    fn validate_err_shunzi_1z() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(27, ClaimedTilePosition::Low).validate(),
+            Err(FuluMianziError::ShunziWithZipai(27))
+        ));
+    }
+
+    #[test]
     fn validate_err_shunzi_8m_910m() {
         assert!(matches!(
             FuluMianzi::Shunzi(7, ClaimedTilePosition::Low).validate(),
@@ -299,7 +315,7 @@ mod tests {
     }
 
     #[test]
-    fn validate_err_kezi() {
+    fn validate_err_kezi_8z() {
         assert!(matches!(
             FuluMianzi::Kezi(34).validate(),
             Err(FuluMianziError::IndexOutOfRange(34))
@@ -307,7 +323,7 @@ mod tests {
     }
 
     #[test]
-    fn validate_err_gangzi() {
+    fn validate_err_gangzi_8z() {
         assert!(matches!(
             FuluMianzi::Gangzi(34).validate(),
             Err(FuluMianziError::IndexOutOfRange(34))
