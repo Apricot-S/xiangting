@@ -76,7 +76,7 @@ If melds are included (e.g., World Riichi Championship, M.LEAGUE), the melds sho
 use xiangting::{calculate_replacement_number, ClaimedTilePosition, FuluMianzi};
 
 fn main() {
-    // 123m1z (3 melds)
+    // 123m1z
     let hand_4: [u8; 34] = [
         1, 1, 1, 0, 0, 0, 0, 0, 0, // m
         0, 0, 0, 0, 0, 0, 0, 0, 0, // p
