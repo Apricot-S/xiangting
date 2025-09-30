@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::Bingpai;
 use crate::constants::{MAX_SHUPAI_INDEX, MAX_TILE_INDEX, NUM_TILE_INDEX};
 use crate::tile::Tile;
 use std::fmt;
@@ -179,6 +178,46 @@ mod tests {
     fn validate_ok_shunzi_1m_23m() {
         assert!(matches!(
             FuluMianzi::Shunzi(0, ClaimedTilePosition::Low).validate(),
+            Ok(())
+        ));
+    }
+
+    #[test]
+    fn validate_ok_shunzi_7m_89m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(6, ClaimedTilePosition::Low).validate(),
+            Ok(())
+        ));
+    }
+
+    #[test]
+    fn validate_ok_shunzi_2m_13m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(1, ClaimedTilePosition::Middle).validate(),
+            Ok(())
+        ));
+    }
+
+    #[test]
+    fn validate_ok_shunzi_8m_79m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(7, ClaimedTilePosition::Middle).validate(),
+            Ok(())
+        ));
+    }
+
+    #[test]
+    fn validate_ok_shunzi_3m_12m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(2, ClaimedTilePosition::High).validate(),
+            Ok(())
+        ));
+    }
+
+    #[test]
+    fn validate_ok_shunzi_9m_78m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(8, ClaimedTilePosition::High).validate(),
             Ok(())
         ));
     }
