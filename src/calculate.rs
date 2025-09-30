@@ -31,7 +31,7 @@ pub fn calculate_replacement_number_3_player(
 ) -> Result<u8, XiangtingError> {
     let num_bingpai = bingpai.count_3_player()?;
     if let Some(fl) = fulu_mianzi_list {
-        fl.iter().try_for_each(|f| f.validate())?;
+        fl.iter().try_for_each(|f| f.validate_3_player())?;
     }
     Ok(0)
 }
@@ -138,6 +138,37 @@ mod tests {
             replacement_number,
             Err(XiangtingError::Bingpai(
                 BingpaiError::InvalidTileFor3Player(1)
+            ))
+        ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_player_err_fulu_123p() {
+        let bingpai = Bingpai::from_code("1m");
+        let fulu_mianzi_list = [FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)];
+        let replacement_number =
+            calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::FuluMianzi(
+                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
+                    9,
+                    ClaimedTilePosition::Low
+                ))
+            ))
+        ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_player_err_fulu_222m() {
+        let bingpai = Bingpai::from_code("1m");
+        let fulu_mianzi_list = [FuluMianzi::Kezi(1)];
+        let replacement_number =
+            calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::FuluMianzi(
+                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
             ))
         ));
     }

@@ -116,6 +116,18 @@ impl FuluMianzi {
         Ok(())
     }
 
+    pub(crate) fn validate_3_player(&self) -> Result<(), FuluMianziError> {
+        match self {
+            FuluMianzi::Shunzi(..) => {
+                Err(FuluMianziError::InvalidFuluMianziFor3Player(self.clone()))
+            }
+            FuluMianzi::Kezi(t) | FuluMianzi::Gangzi(t) if (1..8).contains(t) => {
+                Err(FuluMianziError::InvalidFuluMianziFor3Player(self.clone()))
+            }
+            _ => self.validate(),
+        }
+    }
+
     #[inline]
     fn is_valid_shunzi_combination(tile: &Tile, position: &ClaimedTilePosition) -> bool {
         match position {
