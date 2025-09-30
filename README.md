@@ -1,5 +1,9 @@
 # xiangting
 
+[![Crate](https://img.shields.io/crates/v/xiangting.svg)](https://crates.io/crates/xiangting)
+[![API](https://img.shields.io/badge/api-main-yellow.svg)](https://apricot-s.github.io/xiangting/xiangting)
+[![API](https://docs.rs/xiangting/badge.svg)](https://docs.rs/xiangting)
+
 A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
 
 This library is based on the algorithm in [Cryolite's Nyanten](https://github.com/Cryolite/nyanten).  
