@@ -20,9 +20,7 @@ pub fn calculate_replacement_number(
 ) -> Result<u8, XiangtingError> {
     let num_bingpai = bingpai.count()?;
     if let Some(fl) = fulu_mianzi_list {
-        for f in fl {
-            f.to_tile_counts()?;
-        }
+        fl.iter().try_for_each(|f| f.validate())?;
     }
     Ok(0)
 }

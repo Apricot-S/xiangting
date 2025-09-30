@@ -96,12 +96,7 @@ pub enum FuluMianziError {
 }
 
 impl FuluMianzi {
-    pub(crate) fn to_tile_counts(&self) -> Result<Bingpai, FuluMianziError> {
-        self.validate()?;
-        Ok([0; 34])
-    }
-
-    fn validate(&self) -> Result<(), FuluMianziError> {
+    pub(crate) fn validate(&self) -> Result<(), FuluMianziError> {
         match self {
             FuluMianzi::Shunzi(t, p) => {
                 if *t > MAX_SHUPAI_INDEX {
@@ -179,6 +174,40 @@ impl fmt::Debug for FuluMianzi {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn validate_ok_shunzi_1m_23m() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(0, ClaimedTilePosition::Low).validate(),
+            Ok(())
+        ));
+    }
+
+    #[test]
+    fn validate_ok_kezi() {
+        assert!(matches!(FuluMianzi::Kezi(33).validate(), Ok(())));
+    }
+
+    #[test]
+    fn validate_ok_gangzi() {
+        assert!(matches!(FuluMianzi::Gangzi(33).validate(), Ok(())));
+    }
+
+    #[test]
+    fn validate_err_kezi() {
+        assert!(matches!(
+            FuluMianzi::Kezi(34).validate(),
+            Err(FuluMianziError::IndexOutOfRange(34))
+        ));
+    }
+
+    #[test]
+    fn validate_err_gangzi() {
+        assert!(matches!(
+            FuluMianzi::Gangzi(34).validate(),
+            Err(FuluMianziError::IndexOutOfRange(34))
+        ));
+    }
 
     #[test]
     fn shunzi_display_low() {
