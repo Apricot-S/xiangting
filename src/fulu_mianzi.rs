@@ -223,12 +223,28 @@ mod tests {
     }
 
     #[test]
-    fn validate_ok_kezi() {
+    fn validate_ok_shunzi_1p_23p() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(9, ClaimedTilePosition::Low).validate(),
+            Ok(())
+        ));
+    }
+
+    #[test]
+    fn validate_ok_shunzi_9s_78s() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(26, ClaimedTilePosition::High).validate(),
+            Ok(())
+        ));
+    }
+
+    #[test]
+    fn validate_ok_kezi_7z() {
         assert!(matches!(FuluMianzi::Kezi(33).validate(), Ok(())));
     }
 
     #[test]
-    fn validate_ok_gangzi() {
+    fn validate_ok_gangzi_7z() {
         assert!(matches!(FuluMianzi::Gangzi(33).validate(), Ok(())));
     }
 
@@ -310,6 +326,28 @@ mod tests {
             Err(FuluMianziError::InvalidShunziCombination(
                 1,
                 ClaimedTilePosition::High
+            ))
+        ));
+    }
+
+    #[test]
+    fn validate_err_shunzi_1p_02p() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(9, ClaimedTilePosition::Middle).validate(),
+            Err(FuluMianziError::InvalidShunziCombination(
+                9,
+                ClaimedTilePosition::Middle
+            ))
+        ));
+    }
+
+    #[test]
+    fn validate_err_shunzi_9s_1011s() {
+        assert!(matches!(
+            FuluMianzi::Shunzi(26, ClaimedTilePosition::Low).validate(),
+            Err(FuluMianziError::InvalidShunziCombination(
+                26,
+                ClaimedTilePosition::Low
             ))
         ));
     }
