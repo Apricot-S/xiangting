@@ -181,13 +181,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn shunzi_display() {
+    fn shunzi_display_low() {
         let shunzi_low = FuluMianzi::Shunzi(0, ClaimedTilePosition::Low);
         assert_eq!(format!("{}", shunzi_low), "Chii-1m-Low");
+    }
 
+    #[test]
+    fn shunzi_display_middle() {
         let shunzi_middle = FuluMianzi::Shunzi(1, ClaimedTilePosition::Middle);
         assert_eq!(format!("{}", shunzi_middle), "Chii-2m-Middle");
+    }
 
+    #[test]
+    fn shunzi_display_high() {
         let shunzi_high = FuluMianzi::Shunzi(2, ClaimedTilePosition::High);
         assert_eq!(format!("{}", shunzi_high), "Chii-3m-High");
     }
