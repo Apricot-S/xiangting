@@ -107,4 +107,17 @@ mod tests {
             ))
         ));
     }
+
+    #[test]
+    fn calculate_replacement_number_err_fulu_invalid_shunzi_combination() {
+        let bingpai = Bingpai::from_code("1p");
+        let fulu_mianzi_list = [FuluMianzi::Shunzi(0, ClaimedTilePosition::Middle)];
+        let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::FuluMianzi(
+                FuluMianziError::InvalidShunziCombination(0, ClaimedTilePosition::Middle)
+            ))
+        ));
+    }
 }

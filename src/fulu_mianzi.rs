@@ -110,6 +110,9 @@ impl FuluMianzi {
                     }
                     return Err(FuluMianziError::ShunziWithZipai(*t));
                 }
+                if !FuluMianzi::is_valid_shunzi_combination(t, p) {
+                    return Err(FuluMianziError::InvalidShunziCombination(*t, p.clone()));
+                }
             }
             FuluMianzi::Kezi(t) | FuluMianzi::Gangzi(t) => {
                 if *t > MAX_TILE_INDEX {
@@ -118,6 +121,23 @@ impl FuluMianzi {
             }
         }
         Ok(())
+    }
+
+    #[inline]
+    fn is_valid_shunzi_combination(tile: &Tile, position: &ClaimedTilePosition) -> bool {
+        match position {
+            // false: In case of
+            // { claimed_tile: 8x, dazi: [9x, 10x] } or { claimed_tile: 9x, dazi: [10x, 11x] }
+            ClaimedTilePosition::Low => !matches!(tile, 7 | 16 | 25 | 8 | 17 | 26),
+
+            // false: In case of
+            // { claimed_tile: 1x, dazi: [0x, 2x] } or { claimed_tile: 9x, dazi: [8x, 10x] }
+            ClaimedTilePosition::Middle => !matches!(tile, 0 | 8 | 9 | 17 | 18 | 26),
+
+            // false: In case of
+            // { claimed_tile: 1x, dazi: [-1x, 0x] } or { claimed_tile: 2x, dazi: [0x, 1x] }
+            ClaimedTilePosition::High => !matches!(tile, 0 | 9 | 18 | 1 | 10 | 19),
+        }
     }
 }
 
