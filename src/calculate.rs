@@ -25,6 +25,17 @@ pub fn calculate_replacement_number(
     Ok(0)
 }
 
+pub fn calculate_replacement_number_3_player(
+    bingpai: &Bingpai,
+    fulu_mianzi_list: Option<&[FuluMianzi]>,
+) -> Result<u8, XiangtingError> {
+    let num_bingpai = bingpai.count_3_player()?;
+    if let Some(fl) = fulu_mianzi_list {
+        fl.iter().try_for_each(|f| f.validate())?;
+    }
+    Ok(0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -115,6 +126,18 @@ mod tests {
             replacement_number,
             Err(XiangtingError::FuluMianzi(
                 FuluMianziError::InvalidShunziCombination(0, ClaimedTilePosition::Middle)
+            ))
+        ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_player_err_bingpai_2m() {
+        let bingpai = Bingpai::from_code("2m");
+        let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::Bingpai(
+                BingpaiError::InvalidTileFor3Player(1)
             ))
         ));
     }

@@ -43,10 +43,13 @@ pub enum BingpaiError {
     TooManyTiles { max: u8, count: u8 },
     #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidTileCount(u8),
+    #[error("tile {0} cannot be used in 3-player mahjong")]
+    InvalidTileFor3Player(u8),
 }
 
 pub(crate) trait BingpaiExt {
     fn count(&self) -> Result<u8, BingpaiError>;
+    fn count_3_player(&self) -> Result<u8, BingpaiError>;
 }
 
 impl BingpaiExt for Bingpai {
@@ -69,5 +72,12 @@ impl BingpaiExt for Bingpai {
             n if n % 3 == 0 => Err(BingpaiError::InvalidTileCount(n)),
             n => Ok(n),
         }
+    }
+
+    fn count_3_player(&self) -> Result<u8, BingpaiError> {
+        if let Some(i) = self[1..8].iter().position(|&t| t > 0) {
+            return Err(BingpaiError::InvalidTileFor3Player((i + 1) as u8));
+        }
+        self.count()
     }
 }

@@ -27,6 +27,8 @@ mod tile;
 mod test_utils;
 
 pub use bingpai::{Bingpai, BingpaiError};
-pub use calculate::{XiangtingError, calculate_replacement_number};
+pub use calculate::{
+    XiangtingError, calculate_replacement_number, calculate_replacement_number_3_player,
+};
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 pub use tile::Tile;
