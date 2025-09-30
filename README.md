@@ -16,6 +16,8 @@ Documentation:
 ## References
 
 - [[麻雀]シャンテン数計算アルゴリズム #C++ - Qiita](https://qiita.com/tomohxx/items/75b5f771285e1334c0a5)
+- [5. 集合漸化式 - 麻雀アルゴリズム](https://tomohxx.github.io/mahjong-algorithm-book/srf/)
+- [【図解】向聴数計算アルゴリズム - 麻雀アルゴリズム](https://tomohxx.github.io/mahjong-algorithm-book/illustration/)
 - [Theoretical Background of Nyanten (Efficient Computation of Shanten/Deficiency Numbers) #麻雀 - Qiita](https://qiita.com/Cryolite/items/75d504c7489426806b87)
 - [A Fast and Space-Efficient Algorithm for Calculating Deficient Numbers (a.k.a. Shanten Numbers).pdf](https://www.slideshare.net/slideshow/a-fast-and-space-efficient-algorithm-for-calculating-deficient-numbers-a-k-a-shanten-numbers-pdf/269706674)
 
