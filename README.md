@@ -53,14 +53,14 @@ use xiangting::calculate_replacement_number;
 
 fn main() {
     // 123m456p789s11222z
-    let hand_14: [u8; 34] = [
+    let hand: [u8; 34] = [
         1, 1, 1, 0, 0, 0, 0, 0, 0, // m
         0, 0, 0, 1, 1, 1, 0, 0, 0, // p
         0, 0, 0, 0, 0, 0, 1, 1, 1, // s
         2, 3, 0, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number = calculate_replacement_number(&hand_14, None);
+    let replacement_number = calculate_replacement_number(&hand, None);
     assert_eq!(replacement_number, Ok(0u8));
 }
 ```
@@ -77,7 +77,7 @@ use xiangting::{calculate_replacement_number, ClaimedTilePosition, FuluMianzi};
 
 fn main() {
     // 123m1z
-    let hand_4: [u8; 34] = [
+    let hand: [u8; 34] = [
         1, 1, 1, 0, 0, 0, 0, 0, 0, // m
         0, 0, 0, 0, 0, 0, 0, 0, 0, // p
         0, 0, 0, 0, 0, 0, 0, 0, 0, // s
@@ -91,10 +91,10 @@ fn main() {
         FuluMianzi::Kezi(27),
     ];
 
-    let replacement_number_wo_melds = calculate_replacement_number(&hand_4, None);
+    let replacement_number_wo_melds = calculate_replacement_number(&hand, None);
     assert_eq!(replacement_number_wo_melds, Ok(1u8));
 
-    let replacement_number_w_melds = calculate_replacement_number(&hand_4, Some(&melds));
+    let replacement_number_w_melds = calculate_replacement_number(&hand, Some(&melds));
     assert_eq!(replacement_number_w_melds, Ok(2u8));
 }
 ```
@@ -107,17 +107,17 @@ use xiangting::{calculate_replacement_number, calculate_replacement_number_3_pla
 
 fn main() {
     // 1111m111122233z
-    let hand_13: [u8; 34] = [
+    let hand: [u8; 34] = [
         4, 0, 0, 0, 0, 0, 0, 0, 0, // m
         0, 0, 0, 0, 0, 0, 0, 0, 0, // p
         0, 0, 0, 0, 0, 0, 0, 0, 0, // s
         4, 3, 2, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number_4p = calculate_replacement_number(&hand_13, None);
+    let replacement_number_4p = calculate_replacement_number(&hand, None);
     assert_eq!(replacement_number_4p, Ok(2u8));
 
-    let replacement_number_3p = calculate_replacement_number_3_player(&hand_13, None);
+    let replacement_number_3p = calculate_replacement_number_3_player(&hand, None);
     assert_eq!(replacement_number_3p, Ok(3u8));
 }
 ```
