@@ -44,7 +44,7 @@ pub enum BingpaiError {
     #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidTileCount(u8),
     #[error("tile {0} cannot be used in 3-player mahjong")]
-    InvalidTileFor3Player(u8),
+    InvalidTileFor3Player(Tile),
 }
 
 pub(crate) trait BingpaiExt {
