@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::constants::{MAX_SHUPAI_INDEX, MAX_TILE_INDEX, NUM_TILE_INDEX};
+use crate::constants::{MAX_SHUPAI_INDEX, MAX_TILE_INDEX};
 use crate::tile::Tile;
-use std::fmt;
 use thiserror::Error;
 
 /// Position of the claimed tile in the melded sequence.
@@ -37,7 +36,7 @@ pub enum ClaimedTilePosition {
 /// // 7-777s (Kan 7s)
 /// let gangzi = FuluMianzi::Gangzi(24);
 /// ```
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FuluMianzi {
     /// 順子: Sequence.
     ///
@@ -90,7 +89,7 @@ pub enum FuluMianziError {
     #[error("a sequence cannot be made with {0} and {1:?}")]
     InvalidShunziCombination(Tile, ClaimedTilePosition),
     /// This meld cannot be used in 3-player mahjong (2m to 8m or sequence).
-    #[error("{0} cannot be used in 3-player mahjong")]
+    #[error("{0:?} cannot be used in 3-player mahjong")]
     InvalidFuluMianziFor3Player(FuluMianzi),
 }
 
@@ -132,41 +131,6 @@ impl FuluMianzi {
             // { claimed_tile: 1x, dazi: [-1x, 0x] } or { claimed_tile: 2x, dazi: [0x, 1x] }
             ClaimedTilePosition::High => !matches!(tile, 0 | 9 | 18 | 1 | 10 | 19),
         }
-    }
-}
-
-const TILE_NAMES: [&str; NUM_TILE_INDEX] = [
-    "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m", "9m", // m
-    "1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p", // p
-    "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", // s
-    "1z", "2z", "3z", "4z", "5z", "6z", "7z", // z
-];
-
-impl fmt::Display for FuluMianzi {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            FuluMianzi::Shunzi(index, position) => {
-                let position_str = match position {
-                    ClaimedTilePosition::Low => "Low",
-                    ClaimedTilePosition::Middle => "Middle",
-                    ClaimedTilePosition::High => "High",
-                };
-                f.write_str(&format!(
-                    "Chii-{}-{}",
-                    TILE_NAMES[*index as usize], &position_str
-                ))
-            }
-            FuluMianzi::Kezi(index) => f.write_str(&format!("Pon-{}", TILE_NAMES[*index as usize])),
-            FuluMianzi::Gangzi(index) => {
-                f.write_str(&format!("Kan-{}", TILE_NAMES[*index as usize]))
-            }
-        }
-    }
-}
-
-impl fmt::Debug for FuluMianzi {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self, f)
     }
 }
 
@@ -366,35 +330,5 @@ mod tests {
             FuluMianzi::Gangzi(34).validate(),
             Err(FuluMianziError::IndexOutOfRange(34))
         ));
-    }
-
-    #[test]
-    fn shunzi_display_low() {
-        let shunzi_low = FuluMianzi::Shunzi(0, ClaimedTilePosition::Low);
-        assert_eq!(format!("{}", shunzi_low), "Chii-1m-Low");
-    }
-
-    #[test]
-    fn shunzi_display_middle() {
-        let shunzi_middle = FuluMianzi::Shunzi(1, ClaimedTilePosition::Middle);
-        assert_eq!(format!("{}", shunzi_middle), "Chii-2m-Middle");
-    }
-
-    #[test]
-    fn shunzi_display_high() {
-        let shunzi_high = FuluMianzi::Shunzi(2, ClaimedTilePosition::High);
-        assert_eq!(format!("{}", shunzi_high), "Chii-3m-High");
-    }
-
-    #[test]
-    fn kezi_display() {
-        let kezi = FuluMianzi::Kezi(0);
-        assert_eq!(format!("{}", kezi), "Pon-1m");
-    }
-
-    #[test]
-    fn gangzi_display() {
-        let gangzi = FuluMianzi::Gangzi(0);
-        assert_eq!(format!("{}", gangzi), "Kan-1m");
     }
 }
