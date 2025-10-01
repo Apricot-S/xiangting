@@ -9,6 +9,8 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum ShoupaiError {
+    #[error("the number of melds must be at most {max}, but was {count}")]
+    TooManyFuluMianzi { max: u8, count: u8 },
     #[error("tile {tile} count must be 4 or less but was {count}")]
     TooManyCopies { tile: Tile, count: u8 },
 }
@@ -28,7 +30,17 @@ pub fn calculate_replacement_number(
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
     let num_bingpai = bingpai.count()?;
+
     if let Some(fl) = fulu_mianzi_list {
+        let num_fulu = fl.len() as u8;
+        if num_bingpai + num_fulu * 3 > 14 {
+            return Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::TooManyFuluMianzi {
+                    max: (14 - num_bingpai) / 3,
+                    count: fl.len() as u8,
+                },
+            ));
+        }
         fl.iter().try_for_each(|f| f.validate())?;
     }
 
@@ -187,6 +199,19 @@ mod tests {
     }
 
     #[test]
+    fn calculate_replacement_number_err_shoupai_too_many_fulu_mianzi() {
+        let bingpai = Bingpai::from_code("11122233344455m");
+        let fulu_mianzi_list = [FuluMianzi::Kezi(5)];
+        let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::TooManyFuluMianzi { max: 0, count: 1 }
+            ))
+        ));
+    }
+
+    #[test]
     fn calculate_replacement_number_err_shoupai_5_same_tiles() {
         let bingpai = Bingpai::from_code("1m");
         let fulu_mianzi_list = [FuluMianzi::Gangzi(0)];
@@ -198,21 +223,6 @@ mod tests {
             ))
         ));
     }
-
-    // #[test]
-    // fn calculate_replacement_number_err_shoupai_15_tiles() {
-    //     // TODO: 副露が手牌に対して多くないかのエラーに変更する
-    //     let bingpai = Bingpai::from_code("11122233344455m");
-    //     let fulu_mianzi_list = [FuluMianzi::Kezi(5)];
-    //     let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
-    //     assert!(matches!(
-    //         replacement_number,
-    //         Err(XiangtingError::Shoupai(ShoupaiError::TooManyTiles {
-    //             max: 14,
-    //             count: 15
-    //         }))
-    //     ));
-    // }
 
     #[test]
     fn calculate_replacement_number_3_player_err_bingpai_2m() {
