@@ -2,9 +2,16 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+use crate::Tile;
 use crate::bingpai::{Bingpai, BingpaiError, BingpaiExt};
-use crate::fulu_mianzi::{FuluMianzi, FuluMianziError};
+use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 use thiserror::Error;
+
+#[derive(Debug, Error)]
+pub enum ShoupaiError {
+    #[error("tile {tile} count must be 4 or less but was {count}")]
+    TooManyCopies { tile: Tile, count: u8 },
+}
 
 #[derive(Debug, Error)]
 pub enum XiangtingError {
@@ -12,6 +19,8 @@ pub enum XiangtingError {
     Bingpai(#[from] BingpaiError),
     #[error("hand contains an invalid meld: {0}")]
     FuluMianzi(#[from] FuluMianziError),
+    #[error("hand contains an invalid combination of pure hand and melds: {0}")]
+    Shoupai(#[from] ShoupaiError),
 }
 
 pub fn calculate_replacement_number(
@@ -22,6 +31,50 @@ pub fn calculate_replacement_number(
     if let Some(fl) = fulu_mianzi_list {
         fl.iter().try_for_each(|f| f.validate())?;
     }
+
+    let fulupai = fulu_mianzi_list.map(|fl| {
+        fl.iter().fold([0u8; 34], |mut fulupai, m| {
+            match m {
+                FuluMianzi::Shunzi(t, ClaimedTilePosition::Low) => {
+                    fulupai[*t as usize] += 1;
+                    fulupai[(t + 1) as usize] += 1;
+                    fulupai[(t + 2) as usize] += 1;
+                }
+                FuluMianzi::Shunzi(t, ClaimedTilePosition::Middle) => {
+                    fulupai[(t - 1) as usize] += 1;
+                    fulupai[*t as usize] += 1;
+                    fulupai[(t + 1) as usize] += 1;
+                }
+                FuluMianzi::Shunzi(t, ClaimedTilePosition::High) => {
+                    fulupai[(t - 2) as usize] += 1;
+                    fulupai[(t - 1) as usize] += 1;
+                    fulupai[*t as usize] += 1;
+                }
+                FuluMianzi::Kezi(t) => {
+                    fulupai[*t as usize] += 3;
+                }
+                FuluMianzi::Gangzi(t) => {
+                    fulupai[*t as usize] += 4;
+                }
+            }
+            fulupai
+        })
+    });
+
+    let shoupai: Bingpai = fulupai.map_or_else(
+        || *bingpai,
+        |fp| std::array::from_fn(|i| bingpai[i] + fp[i]),
+    );
+    shoupai
+        .iter()
+        .enumerate()
+        .find(|(_, c)| **c > 4)
+        .map(|(i, &c)| ShoupaiError::TooManyCopies {
+            tile: i as Tile,
+            count: c,
+        })
+        .map_or(Ok(()), Err)?;
+
     Ok(0)
 }
 
@@ -129,6 +182,35 @@ mod tests {
             ))
         ));
     }
+
+    #[test]
+    fn calculate_replacement_number_err_shoupai_5_same_tiles() {
+        let bingpai = Bingpai::from_code("1m");
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(0)];
+        let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::Shoupai(ShoupaiError::TooManyCopies {
+                tile: 0,
+                count: 5
+            }))
+        ));
+    }
+
+    // #[test]
+    // fn calculate_replacement_number_err_shoupai_15_tiles() {
+    //     // TODO: 副露が手牌に対して多くないかのエラーに変更する
+    //     let bingpai = Bingpai::from_code("11122233344455m");
+    //     let fulu_mianzi_list = [FuluMianzi::Kezi(5)];
+    //     let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
+    //     assert!(matches!(
+    //         replacement_number,
+    //         Err(XiangtingError::Shoupai(ShoupaiError::TooManyTiles {
+    //             max: 14,
+    //             count: 15
+    //         }))
+    //     ));
+    // }
 
     #[test]
     fn calculate_replacement_number_3_player_err_bingpai_2m() {
