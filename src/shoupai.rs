@@ -64,9 +64,9 @@ impl FuluMianziListExt for FuluMianziList {
 }
 
 pub(crate) struct Shoupai<'a> {
-    bingpai: &'a Bingpai,
-    tile_counts: Option<Bingpai>,
-    num_required_melds: u8,
+    pub(crate) bingpai: &'a Bingpai,
+    pub(crate) tile_counts: Option<Bingpai>,
+    pub(crate) num_required_melds: u8,
 }
 
 impl<'a> Shoupai<'a> {
@@ -96,9 +96,9 @@ impl<'a> Shoupai<'a> {
 }
 
 pub(crate) struct Shoupai3Player<'a> {
-    bingpai: &'a Bingpai,
-    tile_counts: Option<Bingpai>,
-    num_required_melds: u8,
+    pub(crate) bingpai: &'a Bingpai,
+    pub(crate) tile_counts: Option<Bingpai>,
+    pub(crate) num_required_melds: u8,
 }
 
 impl<'a> Shoupai3Player<'a> {
