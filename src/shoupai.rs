@@ -76,19 +76,19 @@ impl<'a> Shoupai<'a> {
         fulu_mianzi_list: Option<&[FuluMianzi]>,
     ) -> Result<Self, XiangtingError> {
         let num_bingpai = bingpai.count()?;
+        let num_fulu = fulu_mianzi_list.map(|fl| fl.len() as u8);
 
-        if let Some(fl) = fulu_mianzi_list {
-            let num_fulu = fl.len() as u8;
-            if num_fulu > (MAX_NUM_SHOUPAI - num_bingpai) / 3 {
-                return Err(XiangtingError::InvalidShoupai(
-                    ShoupaiError::TooManyFuluMianzi {
-                        max: (14 - num_bingpai) / 3,
-                        count: fl.len() as u8,
-                    },
-                ));
-            }
-            fl.iter().try_for_each(|f| f.validate())?;
-        }
+        num_fulu
+            .filter(|&n| n > (MAX_NUM_SHOUPAI - num_bingpai) / 3)
+            .map(|n| ShoupaiError::TooManyFuluMianzi {
+                max: (MAX_NUM_SHOUPAI - num_bingpai) / 3,
+                count: n,
+            })
+            .map_or(Ok(()), Err)?;
+
+        fulu_mianzi_list
+            .map(|fl| fl.iter().try_for_each(|f| f.validate()))
+            .transpose()?;
 
         let fulupai = fulu_mianzi_list.map(|fl| fl.to_fulupai());
 
