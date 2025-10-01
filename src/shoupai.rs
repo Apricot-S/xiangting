@@ -139,19 +139,16 @@ fn get_tile_counts(bingpai: &Bingpai, fulu_mianzi_list: Option<&[FuluMianzi]>) -
 }
 
 fn validate_tile_counts(tile_counts: Option<Bingpai>) -> Result<(), ShoupaiError> {
-    tile_counts.map_or_else(
-        || Ok(()),
-        |tc| {
-            tc.iter()
-                .enumerate()
-                .find(|(_, c)| **c > 4)
-                .map(|(i, &c)| ShoupaiError::TooManyCopies {
-                    tile: i as Tile,
-                    count: c,
-                })
-                .map_or(Ok(()), Err)
-        },
-    )
+    tile_counts.map_or(Ok(()), |tc| {
+        tc.iter()
+            .enumerate()
+            .find(|(_, c)| **c > 4)
+            .map(|(i, &c)| ShoupaiError::TooManyCopies {
+                tile: i as Tile,
+                count: c,
+            })
+            .map_or(Ok(()), Err)
+    })
 }
 
 #[cfg(test)]
