@@ -27,13 +27,24 @@ mod shisanyao;
 #[cfg(not(feature = "build-file"))]
 mod shoupai;
 #[cfg(not(feature = "build-file"))]
+mod standard;
+#[cfg(not(feature = "build-file"))]
 mod tile;
 
 #[cfg(all(test, not(feature = "build-file")))]
 mod test_utils;
 
+#[cfg(not(feature = "build-file"))]
 pub use bingpai::{Bingpai, BingpaiError};
+#[cfg(not(feature = "build-file"))]
 pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
+#[cfg(not(feature = "build-file"))]
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
+#[cfg(not(feature = "build-file"))]
 pub use shoupai::{ShoupaiError, XiangtingError};
+#[cfg(not(feature = "build-file"))]
 pub use tile::Tile;
+
+#[cfg(feature = "build-map")]
+#[doc(hidden)]
+pub mod standard;
