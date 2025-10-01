@@ -21,14 +21,15 @@ mod constants;
 #[cfg(not(feature = "build-file"))]
 mod fulu_mianzi;
 #[cfg(not(feature = "build-file"))]
+mod shoupai;
+#[cfg(not(feature = "build-file"))]
 mod tile;
 
 #[cfg(all(test, not(feature = "build-file")))]
 mod test_utils;
 
 pub use bingpai::{Bingpai, BingpaiError};
-pub use calculate::{
-    XiangtingError, calculate_replacement_number, calculate_replacement_number_3_player,
-};
+pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
+pub use shoupai::{ShoupaiError, XiangtingError};
 pub use tile::Tile;

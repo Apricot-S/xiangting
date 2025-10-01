@@ -1,0 +1,106 @@
+// SPDX-FileCopyrightText: 2025 Apricot S.
+// SPDX-License-Identifier: MIT
+// This file is part of https://github.com/Apricot-S/xiangting
+
+use crate::Tile;
+use crate::bingpai::{Bingpai, BingpaiError, BingpaiExt};
+use crate::constants::MAX_NUM_SHOUPAI;
+use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
+use thiserror::Error;
+
+#[derive(Debug, Error)]
+pub enum ShoupaiError {
+    #[error("the number of melds must be at most {max}, but was {count}")]
+    TooManyFuluMianzi { max: u8, count: u8 },
+    #[error("tile {tile} count must be 4 or less but was {count}")]
+    TooManyCopies { tile: Tile, count: u8 },
+}
+
+#[derive(Debug, Error)]
+pub enum XiangtingError {
+    #[error("hand contains an invalid pure hand: {0}")]
+    InvalidBingpai(#[from] BingpaiError),
+    #[error("hand contains an invalid meld: {0}")]
+    InvalidFuluMianzi(#[from] FuluMianziError),
+    #[error("hand contains an invalid combination of pure hand and melds: {0}")]
+    InvalidShoupai(#[from] ShoupaiError),
+}
+
+pub(crate) struct Shoupai<'a> {
+    bingpai: &'a Bingpai,
+    tile_counts: Bingpai,
+    num_bingpai: u8,
+    num_fulu: u8,
+}
+
+impl<'a> Shoupai<'a> {
+    pub(crate) fn new(
+        bingpai: &'a Bingpai,
+        fulu_mianzi_list: Option<&[FuluMianzi]>,
+    ) -> Result<Self, XiangtingError> {
+        let num_bingpai = bingpai.count()?;
+
+        if let Some(fl) = fulu_mianzi_list {
+            let num_fulu = fl.len() as u8;
+            if num_fulu > (MAX_NUM_SHOUPAI - num_bingpai) / 3 {
+                return Err(XiangtingError::InvalidShoupai(
+                    ShoupaiError::TooManyFuluMianzi {
+                        max: (14 - num_bingpai) / 3,
+                        count: fl.len() as u8,
+                    },
+                ));
+            }
+            fl.iter().try_for_each(|f| f.validate())?;
+        }
+
+        let fulupai = fulu_mianzi_list.map(|fl| {
+            fl.iter().fold([0u8; 34], |mut fulupai, m| {
+                match m {
+                    FuluMianzi::Shunzi(t, ClaimedTilePosition::Low) => {
+                        fulupai[*t as usize] += 1;
+                        fulupai[(t + 1) as usize] += 1;
+                        fulupai[(t + 2) as usize] += 1;
+                    }
+                    FuluMianzi::Shunzi(t, ClaimedTilePosition::Middle) => {
+                        fulupai[(t - 1) as usize] += 1;
+                        fulupai[*t as usize] += 1;
+                        fulupai[(t + 1) as usize] += 1;
+                    }
+                    FuluMianzi::Shunzi(t, ClaimedTilePosition::High) => {
+                        fulupai[(t - 2) as usize] += 1;
+                        fulupai[(t - 1) as usize] += 1;
+                        fulupai[*t as usize] += 1;
+                    }
+                    FuluMianzi::Kezi(t) => {
+                        fulupai[*t as usize] += 3;
+                    }
+                    FuluMianzi::Gangzi(t) => {
+                        fulupai[*t as usize] += 4;
+                    }
+                }
+                fulupai
+            })
+        });
+
+        let tile_counts: [u8; 34] = fulupai.map_or_else(
+            || *bingpai,
+            |fp| std::array::from_fn(|i| bingpai[i] + fp[i]),
+        );
+        tile_counts
+            .iter()
+            .enumerate()
+            .find(|(_, c)| **c > 4)
+            .map(|(i, &c)| ShoupaiError::TooManyCopies {
+                tile: i as Tile,
+                count: c,
+            })
+            .map_or(Ok(()), Err)?;
+
+        Ok(Self {
+            bingpai,
+            tile_counts,
+            num_bingpai,
+            num_fulu: fulu_mianzi_list.map_or(0, |fl| fl.len() as u8),
+        })
+    }
+}
