@@ -76,35 +76,16 @@ impl<'a> Shoupai<'a> {
     ) -> Result<Self, XiangtingError> {
         let num_bingpai = bingpai.count()?;
 
-        let max_num_fulu = (MAX_NUM_SHOUPAI - num_bingpai) / 3;
+        let max_num_fulu = get_max_num_fulu(num_bingpai);
         let num_fulu = fulu_mianzi_list.map(|fl| fl.len() as u8);
-        num_fulu
-            .filter(|&n| n > max_num_fulu)
-            .map(|n| ShoupaiError::TooManyFuluMianzi {
-                max: max_num_fulu,
-                count: n,
-            })
-            .map_or(Ok(()), Err)?;
+        validate_num_fulu(num_fulu, max_num_fulu)?;
 
         fulu_mianzi_list
             .map(|fl| fl.iter().try_for_each(|f| f.validate()))
             .transpose()?;
 
-        let fulupai = fulu_mianzi_list.map(|fl| fl.to_fulupai());
-
-        let tile_counts = fulupai.map(|fp| std::array::from_fn(|i| bingpai[i] + fp[i]));
-        tile_counts
-            .map(|tc| {
-                tc.iter()
-                    .enumerate()
-                    .find(|(_, c)| **c > 4)
-                    .map(|(i, &c)| ShoupaiError::TooManyCopies {
-                        tile: i as Tile,
-                        count: c,
-                    })
-                    .map_or(Ok(()), Err)
-            })
-            .transpose()?;
+        let tile_counts = get_tile_counts(bingpai, fulu_mianzi_list);
+        validate_tile_counts(tile_counts)?;
 
         Ok(Self {
             bingpai,
@@ -119,35 +100,16 @@ impl<'a> Shoupai<'a> {
     ) -> Result<Self, XiangtingError> {
         let num_bingpai = bingpai.count_3_player()?;
 
-        let max_num_fulu = (MAX_NUM_SHOUPAI - num_bingpai) / 3;
+        let max_num_fulu = get_max_num_fulu(num_bingpai);
         let num_fulu = fulu_mianzi_list.map(|fl| fl.len() as u8);
-        num_fulu
-            .filter(|&n| n > max_num_fulu)
-            .map(|n| ShoupaiError::TooManyFuluMianzi {
-                max: max_num_fulu,
-                count: n,
-            })
-            .map_or(Ok(()), Err)?;
+        validate_num_fulu(num_fulu, max_num_fulu)?;
 
         fulu_mianzi_list
             .map(|fl| fl.iter().try_for_each(|f| f.validate_3_player()))
             .transpose()?;
 
-        let fulupai = fulu_mianzi_list.map(|fl| fl.to_fulupai());
-
-        let tile_counts = fulupai.map(|fp| std::array::from_fn(|i| bingpai[i] + fp[i]));
-        tile_counts
-            .map(|tc| {
-                tc.iter()
-                    .enumerate()
-                    .find(|(_, c)| **c > 4)
-                    .map(|(i, &c)| ShoupaiError::TooManyCopies {
-                        tile: i as Tile,
-                        count: c,
-                    })
-                    .map_or(Ok(()), Err)
-            })
-            .transpose()?;
+        let tile_counts = get_tile_counts(bingpai, fulu_mianzi_list);
+        validate_tile_counts(tile_counts)?;
 
         Ok(Self {
             bingpai,
@@ -155,6 +117,41 @@ impl<'a> Shoupai<'a> {
             num_required_melds: num_bingpai / 3,
         })
     }
+}
+
+fn get_max_num_fulu(num_bingpai: u8) -> u8 {
+    (MAX_NUM_SHOUPAI - num_bingpai) / 3
+}
+
+fn validate_num_fulu(num_fulu: Option<u8>, max_num_fulu: u8) -> Result<(), ShoupaiError> {
+    num_fulu
+        .filter(|&n| n > max_num_fulu)
+        .map(|n| ShoupaiError::TooManyFuluMianzi {
+            max: max_num_fulu,
+            count: n,
+        })
+        .map_or(Ok(()), Err)
+}
+
+fn get_tile_counts(bingpai: &Bingpai, fulu_mianzi_list: Option<&[FuluMianzi]>) -> Option<Bingpai> {
+    let fulupai = fulu_mianzi_list.map(|fl| fl.to_fulupai());
+    fulupai.map(|fp| std::array::from_fn(|i| bingpai[i] + fp[i]))
+}
+
+fn validate_tile_counts(tile_counts: Option<Bingpai>) -> Result<(), ShoupaiError> {
+    tile_counts.map_or_else(
+        || Ok(()),
+        |tc| {
+            tc.iter()
+                .enumerate()
+                .find(|(_, c)| **c > 4)
+                .map(|(i, &c)| ShoupaiError::TooManyCopies {
+                    tile: i as Tile,
+                    count: c,
+                })
+                .map_or(Ok(()), Err)
+        },
+    )
 }
 
 #[cfg(test)]

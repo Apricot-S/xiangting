@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::bingpai::{Bingpai, BingpaiExt};
+use crate::bingpai::Bingpai;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, XiangtingError};
 
