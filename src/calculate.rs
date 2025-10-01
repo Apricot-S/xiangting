@@ -3,6 +3,7 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use super::qiduizi;
+use super::shisanyao;
 use crate::bingpai::Bingpai;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
@@ -12,8 +13,11 @@ pub fn calculate_replacement_number(
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
     let shoupai = Shoupai::new(bingpai, fulu_mianzi_list)?;
+
     let r1 = qiduizi::calculate_replacement_number(&shoupai);
-    Ok(r1)
+    let r2 = shisanyao::calculate_replacement_number(&shoupai);
+
+    Ok([r1, r2].into_iter().min().unwrap())
 }
 
 pub fn calculate_replacement_number_3_player(
@@ -21,9 +25,13 @@ pub fn calculate_replacement_number_3_player(
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
     let shoupai_3p = Shoupai3Player::new(bingpai, fulu_mianzi_list)?;
+
     let shoupai = shoupai_3p.into();
+
     let r1 = qiduizi::calculate_replacement_number(&shoupai);
-    Ok(r1)
+    let r2 = shisanyao::calculate_replacement_number(&shoupai);
+
+    Ok([r1, r2].into_iter().min().unwrap())
 }
 
 #[cfg(test)]
@@ -37,6 +45,13 @@ mod tests {
     #[test]
     fn calculate_replacement_number_ok_qiduizi_tenpai() {
         let bingpai = Bingpai::from_code("1188m288p55s1177z");
+        let replacement_number = calculate_replacement_number(&bingpai, None);
+        assert_eq!(replacement_number.unwrap(), 1);
+    }
+
+    #[test]
+    fn calculate_replacement_number_ok_shisanyao_tenpai() {
+        let bingpai = Bingpai::from_code("19m19p19s1234567z");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
@@ -171,6 +186,13 @@ mod tests {
     #[test]
     fn calculate_replacement_number_3_player_ok_qiduizi_tenpai() {
         let bingpai = Bingpai::from_code("1199m288p55s1177z");
+        let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
+        assert_eq!(replacement_number.unwrap(), 1);
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_player_ok_shisanyao_tenpai() {
+        let bingpai = Bingpai::from_code("19m19p19s1234567z");
         let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
         assert_eq!(replacement_number.unwrap(), 1);
     }

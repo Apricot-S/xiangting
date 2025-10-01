@@ -23,6 +23,8 @@ mod fulu_mianzi;
 #[cfg(not(feature = "build-file"))]
 mod qiduizi;
 #[cfg(not(feature = "build-file"))]
+mod shisanyao;
+#[cfg(not(feature = "build-file"))]
 mod shoupai;
 #[cfg(not(feature = "build-file"))]
 mod tile;
