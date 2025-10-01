@@ -112,6 +112,49 @@ impl<'a> Shoupai<'a> {
             num_required_melds: num_bingpai / 3,
         })
     }
+
+    pub(crate) fn new_3_player(
+        bingpai: &'a Bingpai,
+        fulu_mianzi_list: Option<&[FuluMianzi]>,
+    ) -> Result<Self, XiangtingError> {
+        let num_bingpai = bingpai.count_3_player()?;
+
+        let max_num_fulu = (MAX_NUM_SHOUPAI - num_bingpai) / 3;
+        let num_fulu = fulu_mianzi_list.map(|fl| fl.len() as u8);
+        num_fulu
+            .filter(|&n| n > max_num_fulu)
+            .map(|n| ShoupaiError::TooManyFuluMianzi {
+                max: max_num_fulu,
+                count: n,
+            })
+            .map_or(Ok(()), Err)?;
+
+        fulu_mianzi_list
+            .map(|fl| fl.iter().try_for_each(|f| f.validate_3_player()))
+            .transpose()?;
+
+        let fulupai = fulu_mianzi_list.map(|fl| fl.to_fulupai());
+
+        let tile_counts = fulupai.map(|fp| std::array::from_fn(|i| bingpai[i] + fp[i]));
+        tile_counts
+            .map(|tc| {
+                tc.iter()
+                    .enumerate()
+                    .find(|(_, c)| **c > 4)
+                    .map(|(i, &c)| ShoupaiError::TooManyCopies {
+                        tile: i as Tile,
+                        count: c,
+                    })
+                    .map_or(Ok(()), Err)
+            })
+            .transpose()?;
+
+        Ok(Self {
+            bingpai,
+            tile_counts,
+            num_required_melds: num_bingpai / 3,
+        })
+    }
 }
 
 #[cfg(test)]

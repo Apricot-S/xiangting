@@ -19,10 +19,8 @@ pub fn calculate_replacement_number_3_player(
     bingpai: &Bingpai,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
-    let num_bingpai = bingpai.count_3_player()?;
-    if let Some(fl) = fulu_mianzi_list {
-        fl.iter().try_for_each(|f| f.validate_3_player())?;
-    }
+    let shoupai = Shoupai::new_3_player(bingpai, fulu_mianzi_list)?;
+
     Ok(0)
 }
 
