@@ -71,6 +71,18 @@ mod tests {
     }
 
     #[test]
+    fn calculate_replacement_number_err_bingpai_15_tiles() {
+        let bingpai = Bingpai::from_code("111222333444555m");
+        let replacement_number = calculate_replacement_number(&bingpai, None);
+        assert!(matches!(
+            replacement_number,
+            Err(XiangtingError::InvalidBingpai(BingpaiError::TooManyTiles(
+                15
+            )))
+        ));
+    }
+
+    #[test]
     fn calculate_replacement_number_err_bingpai_5_same_tiles() {
         let bingpai = Bingpai::from_code("11111m");
         let replacement_number = calculate_replacement_number(&bingpai, None);

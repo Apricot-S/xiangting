@@ -31,8 +31,8 @@ pub type Bingpai = [u8; NUM_TILE_INDEX];
 pub enum BingpaiError {
     #[error("tile {tile} count must be 4 or less but was {count}")]
     TooManyCopies { tile: Tile, count: u8 },
-    #[error("total tile count must be {max} or less but was {count}")]
-    TooManyTiles { max: u8, count: u8 },
+    #[error("total tile count must be 14 or less but was {0}")]
+    TooManyTiles(u8),
     #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidTileCount(u8),
     #[error("tile {0} cannot be used in 3-player mahjong")]
@@ -57,10 +57,7 @@ impl BingpaiExt for Bingpai {
 
         let num_bingpai: u8 = self.iter().sum();
         match num_bingpai {
-            n if n > MAX_NUM_SHOUPAI => Err(BingpaiError::TooManyTiles {
-                max: MAX_NUM_SHOUPAI,
-                count: n,
-            }),
+            n if n > MAX_NUM_SHOUPAI => Err(BingpaiError::TooManyTiles(n)),
             n if n % 3 == 0 => Err(BingpaiError::InvalidTileCount(n)),
             n => Ok(n),
         }
