@@ -268,14 +268,6 @@ mod tests {
     }
 
     #[test]
-    fn calculate_replacement_number_incomplete_hand_4_melds_without_a_pair() {
-        let bingpai = Bingpai::from_code("234p567s");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number, 2);
-    }
-
-    #[test]
     fn calculate_replacement_number_incomplete_melds() {
         let bingpai = Bingpai::from_code("123m1z");
 
@@ -360,151 +352,90 @@ mod tests {
     fn calculate_replacement_number_waiting_for_the_5th_tile_4() {
         // Pair wait for a tile already called as a pon
         let bingpai = Bingpai::from_code("123m456p789s1z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [Some(FuluMianzi::Kezi(27)), None, None, None];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Kezi(27)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_5() {
         // Middle wait for a tile already called as a kan
         let bingpai = Bingpai::from_code("13m456p789s11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [Some(FuluMianzi::Gangzi(1)), None, None, None];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(1)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_6() {
         // Edge wait for a tile already called as a kan (12-3)
         let bingpai = Bingpai::from_code("123m12p789s11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [Some(FuluMianzi::Gangzi(11)), None, None, None];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(11)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_7() {
         // Edge wait for a tile already called as a kan (7-89)
         let bingpai = Bingpai::from_code("123m123p89s11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [Some(FuluMianzi::Gangzi(24)), None, None, None];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(24)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_8() {
         // Open wait for tiles already called as kans
         let bingpai = Bingpai::from_code("23m456p11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [
-            Some(FuluMianzi::Gangzi(0)),
-            Some(FuluMianzi::Gangzi(3)),
-            None,
-            None,
-        ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(0), FuluMianzi::Gangzi(3)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_9() {
         // Middle wait for a tile already called as a kan with a isolated 4th tile
         let bingpai = Bingpai::from_code("13333m11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [
-            Some(FuluMianzi::Gangzi(1)),
-            Some(FuluMianzi::Gangzi(3)),
-            None,
-            None,
-        ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(1), FuluMianzi::Gangzi(3)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_10() {
         // Edge wait for a tile already called as a kan with a isolated 4th tile (12-3)
         let bingpai = Bingpai::from_code("12222m11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [
-            Some(FuluMianzi::Gangzi(2)),
-            Some(FuluMianzi::Gangzi(3)),
-            None,
-            None,
-        ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(2), FuluMianzi::Gangzi(3)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_11() {
         // Edge wait for a tile already called as a kan with a isolated 4th tile (7-89)
         let bingpai = Bingpai::from_code("88889m11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [
-            Some(FuluMianzi::Gangzi(5)),
-            Some(FuluMianzi::Gangzi(6)),
-            None,
-            None,
-        ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(5), FuluMianzi::Gangzi(6)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_12() {
         // Open wait for a tile already called as a kan with a isolated 4th tile
         let bingpai = Bingpai::from_code("23333m11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [
-            Some(FuluMianzi::Gangzi(0)),
-            Some(FuluMianzi::Gangzi(3)),
-            None,
-            None,
-        ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(0), FuluMianzi::Gangzi(3)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
@@ -512,112 +443,69 @@ mod tests {
         // Edge wait for a tile already called as a kan with a isolated 4th tile (12-3)
         // and tiles of meld candidates is 4th tile
         let bingpai = Bingpai::from_code("12p11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
         let fulu_mianzi_list = [
-            Some(FuluMianzi::Kezi(9)),
-            Some(FuluMianzi::Kezi(10)),
-            Some(FuluMianzi::Gangzi(11)),
-            None,
+            FuluMianzi::Kezi(9),
+            FuluMianzi::Kezi(10),
+            FuluMianzi::Gangzi(11),
         ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 3);
+        assert_eq!(replacement_number, 3);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_14() {
         let bingpai = Bingpai::from_code("2233p111z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
         let fulu_mianzi_list = [
-            Some(FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)),
-            Some(FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)),
-            None,
-            None,
+            FuluMianzi::Shunzi(9, ClaimedTilePosition::Low),
+            FuluMianzi::Shunzi(9, ClaimedTilePosition::Low),
         ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_15() {
         let bingpai = Bingpai::from_code("13m13p1s11z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 2);
-
-        let fulu_mianzi_list = [
-            Some(FuluMianzi::Gangzi(1)),
-            Some(FuluMianzi::Gangzi(10)),
-            None,
-            None,
-        ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(1), FuluMianzi::Gangzi(10)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 4);
+        assert_eq!(replacement_number, 4);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_16() {
         // A form that can be interpreted as either open wait or edge wait
         let bingpai = Bingpai::from_code("12345m22z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [
-            Some(FuluMianzi::Kezi(2)),
-            Some(FuluMianzi::Gangzi(5)),
-            None,
-            None,
-        ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Kezi(2), FuluMianzi::Gangzi(5)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_17() {
         // A form that can be interpreted as either middle wait or edge wait
         let bingpai = Bingpai::from_code("12234m22z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 1);
-
-        let fulu_mianzi_list = [
-            Some(FuluMianzi::Kezi(2)),
-            Some(FuluMianzi::Gangzi(5)),
-            None,
-            None,
-        ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let fulu_mianzi_list = [FuluMianzi::Kezi(2), FuluMianzi::Gangzi(5)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_waiting_for_the_5th_tile_18() {
         // A suit that cannot be a pair or a joint
         let bingpai = Bingpai::from_code("1111m");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_1 = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_1, 2);
-
         let fulu_mianzi_list = [
-            Some(FuluMianzi::Gangzi(1)),
-            Some(FuluMianzi::Gangzi(2)),
-            Some(FuluMianzi::Gangzi(4)),
-            None,
+            FuluMianzi::Gangzi(1),
+            FuluMianzi::Gangzi(2),
+            FuluMianzi::Gangzi(4),
         ];
-        let shoupai = get_shoupai(&bingpai, &fulu_mianzi_list).ok();
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
-        assert_eq!(replacement_number_2, 2);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
@@ -704,43 +592,39 @@ mod tests {
     fn calculate_replacement_number_different_3_player_and_4_player() {
         let bingpai = Bingpai::from_code("1111m111122233z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_4p = calculate_replacement_number(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_4p, 2);
+        let replacement_number = calculate_replacement_number(&shoupai);
+        assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_different_3_player_and_4_player() {
         let bingpai = Bingpai::from_code("1111m111122233z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number_3p =
-            calculate_replacement_number_3_player(&bingpai, &None, num_bingpai);
-        assert_eq!(replacement_number_3p, 3);
+        let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
+        let replacement_number = calculate_replacement_number_3_player(&shoupai);
+        assert_eq!(replacement_number, 3);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_4_19m_1() {
         let bingpai = Bingpai::from_code("1111m");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number =
-            calculate_replacement_number_3_player(&bingpai, &None, num_bingpai);
+        let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
+        let replacement_number = calculate_replacement_number_3_player(&shoupai);
         assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_4_19m_2() {
         let bingpai = Bingpai::from_code("1111m123p");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number =
-            calculate_replacement_number_3_player(&bingpai, &None, num_bingpai);
+        let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
+        let replacement_number = calculate_replacement_number_3_player(&shoupai);
         assert_eq!(replacement_number, 2);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_4_19m_3() {
         let bingpai = Bingpai::from_code("11119999m");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
-        let replacement_number =
-            calculate_replacement_number_3_player(&bingpai, &None, num_bingpai);
+        let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
+        let replacement_number = calculate_replacement_number_3_player(&shoupai);
         assert_eq!(replacement_number, 2);
     }
 }
