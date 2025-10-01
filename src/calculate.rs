@@ -4,7 +4,7 @@
 
 use crate::bingpai::Bingpai;
 use crate::fulu_mianzi::FuluMianzi;
-use crate::shoupai::{Shoupai, XiangtingError};
+use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 
 pub fn calculate_replacement_number(
     bingpai: &Bingpai,
@@ -19,7 +19,7 @@ pub fn calculate_replacement_number_3_player(
     bingpai: &Bingpai,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
-    let shoupai = Shoupai::new_3_player(bingpai, fulu_mianzi_list)?;
+    let shoupai = Shoupai3Player::new(bingpai, fulu_mianzi_list)?;
 
     Ok(0)
 }

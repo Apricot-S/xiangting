@@ -93,8 +93,16 @@ impl<'a> Shoupai<'a> {
             num_required_melds: num_bingpai / 3,
         })
     }
+}
 
-    pub(crate) fn new_3_player(
+pub(crate) struct Shoupai3Player<'a> {
+    bingpai: &'a Bingpai,
+    tile_counts: Option<Bingpai>,
+    num_required_melds: u8,
+}
+
+impl<'a> Shoupai3Player<'a> {
+    pub(crate) fn new(
         bingpai: &'a Bingpai,
         fulu_mianzi_list: Option<&[FuluMianzi]>,
     ) -> Result<Self, XiangtingError> {
