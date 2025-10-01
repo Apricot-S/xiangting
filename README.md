@@ -69,7 +69,7 @@ fn main() {
     ];
 
     let replacement_number = calculate_replacement_number(&hand, None);
-    assert_eq!(replacement_number, Ok(0u8));
+    assert_eq!(replacement_number.unwrap(), 0u8);
 }
 ```
 
@@ -102,10 +102,10 @@ fn main() {
     ];
 
     let replacement_number_wo_melds = calculate_replacement_number(&hand, None);
-    assert_eq!(replacement_number_wo_melds, Ok(1u8));
+    assert_eq!(replacement_number_wo_melds.unwrap(), 1u8);
 
     let replacement_number_w_melds = calculate_replacement_number(&hand, Some(&melds));
-    assert_eq!(replacement_number_w_melds, Ok(2u8));
+    assert_eq!(replacement_number_w_melds.unwrap(), 2u8);
 }
 ```
 
@@ -127,10 +127,10 @@ fn main() {
     ];
 
     let replacement_number_4p = calculate_replacement_number(&hand, None);
-    assert_eq!(replacement_number_4p, Ok(2u8));
+    assert_eq!(replacement_number_4p.unwrap(), 2u8);
 
     let replacement_number_3p = calculate_replacement_number_3_player(&hand, None);
-    assert_eq!(replacement_number_3p, Ok(3u8));
+    assert_eq!(replacement_number_3p.unwrap(), 3u8);
 }
 ```
 
