@@ -66,8 +66,7 @@ impl FuluMianziListExt for FuluMianziList {
 pub(crate) struct Shoupai<'a> {
     bingpai: &'a Bingpai,
     tile_counts: Bingpai,
-    num_bingpai: u8,
-    num_fulu: u8,
+    num_required_melds: u8,
 }
 
 impl<'a> Shoupai<'a> {
@@ -76,12 +75,13 @@ impl<'a> Shoupai<'a> {
         fulu_mianzi_list: Option<&[FuluMianzi]>,
     ) -> Result<Self, XiangtingError> {
         let num_bingpai = bingpai.count()?;
-        let num_fulu = fulu_mianzi_list.map(|fl| fl.len() as u8);
 
+        let max_num_fulu = (MAX_NUM_SHOUPAI - num_bingpai) / 3;
+        let num_fulu = fulu_mianzi_list.map(|fl| fl.len() as u8);
         num_fulu
-            .filter(|&n| n > (MAX_NUM_SHOUPAI - num_bingpai) / 3)
+            .filter(|&n| n > max_num_fulu)
             .map(|n| ShoupaiError::TooManyFuluMianzi {
-                max: (MAX_NUM_SHOUPAI - num_bingpai) / 3,
+                max: max_num_fulu,
                 count: n,
             })
             .map_or(Ok(()), Err)?;
@@ -109,8 +109,7 @@ impl<'a> Shoupai<'a> {
         Ok(Self {
             bingpai,
             tile_counts,
-            num_bingpai,
-            num_fulu: fulu_mianzi_list.map_or(0, |fl| fl.len() as u8),
+            num_required_melds: num_bingpai / 3,
         })
     }
 }
