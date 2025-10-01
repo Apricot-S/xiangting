@@ -16,11 +16,11 @@ pub enum ShoupaiError {
 #[derive(Debug, Error)]
 pub enum XiangtingError {
     #[error("hand contains an invalid pure hand: {0}")]
-    Bingpai(#[from] BingpaiError),
+    InvalidBingpai(#[from] BingpaiError),
     #[error("hand contains an invalid meld: {0}")]
-    FuluMianzi(#[from] FuluMianziError),
+    InvalidFuluMianzi(#[from] FuluMianziError),
     #[error("hand contains an invalid combination of pure hand and melds: {0}")]
-    Shoupai(#[from] ShoupaiError),
+    InvalidShoupai(#[from] ShoupaiError),
 }
 
 pub fn calculate_replacement_number(
@@ -103,7 +103,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(0)))
+            Err(XiangtingError::InvalidBingpai(
+                BingpaiError::InvalidTileCount(0)
+            ))
         ));
     }
 
@@ -127,7 +129,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(3)))
+            Err(XiangtingError::InvalidBingpai(
+                BingpaiError::InvalidTileCount(3)
+            ))
         ));
     }
 
@@ -137,10 +141,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(BingpaiError::TooManyCopies {
-                tile: 0,
-                count: 5
-            }))
+            Err(XiangtingError::InvalidBingpai(
+                BingpaiError::TooManyCopies { tile: 0, count: 5 }
+            ))
         ));
     }
 
@@ -151,7 +154,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::FuluMianzi(
+            Err(XiangtingError::InvalidFuluMianzi(
                 FuluMianziError::IndexOutOfRange(34)
             ))
         ));
@@ -164,7 +167,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::FuluMianzi(
+            Err(XiangtingError::InvalidFuluMianzi(
                 FuluMianziError::ShunziWithZipai(27)
             ))
         ));
@@ -177,7 +180,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::FuluMianzi(
+            Err(XiangtingError::InvalidFuluMianzi(
                 FuluMianziError::InvalidShunziCombination(0, ClaimedTilePosition::Middle)
             ))
         ));
@@ -190,10 +193,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::TooManyCopies {
-                tile: 0,
-                count: 5
-            }))
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::TooManyCopies { tile: 0, count: 5 }
+            ))
         ));
     }
 
@@ -218,7 +220,7 @@ mod tests {
         let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(
+            Err(XiangtingError::InvalidBingpai(
                 BingpaiError::InvalidTileFor3Player(1)
             ))
         ));
@@ -232,7 +234,7 @@ mod tests {
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::FuluMianzi(
+            Err(XiangtingError::InvalidFuluMianzi(
                 FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
                     9,
                     ClaimedTilePosition::Low
@@ -249,7 +251,7 @@ mod tests {
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::FuluMianzi(
+            Err(XiangtingError::InvalidFuluMianzi(
                 FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
             ))
         ));
