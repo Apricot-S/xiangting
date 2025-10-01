@@ -4,6 +4,7 @@
 
 use super::qiduizi;
 use super::shisanyao;
+use super::standard;
 use crate::bingpai::Bingpai;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
@@ -14,10 +15,11 @@ pub fn calculate_replacement_number(
 ) -> Result<u8, XiangtingError> {
     let shoupai = Shoupai::new(bingpai, fulu_mianzi_list)?;
 
+    let r0 = standard::calculate_replacement_number(&shoupai);
     let r1 = qiduizi::calculate_replacement_number(&shoupai);
     let r2 = shisanyao::calculate_replacement_number(&shoupai);
 
-    Ok([r1, r2].into_iter().min().unwrap())
+    Ok([r0, r1, r2].into_iter().min().unwrap())
 }
 
 pub fn calculate_replacement_number_3_player(
@@ -26,12 +28,14 @@ pub fn calculate_replacement_number_3_player(
 ) -> Result<u8, XiangtingError> {
     let shoupai_3p = Shoupai3Player::new(bingpai, fulu_mianzi_list)?;
 
+    let r0 = standard::calculate_replacement_number_3_player(&shoupai_3p);
+
     let shoupai = shoupai_3p.into();
 
     let r1 = qiduizi::calculate_replacement_number(&shoupai);
     let r2 = shisanyao::calculate_replacement_number(&shoupai);
 
-    Ok([r1, r2].into_iter().min().unwrap())
+    Ok([r0, r1, r2].into_iter().min().unwrap())
 }
 
 #[cfg(test)]
@@ -41,6 +45,13 @@ mod tests {
     use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianziError};
     use crate::shoupai::{ShoupaiError, XiangtingError};
     use crate::test_utils::BingpaiExtForTest;
+
+    #[test]
+    fn calculate_replacement_number_ok_standard_tenpai() {
+        let bingpai = Bingpai::from_code("123m456p789s1122z");
+        let replacement_number = calculate_replacement_number(&bingpai, None);
+        assert_eq!(replacement_number.unwrap(), 1);
+    }
 
     #[test]
     fn calculate_replacement_number_ok_qiduizi_tenpai() {
@@ -181,6 +192,13 @@ mod tests {
                 ShoupaiError::TooManyCopies { tile: 0, count: 5 }
             ))
         ));
+    }
+
+    #[test]
+    fn calculate_replacement_number_3_player_ok_standard_tenpai() {
+        let bingpai = Bingpai::from_code("111m456p789s1122z");
+        let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
+        assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
