@@ -65,7 +65,7 @@ impl FuluMianziListExt for FuluMianziList {
 
 pub(crate) struct Shoupai<'a> {
     bingpai: &'a Bingpai,
-    tile_counts: Bingpai,
+    tile_counts: Option<Bingpai>,
     num_required_melds: u8,
 }
 
@@ -92,19 +92,19 @@ impl<'a> Shoupai<'a> {
 
         let fulupai = fulu_mianzi_list.map(|fl| fl.to_fulupai());
 
-        let tile_counts: [u8; 34] = fulupai.map_or_else(
-            || *bingpai,
-            |fp| std::array::from_fn(|i| bingpai[i] + fp[i]),
-        );
+        let tile_counts = fulupai.map(|fp| std::array::from_fn(|i| bingpai[i] + fp[i]));
         tile_counts
-            .iter()
-            .enumerate()
-            .find(|(_, c)| **c > 4)
-            .map(|(i, &c)| ShoupaiError::TooManyCopies {
-                tile: i as Tile,
-                count: c,
+            .map(|tc| {
+                tc.iter()
+                    .enumerate()
+                    .find(|(_, c)| **c > 4)
+                    .map(|(i, &c)| ShoupaiError::TooManyCopies {
+                        tile: i as Tile,
+                        count: c,
+                    })
+                    .map_or(Ok(()), Err)
             })
-            .map_or(Ok(()), Err)?;
+            .transpose()?;
 
         Ok(Self {
             bingpai,
