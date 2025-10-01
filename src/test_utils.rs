@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::Bingpai;
+use crate::bingpai::Bingpai;
 
 pub(crate) trait BingpaiExtForTest {
     /// Converts a Tenhou-style hand string into an array representing

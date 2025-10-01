@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::Tile;
 use crate::bingpai::{Bingpai, BingpaiError, BingpaiExt};
 use crate::constants::MAX_NUM_SHOUPAI;
 use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
+use crate::tile::Tile;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
