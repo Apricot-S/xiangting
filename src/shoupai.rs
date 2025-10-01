@@ -127,6 +127,16 @@ impl<'a> Shoupai3Player<'a> {
     }
 }
 
+impl<'a> From<Shoupai3Player<'a>> for Shoupai<'a> {
+    fn from(value: Shoupai3Player<'a>) -> Self {
+        Self {
+            bingpai: value.bingpai,
+            tile_counts: value.tile_counts,
+            num_required_melds: value.num_required_melds,
+        }
+    }
+}
+
 fn get_max_num_fulu(num_bingpai: u8) -> u8 {
     (MAX_NUM_SHOUPAI - num_bingpai) / 3
 }
