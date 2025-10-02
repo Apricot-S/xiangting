@@ -42,6 +42,6 @@ name = "build-map"
 path = "src/bin/build_map/main.rs"
 required-features = ["build-map"]
 
-# [[bench]]
-# name = "bench"
-# harness = false
+[[bench]]
+name = "bench"
+harness = false
