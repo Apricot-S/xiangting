@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-// #![warn(missing_docs)]
+#![warn(missing_docs)]
 
 //! A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
 //!
@@ -11,6 +11,26 @@
 //!
 //! - Supports rules that include and exclude melded tiles when determining if a hand contains four identical tiles.
 //! - Supports three-player mahjong.
+//!
+//! # Example
+//!
+//! ```
+//! # use xiangting::calculate_replacement_number;
+//! # use xiangting::XiangtingError;
+//! # fn main() -> Result<(), XiangtingError> {
+//! // 123m456p789s11222z
+//! let hand: [u8; 34] = [
+//!     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
+//!     0, 0, 0, 1, 1, 1, 0, 0, 0, // p
+//!     0, 0, 0, 0, 0, 0, 1, 1, 1, // s
+//!     2, 3, 0, 0, 0, 0, 0, // z
+//! ];
+//!
+//! let replacement_number = calculate_replacement_number(&hand, None);
+//! assert_eq!(replacement_number?, 0u8);
+//! # Ok(())
+//! # }
+//! ```
 
 #[cfg(not(feature = "build-file"))]
 mod bingpai;
