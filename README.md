@@ -83,7 +83,7 @@ If melds are excluded (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), specify `N
 If melds are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be included in the `fulu_mianzi_list`.
 
 ```rust
-use xiangting::{calculate_replacement_number, ClaimedTilePosition, FuluMianzi};
+use xiangting::{ClaimedTilePosition, FuluMianzi, calculate_replacement_number};
 
 fn main() {
     // 123m1z
