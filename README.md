@@ -112,7 +112,7 @@ fn main() {
 ### Support for Three-Player Mahjong
 
 In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
-Additionally, melded sequences (明順子) are not allowed.
+In addition, melded sequences (明順子) are not allowed.
 
 ```rust
 use xiangting::{calculate_replacement_number, calculate_replacement_number_3_player};
