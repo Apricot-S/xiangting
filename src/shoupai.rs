@@ -3,7 +3,7 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use crate::bingpai::{Bingpai, BingpaiError, BingpaiExt};
-use crate::constants::MAX_NUM_SHOUPAI;
+use crate::constants::MAX_NUM_MIANZI;
 use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 use crate::tile::Tile;
 use thiserror::Error;
@@ -66,7 +66,7 @@ impl FuluMianziListExt for FuluMianziList {
 pub(crate) struct Shoupai<'a> {
     pub(crate) bingpai: &'a Bingpai,
     pub(crate) tile_counts: Option<Bingpai>,
-    pub(crate) num_required_melds: u8,
+    pub(crate) num_required_bingpai_mianzi: u8,
 }
 
 impl<'a> Shoupai<'a> {
@@ -75,8 +75,9 @@ impl<'a> Shoupai<'a> {
         fulu_mianzi_list: Option<&[FuluMianzi]>,
     ) -> Result<Self, XiangtingError> {
         let num_bingpai = bingpai.count()?;
+        let num_required_bingpai_mianzi = num_bingpai / 3;
 
-        let max_num_fulu = get_max_num_fulu(num_bingpai);
+        let max_num_fulu = MAX_NUM_MIANZI - num_required_bingpai_mianzi;
         let num_fulu = fulu_mianzi_list.map(|fl| fl.len() as u8);
         validate_num_fulu(num_fulu, max_num_fulu)?;
 
@@ -90,7 +91,7 @@ impl<'a> Shoupai<'a> {
         Ok(Self {
             bingpai,
             tile_counts,
-            num_required_melds: num_bingpai / 3,
+            num_required_bingpai_mianzi,
         })
     }
 }
@@ -98,7 +99,7 @@ impl<'a> Shoupai<'a> {
 pub(crate) struct Shoupai3Player<'a> {
     pub(crate) bingpai: &'a Bingpai,
     pub(crate) tile_counts: Option<Bingpai>,
-    pub(crate) num_required_melds: u8,
+    pub(crate) num_required_bingpai_mianzi: u8,
 }
 
 impl<'a> Shoupai3Player<'a> {
@@ -107,8 +108,9 @@ impl<'a> Shoupai3Player<'a> {
         fulu_mianzi_list: Option<&[FuluMianzi]>,
     ) -> Result<Self, XiangtingError> {
         let num_bingpai = bingpai.count_3_player()?;
+        let num_required_bingpai_mianzi = num_bingpai / 3;
 
-        let max_num_fulu = get_max_num_fulu(num_bingpai);
+        let max_num_fulu = MAX_NUM_MIANZI - num_required_bingpai_mianzi;
         let num_fulu = fulu_mianzi_list.map(|fl| fl.len() as u8);
         validate_num_fulu(num_fulu, max_num_fulu)?;
 
@@ -122,7 +124,7 @@ impl<'a> Shoupai3Player<'a> {
         Ok(Self {
             bingpai,
             tile_counts,
-            num_required_melds: num_bingpai / 3,
+            num_required_bingpai_mianzi,
         })
     }
 }
@@ -132,13 +134,9 @@ impl<'a> From<Shoupai3Player<'a>> for Shoupai<'a> {
         Self {
             bingpai: value.bingpai,
             tile_counts: value.tile_counts,
-            num_required_melds: value.num_required_melds,
+            num_required_bingpai_mianzi: value.num_required_bingpai_mianzi,
         }
     }
-}
-
-fn get_max_num_fulu(num_bingpai: u8) -> u8 {
-    (MAX_NUM_SHOUPAI - num_bingpai) / 3
 }
 
 fn validate_num_fulu(num_fulu: Option<u8>, max_num_fulu: u8) -> Result<(), ShoupaiError> {

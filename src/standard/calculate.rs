@@ -149,7 +149,7 @@ pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
     update_dp(&mut entry0, &entry2);
     update_dp(&mut entry0, &entry3);
 
-    entry0[5 + shoupai.num_required_melds as usize]
+    entry0[5 + shoupai.num_required_bingpai_mianzi as usize]
 }
 
 pub(in super::super) fn calculate_replacement_number_3_player(shoupai: &Shoupai3Player) -> u8 {
@@ -182,7 +182,7 @@ pub(in super::super) fn calculate_replacement_number_3_player(shoupai: &Shoupai3
     update_dp(&mut entry0, &entry2);
     update_dp(&mut entry0, &entry3);
 
-    entry0[5 + shoupai.num_required_melds as usize]
+    entry0[5 + shoupai.num_required_bingpai_mianzi as usize]
 }
 
 #[cfg(test)]

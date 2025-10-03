@@ -5,7 +5,7 @@
 use crate::shoupai::Shoupai;
 
 pub(super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
-    if shoupai.num_required_melds < 4 {
+    if shoupai.num_required_bingpai_mianzi < 4 {
         return u8::MAX;
     }
 
