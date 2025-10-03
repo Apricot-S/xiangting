@@ -19,11 +19,11 @@ use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 /// - Use `None` if melds are excluded in the ruleset (e.g., Tenhou, Mahjong Soul).
 /// - Provide `Some(&[..])` if melds are included (e.g., World Riichi Championship, M.LEAGUE).
 ///
-/// If the number of melds in the list is less than the required number of melds for the hand,
-/// the missing melds are calculated as melds that do not overlap with the tiles in the hand.
-/// For example, if the hand consists of 123p1s, three melds are required.
-/// If only two melds are provided, such as \[444p, 777s], the missing third meld is calculated as
-/// a meld that does not overlap with the tiles in the hand, such as 111z.
+/// If fewer melds are provided than required for a complete hand,
+/// the missing ones are treated as melds that do not overlap with the tiles in the hand.
+/// For example, with the hand 123p1s, three melds are required.
+/// If only two are given (e.g., \[444p, 777s]), the third is considered to be
+/// a non-overlapping meld, such as 111z.
 ///
 /// # Arguments
 ///
