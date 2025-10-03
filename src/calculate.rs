@@ -12,6 +12,13 @@ use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
 /// This function is for 4-player mahjong.
 ///
+/// In some rulesets, melded tiles are excluded when checking whether a hand contains
+/// four identical tiles. In others, melded tiles are included in the calculation.
+/// This function allows you to control that behavior via the `fulu_mianzi_list` argument:
+///
+/// - Use `None` if melds are excluded in the ruleset (e.g., Tenhou, Mahjong Soul).
+/// - Provide `Some(&[..])` if melds are included (e.g., World Riichi Championship, M.LEAGUE).
+///
 /// If the number of melds in the list is less than the required number of melds for the hand,
 /// the missing melds are calculated as melds that do not overlap with the tiles in the hand.
 /// For example, if the hand consists of 123p1s, three melds are required.
@@ -21,7 +28,7 @@ use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 /// # Arguments
 ///
 /// * `bingpai` - A reference to a hand excluding melds.
-/// * `fulu_mianzi_list` - An optional reference to a list of melds.
+/// * `fulu_mianzi_list` - An `Option` containing a reference to a slice of melds.
 ///
 /// # Errors
 ///
