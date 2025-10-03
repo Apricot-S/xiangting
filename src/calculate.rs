@@ -96,6 +96,81 @@ pub fn calculate_replacement_number(
     Ok([r0, r1, r2].into_iter().min().unwrap())
 }
 
+/// Calculates the replacement number (= xiangting number + 1) for a given hand.
+/// This function is for 3-player mahjong.
+///
+/// Tiles from 2m (二萬) to 8m (八萬) are not used.
+/// In addition, melded sequences (明順子) are not allowed.
+///
+/// In some rulesets, melded tiles are excluded when checking whether a hand contains
+/// four identical tiles. In others, melded tiles are included in the calculation.
+/// This function allows you to control that behavior via the `fulu_mianzi_list` argument:
+///
+/// - Use `None` if melds are excluded in the ruleset (e.g., Tenhou, Mahjong Soul).
+/// - Provide `Some(&[..])` if melds are included (e.g., World Riichi Championship, M.LEAGUE).
+///
+/// If fewer melds are provided than required for a complete hand,
+/// the missing ones are treated as melds that do not overlap with the tiles in the hand.
+/// For example, with the hand 123p1s, three melds are required.
+/// If only two are given (e.g., \[444p, 777s]), the third is considered to be
+/// a non-overlapping meld, such as 111z.
+///
+/// # Arguments
+///
+/// * `bingpai` - A reference to a hand excluding melds.
+/// * `fulu_mianzi_list` - An `Option` containing a reference to a slice of melds.
+///
+/// # Errors
+///
+/// Returns [`Err`] if the hand is invalid.
+///
+/// # Examples
+///
+/// ```
+/// # use xiangting::{ClaimedTilePosition, FuluMianzi, calculate_replacement_number_3_player};
+/// # use xiangting::XiangtingError;
+/// # fn main() -> Result<(), XiangtingError> {
+/// // 111m456p789s11222z
+/// let hand: [u8; 34] = [
+///     3, 0, 0, 0, 0, 0, 0, 0, 0, // m
+///     0, 0, 0, 1, 1, 1, 0, 0, 0, // p
+///     0, 0, 0, 0, 0, 0, 1, 1, 1, // s
+///     2, 3, 0, 0, 0, 0, 0, // z
+/// ];
+///
+/// let replacement_number = calculate_replacement_number_3_player(&hand, None);
+/// assert_eq!(replacement_number?, 0u8);
+///
+/// // 111m1z
+/// let hand: [u8; 34] = [
+///     3, 0, 0, 0, 0, 0, 0, 0, 0, // m
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+///     1, 0, 0, 0, 0, 0, 0, // z
+/// ];
+///
+/// // 444p 7777s 111z
+/// let melds_3 = [
+///     FuluMianzi::Kezi(12),
+///     FuluMianzi::Gangzi(24),
+///     FuluMianzi::Kezi(27),
+/// ];
+///
+/// let replacement_number_wo_melds = calculate_replacement_number_3_player(&hand, None);
+/// assert_eq!(replacement_number_wo_melds?, 1u8);
+///
+/// let replacement_number_w_melds = calculate_replacement_number_3_player(&hand, Some(&melds_3));
+/// assert_eq!(replacement_number_w_melds?, 2u8);
+///
+/// // 444p 7777s
+/// let melds_2 = [FuluMianzi::Kezi(12), FuluMianzi::Gangzi(24)];
+///
+/// let replacement_number_w_missing_melds =
+///     calculate_replacement_number_3_player(&hand, Some(&melds_2));
+/// assert_eq!(replacement_number_w_missing_melds?, 1u8);
+/// # Ok(())
+/// # }
+/// ```
 pub fn calculate_replacement_number_3_player(
     bingpai: &Bingpai,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
