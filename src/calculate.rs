@@ -9,6 +9,73 @@ use crate::bingpai::Bingpai;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 
+/// Calculates the replacement number (= xiangting number + 1) for a given hand.
+/// This function is for 4-player mahjong.
+///
+/// If the number of melds in the list is less than the required number of melds for the hand,
+/// the missing melds are calculated as melds that do not overlap with the tiles in the hand.
+/// For example, if the hand consists of 123p1s, three melds are required.
+/// If only two melds are provided, such as \[444p, 777s], the missing third meld is calculated as
+/// a meld that does not overlap with the tiles in the hand, such as 111z.
+///
+/// # Arguments
+///
+/// * `bingpai` - A reference to a hand excluding melds.
+/// * `fulu_mianzi_list` - An optional reference to a list of melds.
+///
+/// # Errors
+///
+/// Returns [`Err`] if the hand is invalid.
+///
+/// # Examples
+///
+/// ```
+/// # use xiangting::{ClaimedTilePosition, FuluMianzi, calculate_replacement_number};
+/// # use xiangting::XiangtingError;
+/// # fn main() -> Result<(), XiangtingError> {
+/// // 123m456p789s11222z
+/// let hand: [u8; 34] = [
+///     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
+///     0, 0, 0, 1, 1, 1, 0, 0, 0, // p
+///     0, 0, 0, 0, 0, 0, 1, 1, 1, // s
+///     2, 3, 0, 0, 0, 0, 0, // z
+/// ];
+///
+/// let replacement_number = calculate_replacement_number(&hand, None);
+/// assert_eq!(replacement_number?, 0u8);
+///
+/// // 123m1z
+/// let hand: [u8; 34] = [
+///     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+///     1, 0, 0, 0, 0, 0, 0, // z
+/// ];
+///
+/// // 456p 7777s 111z
+/// let melds_3 = [
+///     FuluMianzi::Shunzi(12, ClaimedTilePosition::Low),
+///     FuluMianzi::Gangzi(24),
+///     FuluMianzi::Kezi(27),
+/// ];
+///
+/// let replacement_number_wo_melds = calculate_replacement_number(&hand, None);
+/// assert_eq!(replacement_number_wo_melds?, 1u8);
+///
+/// let replacement_number_w_melds = calculate_replacement_number(&hand, Some(&melds_3));
+/// assert_eq!(replacement_number_w_melds?, 2u8);
+///
+/// // 456p 7777s
+/// let melds_2 = [
+///     FuluMianzi::Shunzi(12, ClaimedTilePosition::Low),
+///     FuluMianzi::Gangzi(24),
+/// ];
+///
+/// let replacement_number_w_missing_melds = calculate_replacement_number(&hand, Some(&melds_2));
+/// assert_eq!(replacement_number_w_missing_melds?, 1u8);
+/// # Ok(())
+/// # }
+/// ```
 pub fn calculate_replacement_number(
     bingpai: &Bingpai,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
