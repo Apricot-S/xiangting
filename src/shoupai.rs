@@ -8,12 +8,25 @@ use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 use crate::tile::Tile;
 use thiserror::Error;
 
+/// Errors that occur when an invalid hand (手牌) is provided.
 #[derive(Debug, Error)]
 pub enum ShoupaiError {
+    /// The number of melds in the hand exceeds the allowed maximum.
     #[error("the number of melds must be at most {max}, but was {count}")]
-    TooManyFuluMianzi { max: u8, count: u8 },
+    TooManyFuluMianzi {
+        /// The maximum number of melds permitted in this hand.
+        max: u8,
+        /// The actual number of melds found in the hand.
+        count: u8,
+    },
+    /// A specific tile count in the hand exceeds 4.
     #[error("tile {tile} count must be 4 or less but was {count}")]
-    TooManyCopies { tile: Tile, count: u8 },
+    TooManyCopies {
+        /// The tile that appears too many times.
+        tile: Tile,
+        /// The actual number of copies found in the hand.
+        count: u8,
+    },
 }
 
 #[derive(Debug, Error)]
