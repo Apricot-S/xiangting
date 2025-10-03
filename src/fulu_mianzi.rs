@@ -79,7 +79,7 @@ pub enum FuluMianzi {
 /// Errors that occur when an invalid meld is provided.
 #[derive(Debug, Error)]
 pub enum FuluMianziError {
-    /// The tile index is outside the range of 0 to 33.
+    /// The tile index is outside the range of 0-33.
     #[error("tile index must be between 0 and 33 but was {0}")]
     IndexOutOfRange(Tile),
     /// An attempt was made to create a sequence using honors (字牌).
@@ -88,7 +88,7 @@ pub enum FuluMianziError {
     /// The tile and position combination cannot form a valid sequence.
     #[error("a sequence cannot be made with {0} and {1:?}")]
     InvalidShunziCombination(Tile, ClaimedTilePosition),
-    /// This meld cannot be used in 3-player mahjong (2m to 8m or sequence).
+    /// This meld cannot be used in 3-player mahjong (2m-8m or sequence).
     #[error("{0:?} cannot be used in 3-player mahjong")]
     InvalidFuluMianziFor3Player(FuluMianzi),
 }
