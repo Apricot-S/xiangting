@@ -1,0 +1,21 @@
+// SPDX-FileCopyrightText: 2025 Apricot S.
+// SPDX-License-Identifier: MIT
+// This file is part of https://github.com/Apricot-S/xiangting
+
+use xiangting::{calculate_replacement_number, calculate_replacement_number_3_player};
+
+fn main() {
+    // 1111m111122233z
+    let hand: [u8; 34] = [
+        4, 0, 0, 0, 0, 0, 0, 0, 0, // m
+        0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+        0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+        4, 3, 2, 0, 0, 0, 0, // z
+    ];
+
+    let replacement_number_4p = calculate_replacement_number(&hand, None);
+    assert_eq!(replacement_number_4p.unwrap(), 2u8);
+
+    let replacement_number_3p = calculate_replacement_number_3_player(&hand, None);
+    assert_eq!(replacement_number_3p.unwrap(), 3u8);
+}

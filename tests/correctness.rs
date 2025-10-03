@@ -9,11 +9,11 @@ mod nyanten;
 
 #[cfg(feature = "correctness")]
 mod tests {
-    use crate::hand_generator::{build_table, decode, NUM_HANDS};
+    use crate::hand_generator::{NUM_HANDS, build_table, decode};
     use crate::nyanten::calculateReplacementNumber;
     use std::fs::File;
     use std::io::Write;
-    use std::{env, thread, usize};
+    use std::{env, thread};
     use xiangting::calculate_replacement_number;
 
     fn verify_correctness<const N: usize>() -> bool {
@@ -47,7 +47,7 @@ mod tests {
                     let hand = decode(hash, &table);
                     let result_nyanten =
                         unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(34)) };
-                    let result_xiangting = calculate_replacement_number(&hand, &None).unwrap();
+                    let result_xiangting = calculate_replacement_number(&hand, None).unwrap();
 
                     if result_nyanten != result_xiangting {
                         return Some(format!(

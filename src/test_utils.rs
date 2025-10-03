@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::Bingpai;
+use crate::bingpai::Bingpai;
 
 pub(crate) trait BingpaiExtForTest {
     /// Converts a Tenhou-style hand string into an array representing
@@ -12,22 +12,29 @@ pub(crate) trait BingpaiExtForTest {
 
 impl BingpaiExtForTest for Bingpai {
     fn from_code(hand: &str) -> Bingpai {
-        const TILE_MAP: [(char, usize); 4] = [('m', 0), ('p', 9), ('s', 18), ('z', 27)];
-        let mut current_type: Option<usize> = None;
+        let mut current_color: Option<usize> = None;
         let mut result: Bingpai = [0u8; 34];
 
         for c in hand.chars().rev() {
-            if let Some(&(_, idx)) = TILE_MAP.iter().find(|&&(t, _)| t == c) {
-                current_type = Some(idx);
-            } else if let Some(d) = c.to_digit(10) {
-                if !(1..=9).contains(&d) {
-                    panic!("tile number must be between 1 and 9, got {}", d);
+            match c {
+                'm' => current_color = Some(0),
+                'p' => current_color = Some(9),
+                's' => current_color = Some(18),
+                'z' => current_color = Some(27),
+                _ => {
+                    let d = c.to_digit(10).expect("invalid digit") as usize;
+                    let base = current_color.expect("digit without type");
+                    if !(1..=9).contains(&d) {
+                        panic!("tile number must be 1-9, got {}", d);
+                    }
+                    if base == 27 && d > 7 {
+                        panic!("honor tile must be 1-7, got {}", d);
+                    }
+                    result[base + d - 1] += 1;
                 }
-                let base = current_type.expect("no type specified before the tile number");
-                let offset = d as usize - 1;
-                result[base + offset] += 1;
             }
         }
+
         result
     }
 }

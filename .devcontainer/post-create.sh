@@ -24,5 +24,5 @@ chmod +x scripts/*.sh
 
 # Clone `nyanten`.
 pushd /workspaces
-git clone https://github.com/Cryolite/nyanten
+git clone --depth=1 https://github.com/Cryolite/nyanten.git
 popd

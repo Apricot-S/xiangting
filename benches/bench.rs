@@ -4,7 +4,7 @@
 
 mod random_hand;
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 use random_hand::{
     create_rng, generate_random_full_flush_pure_hand, generate_random_half_flush_pure_hand,
     generate_random_non_simple_pure_hand, generate_random_pure_hand,
@@ -26,7 +26,7 @@ fn xiangting_normal(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Normal", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), &None).unwrap())
+        b.iter(|| calculate_replacement_number(hand.next().unwrap(), None).unwrap())
     });
     group.finish();
 }
@@ -42,7 +42,7 @@ fn xiangting_half_flush(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Half Flush", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), &None).unwrap())
+        b.iter(|| calculate_replacement_number(hand.next().unwrap(), None).unwrap())
     });
     group.finish();
 }
@@ -58,7 +58,7 @@ fn xiangting_full_flush(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Full Flush", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), &None).unwrap())
+        b.iter(|| calculate_replacement_number(hand.next().unwrap(), None).unwrap())
     });
     group.finish();
 }
@@ -74,7 +74,7 @@ fn xiangting_non_simple(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Non-Simple", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), &None).unwrap())
+        b.iter(|| calculate_replacement_number(hand.next().unwrap(), None).unwrap())
     });
     group.finish();
 }
