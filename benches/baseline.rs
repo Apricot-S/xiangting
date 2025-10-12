@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use xiangting::{Bingpai, calculate_replacement_number};
+use xiangting::{TileCounts, calculate_replacement_number};
 
-pub fn calculate_necessary_tiles(bingpai: &Bingpai) -> u64 {
+pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
     let mut bingpai = bingpai.clone();
 
     let replacement_number = calculate_replacement_number(&bingpai, None).unwrap();
@@ -36,7 +36,7 @@ pub fn calculate_necessary_tiles(bingpai: &Bingpai) -> u64 {
     necessary_tiles
 }
 
-pub fn calculate_unnecessary_tiles(bingpai: &Bingpai) -> u64 {
+pub fn calculate_unnecessary_tiles(bingpai: &TileCounts) -> u64 {
     let mut bingpai = bingpai.clone();
 
     let replacement_number = calculate_replacement_number(&bingpai, None).unwrap();
