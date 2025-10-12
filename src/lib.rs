@@ -35,13 +35,13 @@
 #[cfg(not(feature = "build-file"))]
 mod bingpai;
 #[cfg(not(feature = "build-file"))]
-mod calculate;
-#[cfg(not(feature = "build-file"))]
 mod constants;
 #[cfg(not(feature = "build-file"))]
 mod fulu_mianzi;
 #[cfg(not(feature = "build-file"))]
 mod qiduizi;
+#[cfg(not(feature = "build-file"))]
+mod replacement_number;
 #[cfg(not(feature = "build-file"))]
 mod shisanyao;
 #[cfg(not(feature = "build-file"))]
@@ -57,9 +57,9 @@ mod test_utils;
 #[cfg(not(feature = "build-file"))]
 pub use bingpai::BingpaiError;
 #[cfg(not(feature = "build-file"))]
-pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
-#[cfg(not(feature = "build-file"))]
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
+#[cfg(not(feature = "build-file"))]
+pub use replacement_number::{calculate_replacement_number, calculate_replacement_number_3_player};
 #[cfg(not(feature = "build-file"))]
 pub use shoupai::{ShoupaiError, XiangtingError};
 #[cfg(not(feature = "build-file"))]
