@@ -46,11 +46,11 @@ pub enum XiangtingError {
 type FuluMianziList = [FuluMianzi];
 
 trait FuluMianziListExt {
-    fn to_fulupai(&self) -> TileCounts;
+    fn to_tile_counts(&self) -> TileCounts;
 }
 
 impl FuluMianziListExt for FuluMianziList {
-    fn to_fulupai(&self) -> TileCounts {
+    fn to_tile_counts(&self) -> TileCounts {
         self.iter().fold([0u8; 34], |mut fulupai, m| {
             match m {
                 FuluMianzi::Shunzi(t, ClaimedTilePosition::Low) => {
@@ -170,7 +170,7 @@ fn get_tile_counts(
     bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Option<TileCounts> {
-    let fulupai = fulu_mianzi_list.map(|fl| fl.to_fulupai());
+    let fulupai = fulu_mianzi_list.map(|fl| fl.to_tile_counts());
     fulupai.map(|fp| std::array::from_fn(|i| bingpai[i] + fp[i]))
 }
 
@@ -193,42 +193,54 @@ mod tests {
     use crate::test_utils::TileCountsExt;
 
     #[test]
-    fn to_fulupai_1m_23m() {
+    fn to_tile_counts_1m_23m() {
         let fulu_mianzi_list = [FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)];
-        assert_eq!(fulu_mianzi_list.to_fulupai(), TileCounts::from_code("123m"));
+        assert_eq!(
+            fulu_mianzi_list.to_tile_counts(),
+            TileCounts::from_code("123m")
+        );
     }
 
     #[test]
-    fn to_fulupai_4p_35p() {
+    fn to_tile_counts_4p_35p() {
         let fulu_mianzi_list = [FuluMianzi::Shunzi(12, ClaimedTilePosition::Middle)];
-        assert_eq!(fulu_mianzi_list.to_fulupai(), TileCounts::from_code("435p"));
+        assert_eq!(
+            fulu_mianzi_list.to_tile_counts(),
+            TileCounts::from_code("435p")
+        );
     }
 
     #[test]
-    fn to_fulupai_9s_78s() {
+    fn to_tile_counts_9s_78s() {
         let fulu_mianzi_list = [FuluMianzi::Shunzi(26, ClaimedTilePosition::High)];
-        assert_eq!(fulu_mianzi_list.to_fulupai(), TileCounts::from_code("978s"));
+        assert_eq!(
+            fulu_mianzi_list.to_tile_counts(),
+            TileCounts::from_code("978s")
+        );
     }
 
     #[test]
-    fn to_fulupai_111z() {
+    fn to_tile_counts_111z() {
         let fulu_mianzi_list = [FuluMianzi::Kezi(27)];
-        assert_eq!(fulu_mianzi_list.to_fulupai(), TileCounts::from_code("111z"));
+        assert_eq!(
+            fulu_mianzi_list.to_tile_counts(),
+            TileCounts::from_code("111z")
+        );
     }
 
     #[test]
-    fn to_fulupai_7777z() {
+    fn to_tile_counts_7777z() {
         let fulu_mianzi_list = [FuluMianzi::Gangzi(33)];
         assert_eq!(
-            fulu_mianzi_list.to_fulupai(),
+            fulu_mianzi_list.to_tile_counts(),
             TileCounts::from_code("7777z")
         );
     }
 
     #[test]
     #[should_panic]
-    fn to_fulupai_111z_not_consider_invalid_fulu() {
+    fn to_tile_counts_111z_not_consider_invalid_fulu() {
         let fulu_mianzi_list = [FuluMianzi::Kezi(34)];
-        fulu_mianzi_list.to_fulupai();
+        fulu_mianzi_list.to_tile_counts();
     }
 }
