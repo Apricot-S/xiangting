@@ -3,11 +3,11 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 #[cfg(not(feature = "build-file"))]
-mod calculate;
-#[cfg(not(feature = "build-file"))]
 mod core;
 #[cfg(not(feature = "build-file"))]
 mod hash;
+#[cfg(not(feature = "build-file"))]
+mod replacement_number;
 #[cfg(not(feature = "build-file"))]
 mod shupai_map;
 #[cfg(not(feature = "build-file"))]
@@ -22,7 +22,9 @@ mod zipai_map;
 mod zipai_table;
 
 #[cfg(not(feature = "build-file"))]
-pub(super) use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
+pub(super) use replacement_number::{
+    calculate_replacement_number, calculate_replacement_number_3_player,
+};
 
 #[cfg(feature = "build-map")]
 pub mod core;
