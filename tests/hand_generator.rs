@@ -9,7 +9,7 @@
 //! https://gist.github.com/tomohxx/fc0b72e3fe68744a6ac56a64a41ab8d7
 
 use std::cmp::min;
-use xiangting::Bingpai;
+use xiangting::TileCounts;
 
 const MAX_NUM_SAME_TILE: usize = 4;
 const NUM_TILE_INDEX: usize = 3 * 9 + 4 + 3;
@@ -57,8 +57,8 @@ pub fn build_table<const N: usize>() -> Table<N> {
     table
 }
 
-pub fn decode<const N: usize>(hash: u64, table: &Table<N>) -> Bingpai {
-    let mut hand: Bingpai = [0; NUM_TILE_INDEX];
+pub fn decode<const N: usize>(hash: u64, table: &Table<N>) -> TileCounts {
+    let mut hand: TileCounts = [0; NUM_TILE_INDEX];
     let mut h = 0;
     let mut n = 0;
 
@@ -86,14 +86,14 @@ mod tests {
     use super::*;
 
     #[inline]
-    fn to_count34(hand: &[usize]) -> Bingpai {
+    fn to_count34(hand: &[usize]) -> TileCounts {
         hand.iter().fold([0u8; NUM_TILE_INDEX], |mut counts, &t| {
             counts[t] += 1;
             counts
         })
     }
 
-    fn generate_hands<const N: usize>(expected_first: Bingpai, expected_last: Bingpai) {
+    fn generate_hands<const N: usize>(expected_first: TileCounts, expected_last: TileCounts) {
         let table = build_table::<N>();
 
         let first_hand = decode(NUM_HANDS[N - 1] - 1, &table);
