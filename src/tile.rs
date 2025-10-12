@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+use crate::constants::NUM_TILE_INDEX;
+
 /// 牌: Tile.
 ///
 /// The value represents the index of the tile.
@@ -23,3 +25,22 @@
 /// | ----- | --------- | ---------- | --------- | ---------- | ---------- | ---------- | -------- |
 /// | Tile  | East (1z) | South (2z) | West (3z) | North (4z) | White (5z) | Green (6z) | Red (7z) |
 pub type Tile = u8;
+
+/// A type representing the number of tiles for each kind.
+///
+/// Each element of the array represents the count of a specific tile in the hand.
+/// The correspondence between the index and the tile is the same as [`Tile`](crate::Tile).
+///
+/// # Examples
+///
+/// ```
+/// # use xiangting::TileCounts;
+/// // 111m456p789s11222z
+/// let hand: TileCounts = [
+///     3, 0, 0, 0, 0, 0, 0, 0, 0, // m
+///     0, 0, 0, 1, 1, 1, 0, 0, 0, // p
+///     0, 0, 0, 0, 0, 0, 1, 1, 1, // s
+///     2, 3, 0, 0, 0, 0, 0, // z
+/// ];
+/// ```
+pub type TileCounts = [u8; NUM_TILE_INDEX];

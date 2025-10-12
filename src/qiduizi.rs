@@ -23,12 +23,12 @@ pub(super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::bingpai::Bingpai;
-    use crate::test_utils::BingpaiExtForTest;
+    use crate::test_utils::TileCountsExt;
+    use crate::tile::TileCounts;
 
     #[test]
     fn calculate_replacement_number_without_pair() {
-        let bingpai = Bingpai::from_code("19m19p19s1234567z");
+        let bingpai = TileCounts::from_code("19m19p19s1234567z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
         assert_eq!(replacement_number, 7);
@@ -36,7 +36,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_with_quadruple() {
-        let bingpai = Bingpai::from_code("1188m288p55s1111z");
+        let bingpai = TileCounts::from_code("1188m288p55s1111z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
         assert_eq!(replacement_number, 3);
@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_with_triplet() {
-        let bingpai = Bingpai::from_code("1188m2388p55s111z");
+        let bingpai = TileCounts::from_code("1188m2388p55s111z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
         assert_eq!(replacement_number, 2);
@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_with_2_triplets() {
-        let bingpai = Bingpai::from_code("1188m288p555s111z");
+        let bingpai = TileCounts::from_code("1188m288p555s111z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
         assert_eq!(replacement_number, 3);
@@ -60,7 +60,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_tenpai() {
-        let bingpai = Bingpai::from_code("1188m288p55s1177z");
+        let bingpai = TileCounts::from_code("1188m288p55s1177z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
         assert_eq!(replacement_number, 1);
@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_win() {
-        let bingpai = Bingpai::from_code("1188m2288p55s1177z");
+        let bingpai = TileCounts::from_code("1188m2288p55s1177z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
         assert_eq!(replacement_number, 0);
@@ -76,7 +76,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_incomplete_hand() {
-        let bingpai = Bingpai::from_code("1188m55s1122z");
+        let bingpai = TileCounts::from_code("1188m55s1122z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
         assert_eq!(replacement_number, u8::MAX);

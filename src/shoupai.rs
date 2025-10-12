@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::bingpai::{Bingpai, BingpaiError, BingpaiExt};
+use crate::bingpai::{BingpaiError, TileCountsExt};
 use crate::constants::MAX_NUM_MIANZI;
 use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
-use crate::tile::Tile;
+use crate::tile::{Tile, TileCounts};
 use thiserror::Error;
 
 /// Errors that occur when an invalid hand (手牌) is provided.
@@ -46,11 +46,11 @@ pub enum XiangtingError {
 type FuluMianziList = [FuluMianzi];
 
 trait FuluMianziListExt {
-    fn to_fulupai(&self) -> Bingpai;
+    fn to_tile_counts(&self) -> TileCounts;
 }
 
 impl FuluMianziListExt for FuluMianziList {
-    fn to_fulupai(&self) -> Bingpai {
+    fn to_tile_counts(&self) -> TileCounts {
         self.iter().fold([0u8; 34], |mut fulupai, m| {
             match m {
                 FuluMianzi::Shunzi(t, ClaimedTilePosition::Low) => {
@@ -81,14 +81,14 @@ impl FuluMianziListExt for FuluMianziList {
 }
 
 pub(crate) struct Shoupai<'a> {
-    pub(crate) bingpai: &'a Bingpai,
-    pub(crate) tile_counts: Option<Bingpai>,
+    pub(crate) bingpai: &'a TileCounts,
+    pub(crate) tile_counts: Option<TileCounts>,
     pub(crate) num_required_bingpai_mianzi: u8,
 }
 
 impl<'a> Shoupai<'a> {
     pub(crate) fn new(
-        bingpai: &'a Bingpai,
+        bingpai: &'a TileCounts,
         fulu_mianzi_list: Option<&[FuluMianzi]>,
     ) -> Result<Self, XiangtingError> {
         let num_bingpai = bingpai.count()?;
@@ -114,14 +114,14 @@ impl<'a> Shoupai<'a> {
 }
 
 pub(crate) struct Shoupai3Player<'a> {
-    pub(crate) bingpai: &'a Bingpai,
-    pub(crate) tile_counts: Option<Bingpai>,
+    pub(crate) bingpai: &'a TileCounts,
+    pub(crate) tile_counts: Option<TileCounts>,
     pub(crate) num_required_bingpai_mianzi: u8,
 }
 
 impl<'a> Shoupai3Player<'a> {
     pub(crate) fn new(
-        bingpai: &'a Bingpai,
+        bingpai: &'a TileCounts,
         fulu_mianzi_list: Option<&[FuluMianzi]>,
     ) -> Result<Self, XiangtingError> {
         let num_bingpai = bingpai.count_3_player()?;
@@ -166,12 +166,15 @@ fn validate_num_fulu(num_fulu: Option<u8>, max_num_fulu: u8) -> Result<(), Shoup
         .map_or(Ok(()), Err)
 }
 
-fn get_tile_counts(bingpai: &Bingpai, fulu_mianzi_list: Option<&[FuluMianzi]>) -> Option<Bingpai> {
-    let fulupai = fulu_mianzi_list.map(|fl| fl.to_fulupai());
+fn get_tile_counts(
+    bingpai: &TileCounts,
+    fulu_mianzi_list: Option<&[FuluMianzi]>,
+) -> Option<TileCounts> {
+    let fulupai = fulu_mianzi_list.map(|fl| fl.to_tile_counts());
     fulupai.map(|fp| std::array::from_fn(|i| bingpai[i] + fp[i]))
 }
 
-fn validate_tile_counts(tile_counts: Option<Bingpai>) -> Result<(), ShoupaiError> {
+fn validate_tile_counts(tile_counts: Option<TileCounts>) -> Result<(), ShoupaiError> {
     tile_counts.map_or(Ok(()), |tc| {
         tc.iter()
             .enumerate()
@@ -187,42 +190,57 @@ fn validate_tile_counts(tile_counts: Option<Bingpai>) -> Result<(), ShoupaiError
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::BingpaiExtForTest;
+    use crate::test_utils::TileCountsExt;
 
     #[test]
-    fn to_fulupai_1m_23m() {
+    fn to_tile_counts_1m_23m() {
         let fulu_mianzi_list = [FuluMianzi::Shunzi(0, ClaimedTilePosition::Low)];
-        assert_eq!(fulu_mianzi_list.to_fulupai(), Bingpai::from_code("123m"));
+        assert_eq!(
+            fulu_mianzi_list.to_tile_counts(),
+            TileCounts::from_code("123m")
+        );
     }
 
     #[test]
-    fn to_fulupai_4p_35p() {
+    fn to_tile_counts_4p_35p() {
         let fulu_mianzi_list = [FuluMianzi::Shunzi(12, ClaimedTilePosition::Middle)];
-        assert_eq!(fulu_mianzi_list.to_fulupai(), Bingpai::from_code("435p"));
+        assert_eq!(
+            fulu_mianzi_list.to_tile_counts(),
+            TileCounts::from_code("435p")
+        );
     }
 
     #[test]
-    fn to_fulupai_9s_78s() {
+    fn to_tile_counts_9s_78s() {
         let fulu_mianzi_list = [FuluMianzi::Shunzi(26, ClaimedTilePosition::High)];
-        assert_eq!(fulu_mianzi_list.to_fulupai(), Bingpai::from_code("978s"));
+        assert_eq!(
+            fulu_mianzi_list.to_tile_counts(),
+            TileCounts::from_code("978s")
+        );
     }
 
     #[test]
-    fn to_fulupai_111z() {
+    fn to_tile_counts_111z() {
         let fulu_mianzi_list = [FuluMianzi::Kezi(27)];
-        assert_eq!(fulu_mianzi_list.to_fulupai(), Bingpai::from_code("111z"));
+        assert_eq!(
+            fulu_mianzi_list.to_tile_counts(),
+            TileCounts::from_code("111z")
+        );
     }
 
     #[test]
-    fn to_fulupai_7777z() {
+    fn to_tile_counts_7777z() {
         let fulu_mianzi_list = [FuluMianzi::Gangzi(33)];
-        assert_eq!(fulu_mianzi_list.to_fulupai(), Bingpai::from_code("7777z"));
+        assert_eq!(
+            fulu_mianzi_list.to_tile_counts(),
+            TileCounts::from_code("7777z")
+        );
     }
 
     #[test]
     #[should_panic]
-    fn to_fulupai_111z_not_consider_invalid_fulu() {
+    fn to_tile_counts_111z_not_consider_invalid_fulu() {
         let fulu_mianzi_list = [FuluMianzi::Kezi(34)];
-        fulu_mianzi_list.to_fulupai();
+        fulu_mianzi_list.to_tile_counts();
     }
 }

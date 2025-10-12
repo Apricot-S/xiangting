@@ -5,9 +5,9 @@
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
-use crate::bingpai::Bingpai;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
+use crate::tile::TileCounts;
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
 /// This function is for 4-player mahjong.
@@ -27,7 +27,7 @@ use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 ///
 /// # Arguments
 ///
-/// * `bingpai` - A reference to a hand excluding melds.
+/// * `bingpai` - 兵牌: A reference to a hand excluding melds (a.k.a. pure hand, 純手牌).
 /// * `fulu_mianzi_list` - An `Option` containing a reference to a slice of melds.
 ///
 /// # Errors
@@ -84,7 +84,7 @@ use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 /// # }
 /// ```
 pub fn calculate_replacement_number(
-    bingpai: &Bingpai,
+    bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
     let shoupai = Shoupai::new(bingpai, fulu_mianzi_list)?;
@@ -117,7 +117,7 @@ pub fn calculate_replacement_number(
 ///
 /// # Arguments
 ///
-/// * `bingpai` - A reference to a hand excluding melds.
+/// * `bingpai` - 兵牌: A reference to a hand excluding melds (a.k.a. pure hand, 純手牌).
 /// * `fulu_mianzi_list` - An `Option` containing a reference to a slice of melds.
 ///
 /// # Errors
@@ -172,7 +172,7 @@ pub fn calculate_replacement_number(
 /// # }
 /// ```
 pub fn calculate_replacement_number_3_player(
-    bingpai: &Bingpai,
+    bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
     let shoupai_3p = Shoupai3Player::new(bingpai, fulu_mianzi_list)?;
@@ -193,32 +193,32 @@ mod tests {
     use crate::bingpai::BingpaiError;
     use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianziError};
     use crate::shoupai::{ShoupaiError, XiangtingError};
-    use crate::test_utils::BingpaiExtForTest;
+    use crate::test_utils::TileCountsExt;
 
     #[test]
     fn calculate_replacement_number_ok_standard_tenpai() {
-        let bingpai = Bingpai::from_code("123m456p789s1122z");
+        let bingpai = TileCounts::from_code("123m456p789s1122z");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_ok_qiduizi_tenpai() {
-        let bingpai = Bingpai::from_code("1188m288p55s1177z");
+        let bingpai = TileCounts::from_code("1188m288p55s1177z");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_ok_shisanyao_tenpai() {
-        let bingpai = Bingpai::from_code("19m19p19s1234567z");
+        let bingpai = TileCounts::from_code("19m19p19s1234567z");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_err_bingpai_empty() {
-        let bingpai = Bingpai::from_code("");
+        let bingpai = TileCounts::from_code("");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
@@ -230,21 +230,21 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_ok_bingpai_1_tile() {
-        let bingpai = Bingpai::from_code("1m");
+        let bingpai = TileCounts::from_code("1m");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(replacement_number.is_ok());
     }
 
     #[test]
     fn calculate_replacement_number_ok_bingpai_2_tiles() {
-        let bingpai = Bingpai::from_code("2p3s");
+        let bingpai = TileCounts::from_code("2p3s");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(replacement_number.is_ok());
     }
 
     #[test]
     fn calculate_replacement_number_err_bingpai_3_tiles() {
-        let bingpai = Bingpai::from_code("2p3s7z");
+        let bingpai = TileCounts::from_code("2p3s7z");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
@@ -256,7 +256,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_err_bingpai_15_tiles() {
-        let bingpai = Bingpai::from_code("111222333444555m");
+        let bingpai = TileCounts::from_code("111222333444555m");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
@@ -268,7 +268,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_err_bingpai_5_same_tiles() {
-        let bingpai = Bingpai::from_code("11111m");
+        let bingpai = TileCounts::from_code("11111m");
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
@@ -280,7 +280,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_err_fulu_index_out_of_range() {
-        let bingpai = Bingpai::from_code("1m");
+        let bingpai = TileCounts::from_code("1m");
         let fulu_mianzi_list = [FuluMianzi::Kezi(34)];
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
@@ -293,7 +293,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_err_fulu_shunzi_with_zipai() {
-        let bingpai = Bingpai::from_code("1p");
+        let bingpai = TileCounts::from_code("1p");
         let fulu_mianzi_list = [FuluMianzi::Shunzi(27, ClaimedTilePosition::Low)];
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
@@ -306,7 +306,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_err_fulu_invalid_shunzi_combination() {
-        let bingpai = Bingpai::from_code("1p");
+        let bingpai = TileCounts::from_code("1p");
         let fulu_mianzi_list = [FuluMianzi::Shunzi(0, ClaimedTilePosition::Middle)];
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
@@ -319,7 +319,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_err_shoupai_too_many_fulu_mianzi() {
-        let bingpai = Bingpai::from_code("11122233344455m");
+        let bingpai = TileCounts::from_code("11122233344455m");
         let fulu_mianzi_list = [FuluMianzi::Kezi(5)];
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
@@ -332,7 +332,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_err_shoupai_5_same_tiles() {
-        let bingpai = Bingpai::from_code("1m");
+        let bingpai = TileCounts::from_code("1m");
         let fulu_mianzi_list = [FuluMianzi::Gangzi(0)];
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
@@ -345,28 +345,28 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_3_player_ok_standard_tenpai() {
-        let bingpai = Bingpai::from_code("111m456p789s1122z");
+        let bingpai = TileCounts::from_code("111m456p789s1122z");
         let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_ok_qiduizi_tenpai() {
-        let bingpai = Bingpai::from_code("1199m288p55s1177z");
+        let bingpai = TileCounts::from_code("1199m288p55s1177z");
         let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_ok_shisanyao_tenpai() {
-        let bingpai = Bingpai::from_code("19m19p19s1234567z");
+        let bingpai = TileCounts::from_code("19m19p19s1234567z");
         let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_err_bingpai_2m() {
-        let bingpai = Bingpai::from_code("2m");
+        let bingpai = TileCounts::from_code("2m");
         let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
         assert!(matches!(
             replacement_number,
@@ -378,7 +378,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_3_player_err_fulu_123p() {
-        let bingpai = Bingpai::from_code("1m");
+        let bingpai = TileCounts::from_code("1m");
         let fulu_mianzi_list = [FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)];
         let replacement_number =
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
@@ -395,7 +395,7 @@ mod tests {
 
     #[test]
     fn calculate_replacement_number_3_player_err_fulu_222m() {
-        let bingpai = Bingpai::from_code("1m");
+        let bingpai = TileCounts::from_code("1m");
         let fulu_mianzi_list = [FuluMianzi::Kezi(1)];
         let replacement_number =
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));

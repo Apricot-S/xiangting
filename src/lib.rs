@@ -55,7 +55,7 @@ mod tile;
 mod test_utils;
 
 #[cfg(not(feature = "build-file"))]
-pub use bingpai::{Bingpai, BingpaiError};
+pub use bingpai::BingpaiError;
 #[cfg(not(feature = "build-file"))]
 pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
 #[cfg(not(feature = "build-file"))]
@@ -63,7 +63,7 @@ pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 #[cfg(not(feature = "build-file"))]
 pub use shoupai::{ShoupaiError, XiangtingError};
 #[cfg(not(feature = "build-file"))]
-pub use tile::Tile;
+pub use tile::{Tile, TileCounts};
 
 #[cfg(feature = "build-map")]
 #[doc(hidden)]

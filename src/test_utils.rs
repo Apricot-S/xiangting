@@ -2,18 +2,18 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::bingpai::Bingpai;
+use crate::tile::TileCounts;
 
-pub(crate) trait BingpaiExtForTest {
-    /// Converts a Tenhou-style hand string into an array representing
+pub(crate) trait TileCountsExt {
+    /// Converts a Tenhou-style tile string into an array representing
     /// the counts of 34 types of tiles.
-    fn from_code(hand: &str) -> Bingpai;
+    fn from_code(hand: &str) -> TileCounts;
 }
 
-impl BingpaiExtForTest for Bingpai {
-    fn from_code(hand: &str) -> Bingpai {
+impl TileCountsExt for TileCounts {
+    fn from_code(hand: &str) -> TileCounts {
         let mut current_color: Option<usize> = None;
-        let mut result: Bingpai = [0u8; 34];
+        let mut result: TileCounts = [0u8; 34];
 
         for c in hand.chars().rev() {
             match c {
@@ -45,8 +45,8 @@ mod tests {
 
     #[test]
     fn test_from_code_normal() {
-        let counts = Bingpai::from_code("123m456p789s12344z");
-        let expected_counts: Bingpai = [
+        let counts = TileCounts::from_code("123m456p789s12344z");
+        let expected_counts: TileCounts = [
             1, 1, 1, 0, 0, 0, 0, 0, 0, // m
             0, 0, 0, 1, 1, 1, 0, 0, 0, // p
             0, 0, 0, 0, 0, 0, 1, 1, 1, // s
@@ -57,8 +57,8 @@ mod tests {
 
     #[test]
     fn test_from_code_multiple_types() {
-        let counts = Bingpai::from_code("11m22p33s44z11m2p7s");
-        let expected_counts: Bingpai = [
+        let counts = TileCounts::from_code("11m22p33s44z11m2p7s");
+        let expected_counts: TileCounts = [
             4, 0, 0, 0, 0, 0, 0, 0, 0, // m
             0, 3, 0, 0, 0, 0, 0, 0, 0, // p
             0, 0, 2, 0, 0, 0, 1, 0, 0, // s
@@ -69,28 +69,28 @@ mod tests {
 
     #[test]
     fn test_from_code_empty() {
-        let counts = Bingpai::from_code("");
-        let expected_counts: Bingpai = [0u8; 34];
+        let counts = TileCounts::from_code("");
+        let expected_counts: TileCounts = [0u8; 34];
         assert_eq!(counts, expected_counts);
     }
 
     #[test]
     #[should_panic]
     fn test_from_code_no_type() {
-        Bingpai::from_code("123456");
+        TileCounts::from_code("123456");
     }
 
     #[test]
     #[should_panic]
     fn test_from_code_offset_out_of_range_number() {
         // 0m does not exist
-        Bingpai::from_code("0m");
+        TileCounts::from_code("0m");
     }
 
     #[test]
     #[should_panic]
     fn test_from_code_offset_out_of_range_z() {
         // 8z does not exist
-        Bingpai::from_code("8z");
+        TileCounts::from_code("8z");
     }
 }
