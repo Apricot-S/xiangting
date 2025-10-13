@@ -33,6 +33,8 @@
 //! ```
 
 #[cfg(not(feature = "build-file"))]
+mod analysis;
+#[cfg(not(feature = "build-file"))]
 mod bingpai;
 #[cfg(not(feature = "build-file"))]
 mod constants;
@@ -50,6 +52,8 @@ mod shoupai;
 mod standard;
 #[cfg(not(feature = "build-file"))]
 mod tile;
+#[cfg(not(feature = "build-file"))]
+mod xiangting_analysis;
 
 #[cfg(all(test, not(feature = "build-file")))]
 mod test_utils;
