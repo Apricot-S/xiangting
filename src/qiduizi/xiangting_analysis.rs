@@ -3,7 +3,7 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use crate::analysis::XiangtingAnalysis;
-use crate::shoupai::Shoupai;
+use crate::shoupai::{Shoupai, Shoupai3Player};
 
 pub(in super::super) fn analyze_xiangting(shoupai: &Shoupai) -> XiangtingAnalysis {
     if shoupai.num_required_bingpai_mianzi < 4 {
@@ -76,7 +76,7 @@ pub(in super::super) fn analyze_xiangting(shoupai: &Shoupai) -> XiangtingAnalysi
     }
 }
 
-pub(in super::super) fn analyze_xiangting_3_player(shoupai: &Shoupai) -> XiangtingAnalysis {
+pub(in super::super) fn analyze_xiangting_3_player(shoupai: &Shoupai3Player) -> XiangtingAnalysis {
     if shoupai.num_required_bingpai_mianzi < 4 {
         return XiangtingAnalysis {
             replacement_number: u8::MAX,
