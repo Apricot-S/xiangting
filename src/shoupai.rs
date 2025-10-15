@@ -190,7 +190,7 @@ fn validate_tile_counts(tile_counts: Option<TileCounts>) -> Result<(), ShoupaiEr
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::TileCountsExt;
+    use crate::test_utils::FromTileCode;
 
     #[test]
     fn to_tile_counts_1m_23m() {

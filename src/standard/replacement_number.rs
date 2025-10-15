@@ -188,7 +188,7 @@ pub(in super::super) fn calculate_replacement_number_3_player(shoupai: &Shoupai3
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::TileCountsExt;
+    use crate::test_utils::FromTileCode;
     use crate::{ClaimedTilePosition, FuluMianzi};
 
     #[test]
