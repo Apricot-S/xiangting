@@ -63,16 +63,77 @@ pub type TileCounts = [u8; NUM_TILE_INDEX];
 /// ```
 pub type TileFlags = u64;
 
+/// Extension utilities for working with [`TileFlags`](crate::TileFlags).
+///
+/// This trait provides convenience methods to interpret and transform bit flag sets
+/// that represent tiles.
 pub trait TileFlagsExt {
-    fn to_array(self) -> [bool; NUM_TILE_INDEX];
+    /// Converts the bit flag set into a boolean array.
+    ///
+    /// Each element indicates whether the corresponding tile index is present:
+    /// `true` if the bit for that index is set, `false` otherwise.
+    ///
+    /// The order of elements is identical to [`TileCounts`](crate::TileCounts).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use xiangting::{TileFlags, TileFlagsExt};
+    /// // 1m456p789s12z
+    /// let flags: TileFlags = 0b0000011_111000000_000111000_000000001;
+    /// let arr = flags.to_array();
+    ///
+    /// assert!(arr[0]);  // 1m
+    /// assert!(arr[12]); // 4p
+    /// assert!(arr[13]); // 5p
+    /// assert!(arr[14]); // 6p
+    /// assert!(arr[24]); // 7s
+    /// assert!(arr[25]); // 8s
+    /// assert!(arr[26]); // 9s
+    /// assert!(arr[27]); // 1z (East)
+    /// assert!(arr[28]); // 2z (South)
+    ///
+    /// // A tile not in the set:
+    /// assert!(!arr[4]); // 5m
+    /// ```
+    fn to_array(&self) -> [bool; NUM_TILE_INDEX];
 }
 
 impl TileFlagsExt for TileFlags {
-    fn to_array(self) -> [bool; NUM_TILE_INDEX] {
+    fn to_array(&self) -> [bool; NUM_TILE_INDEX] {
         let mut arr = [false; NUM_TILE_INDEX];
         for (i, t) in arr.iter_mut().enumerate() {
             *t = (self & (1u64 << i)) != 0;
         }
         arr
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn to_array_empty() {
+        let flags: TileFlags = 0b0000000_000000000_000000000_000000000;
+        assert_eq!(flags.to_array(), [false; 34]);
+    }
+
+    #[test]
+    fn to_array_all() {
+        let flags: TileFlags = 0b1111111_111111111_111111111_111111111;
+        assert_eq!(flags.to_array(), [true; 34]);
+    }
+
+    #[test]
+    fn to_array_1m456p789s12z() {
+        let flags: TileFlags = 0b0000011_111000000_000111000_000000001;
+        let arr = [
+            true, false, false, false, false, false, false, false, false, // m
+            false, false, false, true, true, true, false, false, false, // p
+            false, false, false, false, false, false, true, true, true, // s
+            true, true, false, false, false, false, false, // z
+        ];
+        assert_eq!(flags.to_array(), arr);
     }
 }
