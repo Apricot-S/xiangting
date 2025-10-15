@@ -41,6 +41,8 @@ mod constants;
 #[cfg(not(feature = "build-file"))]
 mod fulu_mianzi;
 #[cfg(not(feature = "build-file"))]
+mod necessary_tiles;
+#[cfg(not(feature = "build-file"))]
 mod qiduizi;
 #[cfg(not(feature = "build-file"))]
 mod replacement_number;
@@ -53,7 +55,7 @@ mod standard;
 #[cfg(not(feature = "build-file"))]
 mod tile;
 #[cfg(not(feature = "build-file"))]
-mod xiangting_analysis;
+mod unnecessary_tiles;
 
 #[cfg(all(test, not(feature = "build-file")))]
 mod test_utils;
