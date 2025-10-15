@@ -4,7 +4,7 @@
 
 use super::qiduizi;
 use crate::fulu_mianzi::FuluMianzi;
-use crate::shoupai::{Shoupai, XiangtingError};
+use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 use crate::tile::{TileCounts, TileFlags};
 
 pub fn calculate_necessary_tiles(
@@ -14,6 +14,17 @@ pub fn calculate_necessary_tiles(
     let shoupai = Shoupai::new(bingpai, fulu_mianzi_list)?;
 
     let (r1, n1) = qiduizi::calculate_necessary_tiles(&shoupai);
+
+    unimplemented!("")
+}
+
+pub fn calculate_necessary_tiles_3_player(
+    bingpai: &TileCounts,
+    fulu_mianzi_list: Option<&[FuluMianzi]>,
+) -> Result<(u8, TileFlags), XiangtingError> {
+    let shoupai = Shoupai3Player::new(bingpai, fulu_mianzi_list)?;
+
+    let (r1, n1) = qiduizi::calculate_necessary_tiles_3_player(&shoupai);
 
     unimplemented!("")
 }
