@@ -33,8 +33,6 @@
 //! ```
 
 #[cfg(not(feature = "build-file"))]
-mod analysis;
-#[cfg(not(feature = "build-file"))]
 mod bingpai;
 #[cfg(not(feature = "build-file"))]
 mod constants;
