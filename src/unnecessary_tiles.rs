@@ -5,12 +5,12 @@
 use super::qiduizi;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, XiangtingError};
-use crate::tile::TileCounts;
+use crate::tile::{TileCounts, TileFlags};
 
 pub fn calculate_unnecessary_tiles(
     bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
-) -> Result<(u8, u64), XiangtingError> {
+) -> Result<(u8, TileFlags), XiangtingError> {
     let shoupai = Shoupai::new(bingpai, fulu_mianzi_list)?;
 
     let (r1, u1) = qiduizi::calculate_unnecessary_tiles(&shoupai);

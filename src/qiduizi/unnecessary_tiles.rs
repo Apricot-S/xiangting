@@ -3,8 +3,9 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use crate::shoupai::{Shoupai, Shoupai3Player};
+use crate::tile::TileFlags;
 
-pub(in super::super) fn calculate_unnecessary_tiles(shoupai: &Shoupai) -> (u8, u64) {
+pub(in super::super) fn calculate_unnecessary_tiles(shoupai: &Shoupai) -> (u8, TileFlags) {
     if shoupai.num_required_bingpai_mianzi < 4 {
         return (u8::MAX, 0);
     }
@@ -44,7 +45,7 @@ pub(in super::super) fn calculate_unnecessary_tiles(shoupai: &Shoupai) -> (u8, u
 
 pub(in super::super) fn calculate_unnecessary_tiles_3_player(
     shoupai: &Shoupai3Player,
-) -> (u8, u64) {
+) -> (u8, TileFlags) {
     if shoupai.num_required_bingpai_mianzi < 4 {
         return (u8::MAX, 0);
     }
