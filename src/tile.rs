@@ -44,3 +44,35 @@ pub type Tile = u8;
 /// ];
 /// ```
 pub type TileCounts = [u8; NUM_TILE_INDEX];
+
+/// A type representing tiles as a bit flag set.
+///
+/// Each bit corresponds to a tile index, following the same mapping as [`Tile`](crate::Tile).
+/// The least significant bit (bit 0) represents 1m, bit 1 represents 2m, ...,
+/// and bit 33 represents Red (7z).
+///
+/// This allows efficient representation of sets of tiles, such as
+/// necessary tiles or unnecessary tiles.
+///
+/// # Examples
+///
+/// ```
+/// # use xiangting::TileFlags;
+/// // 1m456p789s12z
+/// let tiles: TileFlags = 0b0000011_111000000_000111000_000000001;
+/// ```
+pub type TileFlags = u64;
+
+pub trait TileFlagsExt {
+    fn to_array(self) -> [bool; NUM_TILE_INDEX];
+}
+
+impl TileFlagsExt for TileFlags {
+    fn to_array(self) -> [bool; NUM_TILE_INDEX] {
+        let mut arr = [false; NUM_TILE_INDEX];
+        for (i, t) in arr.iter_mut().enumerate() {
+            *t = (self & (1u64 << i)) != 0;
+        }
+        arr
+    }
+}

@@ -69,7 +69,7 @@ pub use replacement_number::{calculate_replacement_number, calculate_replacement
 #[cfg(not(feature = "build-file"))]
 pub use shoupai::{ShoupaiError, XiangtingError};
 #[cfg(not(feature = "build-file"))]
-pub use tile::{Tile, TileCounts};
+pub use tile::{Tile, TileCounts, TileFlags};
 
 #[cfg(feature = "build-map")]
 #[doc(hidden)]
