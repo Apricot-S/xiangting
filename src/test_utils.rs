@@ -4,13 +4,12 @@
 
 use crate::tile::TileCounts;
 
-pub(crate) trait TileCountsExt {
-    /// Converts a Tenhou-style tile string into an array representing
-    /// the counts of 34 types of tiles.
-    fn from_code(hand: &str) -> TileCounts;
+pub(crate) trait FromTileCode<T> {
+    /// Converts a Tenhou-style tile string into `T`.
+    fn from_code(hand: &str) -> T;
 }
 
-impl TileCountsExt for TileCounts {
+impl FromTileCode<TileCounts> for TileCounts {
     fn from_code(hand: &str) -> TileCounts {
         let mut current_color: Option<usize> = None;
         let mut result: TileCounts = [0u8; 34];

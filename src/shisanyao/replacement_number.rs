@@ -24,7 +24,7 @@ pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::TileCountsExt;
+    use crate::test_utils::FromTileCode;
     use crate::tile::TileCounts;
 
     #[test]

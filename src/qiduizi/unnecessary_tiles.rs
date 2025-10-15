@@ -90,7 +90,7 @@ pub(in super::super) fn calculate_unnecessary_tiles_3_player(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::TileCountsExt;
+    use crate::test_utils::FromTileCode;
     use crate::tile::TileCounts;
 
     #[test]

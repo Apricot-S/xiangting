@@ -193,7 +193,7 @@ mod tests {
     use crate::bingpai::BingpaiError;
     use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianziError};
     use crate::shoupai::{ShoupaiError, XiangtingError};
-    use crate::test_utils::TileCountsExt;
+    use crate::test_utils::FromTileCode;
 
     #[test]
     fn calculate_replacement_number_ok_standard_tenpai() {
