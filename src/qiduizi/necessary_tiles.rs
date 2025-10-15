@@ -129,4 +129,13 @@ mod tests {
         assert_eq!(replacement_number, u8::MAX);
         assert_eq!(necessary_tiles, 0b0000000_000000000_000000000_000000000);
     }
+
+    #[test]
+    fn calculate_necessary_tiles_3_player_with_quadruple() {
+        let bingpai = TileCounts::from_code("1199m288p55s1111z");
+        let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3_player(&shoupai);
+        assert_eq!(replacement_number, 3);
+        assert_eq!(necessary_tiles, 0b1111110_111101111_101111111_000000000);
+    }
 }
