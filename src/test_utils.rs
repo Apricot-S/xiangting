@@ -4,66 +4,84 @@
 
 use crate::tile::{TileCounts, TileFlags};
 
-pub(crate) trait FromTileCode<T> {
-    /// Converts a Tenhou-style tile string into `T`.
-    fn from_code(hand: &str) -> T;
+fn parse_tile_indices(hand: &str) -> impl Iterator<Item = usize> + '_ {
+    let mut current_color: Option<usize> = None;
+
+    hand.chars()
+        .rev()
+        .map(move |c| match c {
+            'm' => {
+                current_color = Some(0);
+                return None;
+            }
+            'p' => {
+                current_color = Some(9);
+                return None;
+            }
+            's' => {
+                current_color = Some(18);
+                return None;
+            }
+            'z' => {
+                current_color = Some(27);
+                return None;
+            }
+            _ => {
+                let d = c.to_digit(10).expect("invalid digit") as usize;
+                let base = current_color.expect("digit without type");
+                if !(1..=9).contains(&d) {
+                    panic!("tile number must be 1-9, got {}", d);
+                }
+                if base == 27 && d > 7 {
+                    panic!("honor tile must be 1-7, got {}", d);
+                }
+                return Some(base + d - 1);
+            }
+        })
+        .filter_map(|x| x)
 }
 
-impl FromTileCode<TileCounts> for TileCounts {
-    fn from_code(hand: &str) -> TileCounts {
-        let mut current_color: Option<usize> = None;
-        let mut result: TileCounts = [0u8; 34];
+pub trait FromTileCode: Sized {
+    /// Converts a Tenhou-style tile string into `T`.
+    fn from_code(hand: &str) -> Self;
+    fn empty() -> Self;
+    fn apply(self, idx: usize) -> Self;
+}
 
-        for c in hand.chars().rev() {
-            match c {
-                'm' => current_color = Some(0),
-                'p' => current_color = Some(9),
-                's' => current_color = Some(18),
-                'z' => current_color = Some(27),
-                _ => {
-                    let d = c.to_digit(10).expect("invalid digit") as usize;
-                    let base = current_color.expect("digit without type");
-                    if !(1..=9).contains(&d) {
-                        panic!("tile number must be 1-9, got {}", d);
-                    }
-                    if base == 27 && d > 7 {
-                        panic!("honor tile must be 1-7, got {}", d);
-                    }
-                    result[base + d - 1] += 1;
-                }
-            }
+impl FromTileCode for TileCounts {
+    fn from_code(hand: &str) -> Self {
+        let mut result = Self::empty();
+        for idx in parse_tile_indices(hand) {
+            result = result.apply(idx);
         }
-
         result
+    }
+
+    fn empty() -> Self {
+        [0u8; 34]
+    }
+
+    fn apply(mut self, idx: usize) -> Self {
+        self[idx] += 1;
+        self
     }
 }
 
-impl FromTileCode<TileFlags> for TileFlags {
-    fn from_code(hand: &str) -> TileFlags {
-        let mut current_color: Option<usize> = None;
-        let mut result: TileFlags = 0u64;
-
-        for c in hand.chars().rev() {
-            match c {
-                'm' => current_color = Some(0),
-                'p' => current_color = Some(9),
-                's' => current_color = Some(18),
-                'z' => current_color = Some(27),
-                _ => {
-                    let d = c.to_digit(10).expect("invalid digit") as usize;
-                    let base = current_color.expect("digit without type");
-                    if !(1..=9).contains(&d) {
-                        panic!("tile number must be 1-9, got {}", d);
-                    }
-                    if base == 27 && d > 7 {
-                        panic!("honor tile must be 1-7, got {}", d);
-                    }
-                    result |= 1 << (base + d - 1);
-                }
-            }
+impl FromTileCode for TileFlags {
+    fn from_code(hand: &str) -> Self {
+        let mut result = Self::empty();
+        for idx in parse_tile_indices(hand) {
+            result = result.apply(idx);
         }
-
         result
+    }
+
+    fn empty() -> Self {
+        0u64
+    }
+
+    fn apply(self, idx: usize) -> Self {
+        self | (1 << idx)
     }
 }
 
