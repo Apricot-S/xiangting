@@ -6,6 +6,7 @@ use super::qiduizi;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 use crate::tile::{TileCounts, TileFlags};
+use std::cmp::Ordering;
 
 pub fn calculate_necessary_tiles(
     bingpai: &TileCounts,
@@ -13,18 +14,40 @@ pub fn calculate_necessary_tiles(
 ) -> Result<(u8, TileFlags), XiangtingError> {
     let shoupai = Shoupai::new(bingpai, fulu_mianzi_list)?;
 
-    let (r1, n1) = qiduizi::calculate_necessary_tiles(&shoupai);
+    let (mut replacement_number, mut necessary_tiles) = (u8::MAX, 0u64);
 
-    unimplemented!("")
+    let (r1, n1) = qiduizi::calculate_necessary_tiles(&shoupai);
+    match r1.cmp(&replacement_number) {
+        Ordering::Less => {
+            replacement_number = r1;
+            necessary_tiles = n1;
+        }
+        Ordering::Equal => necessary_tiles |= n1,
+        Ordering::Greater => (),
+    }
+
+    Ok((replacement_number, necessary_tiles))
 }
 
 pub fn calculate_necessary_tiles_3_player(
     bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<(u8, TileFlags), XiangtingError> {
-    let shoupai = Shoupai3Player::new(bingpai, fulu_mianzi_list)?;
+    let shoupai_3p = Shoupai3Player::new(bingpai, fulu_mianzi_list)?;
 
-    let (r1, n1) = qiduizi::calculate_necessary_tiles_3_player(&shoupai);
+    let (mut replacement_number, mut necessary_tiles) = (u8::MAX, 0u64);
 
-    unimplemented!("")
+    let (r1, n1) = qiduizi::calculate_necessary_tiles_3_player(&shoupai_3p);
+    match r1.cmp(&replacement_number) {
+        Ordering::Less => {
+            replacement_number = r1;
+            necessary_tiles = n1;
+        }
+        Ordering::Equal => necessary_tiles |= n1,
+        Ordering::Greater => (),
+    }
+
+    // let shoupai = shoupai_3p.into();
+
+    Ok((replacement_number, necessary_tiles))
 }
