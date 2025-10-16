@@ -61,3 +61,33 @@ pub(super) type UnpackedTiles = [u16; 10];
 // unpacked.0 : Replacement number
 // unpacked.1 : Necessary tiles
 pub(super) type Unpacked = (UnpackedNumbers, UnpackedTiles);
+
+#[inline]
+pub(super) fn unpack(pack: &MapValue) -> Unpacked {
+    (
+        [
+            0u8,
+            (pack[0] & 0x0F) as u8,
+            ((pack[0] >> 4) & 0x0F) as u8,
+            ((pack[0] >> (4 * 2)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 3)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 4)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 5)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 6)) & 0x0F) as u8,
+            ((pack[0] >> (4 * 7)) & 0x0F) as u8,
+            ((pack[3] >> (9 * 3)) & 0x0F) as u8,
+        ],
+        [
+            0u16,
+            (pack[1] & 0x01FF) as u16,
+            ((pack[1] >> 9) & 0x01FF) as u16,
+            ((pack[1] >> (9 * 2)) & 0x01FF) as u16,
+            (pack[2] & 0x01FF) as u16,
+            ((pack[2] >> 9) & 0x01FF) as u16,
+            ((pack[2] >> (9 * 2)) & 0x01FF) as u16,
+            (pack[3] & 0x01FF) as u16,
+            ((pack[3] >> 9) & 0x01FF) as u16,
+            ((pack[3] >> (9 * 2)) & 0x01FF) as u16,
+        ],
+    )
+}

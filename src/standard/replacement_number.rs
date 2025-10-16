@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::{MapValue, Unpacked, UnpackedNumbers};
+use super::core::{Unpacked, UnpackedNumbers, unpack};
 use super::hash::{hash_19m, hash_shupai, hash_zipai};
 use super::shupai_map::SHUPAI_MAP;
 use super::wanzi_19_map::WANZI_19_MAP;
@@ -10,36 +10,6 @@ use super::zipai_map::ZIPAI_MAP;
 use crate::shoupai::{Shoupai, Shoupai3Player};
 use crate::tile::TileCounts;
 use std::cmp::min;
-
-#[inline]
-fn unpack(pack: &MapValue) -> Unpacked {
-    (
-        [
-            0u8,
-            (pack[0] & 0x0F) as u8,
-            ((pack[0] >> 4) & 0x0F) as u8,
-            ((pack[0] >> (4 * 2)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 3)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 4)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 5)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 6)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 7)) & 0x0F) as u8,
-            ((pack[3] >> (9 * 3)) & 0x0F) as u8,
-        ],
-        [
-            0u16,
-            (pack[1] & 0x01FF) as u16,
-            ((pack[1] >> 9) & 0x01FF) as u16,
-            ((pack[1] >> (9 * 2)) & 0x01FF) as u16,
-            (pack[2] & 0x01FF) as u16,
-            ((pack[2] >> 9) & 0x01FF) as u16,
-            ((pack[2] >> (9 * 2)) & 0x01FF) as u16,
-            (pack[3] & 0x01FF) as u16,
-            ((pack[3] >> 9) & 0x01FF) as u16,
-            ((pack[3] >> (9 * 2)) & 0x01FF) as u16,
-        ],
-    )
-}
 
 #[inline]
 fn split_flags(all_color: u64) -> (u16, u16, u16, u16) {
