@@ -3,6 +3,7 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use super::qiduizi;
+use super::shisanyao;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
 use crate::tile::{TileCounts, TileFlags};
@@ -23,6 +24,16 @@ pub fn calculate_necessary_tiles(
             necessary_tiles = n1;
         }
         Ordering::Equal => necessary_tiles |= n1,
+        Ordering::Greater => (),
+    }
+
+    let (r2, n2) = shisanyao::calculate_necessary_tiles(&shoupai);
+    match r2.cmp(&replacement_number) {
+        Ordering::Less => {
+            replacement_number = r2;
+            necessary_tiles = n2;
+        }
+        Ordering::Equal => necessary_tiles |= n2,
         Ordering::Greater => (),
     }
 
@@ -47,7 +58,17 @@ pub fn calculate_necessary_tiles_3_player(
         Ordering::Greater => (),
     }
 
-    // let shoupai = shoupai_3p.into();
+    let shoupai = shoupai_3p.into();
+
+    let (r2, n2) = shisanyao::calculate_necessary_tiles(&shoupai);
+    match r2.cmp(&replacement_number) {
+        Ordering::Less => {
+            replacement_number = r2;
+            necessary_tiles = n2;
+        }
+        Ordering::Equal => necessary_tiles |= n2,
+        Ordering::Greater => (),
+    }
 
     Ok((replacement_number, necessary_tiles))
 }
