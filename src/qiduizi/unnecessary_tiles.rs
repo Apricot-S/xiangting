@@ -99,7 +99,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 7);
-        assert_eq!(unnecessary_tiles, 0b1111111_100000001_100000001_100000001);
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("19m19p19s1234567z"));
     }
 
     #[test]
@@ -108,7 +108,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(unnecessary_tiles, 0b0000001_000000000_000000000_000000000);
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1z"));
     }
 
     #[test]
@@ -117,7 +117,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(unnecessary_tiles, 0b0000001_000000000_000000000_000000000);
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1z"));
     }
 
     #[test]
@@ -126,7 +126,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(unnecessary_tiles, 0b0000001_000010000_000000000_000000000);
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("5s1z"));
     }
 
     #[test]
@@ -135,7 +135,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 1);
-        assert_eq!(unnecessary_tiles, 0b0000000_000000000_000000000_000000000);
+        assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
     }
 
     #[test]
@@ -144,7 +144,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 0);
-        assert_eq!(unnecessary_tiles, 0b0000000_000000000_000000000_000000000);
+        assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
     }
 
     #[test]
@@ -153,7 +153,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, u8::MAX);
-        assert_eq!(unnecessary_tiles, 0b0000000_000000000_000000000_000000000);
+        assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
     }
 
     #[test]
@@ -163,6 +163,6 @@ mod tests {
         let (replacement_number, unnecessary_tiles) =
             calculate_unnecessary_tiles_3_player(&shoupai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(unnecessary_tiles, 0b0000001_000000000_000000000_000000000);
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1z"));
     }
 }
