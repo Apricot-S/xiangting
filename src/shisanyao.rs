@@ -5,6 +5,8 @@
 mod common;
 mod necessary_tiles;
 mod replacement_number;
+mod unnecessary_tiles;
 
 pub(super) use necessary_tiles::calculate_necessary_tiles;
 pub(super) use replacement_number::calculate_replacement_number;
+pub(super) use unnecessary_tiles::calculate_unnecessary_tiles;
