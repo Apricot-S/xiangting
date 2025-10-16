@@ -11,9 +11,6 @@ use crate::shoupai::{Shoupai, Shoupai3Player};
 use crate::tile::TileCounts;
 use std::cmp::min;
 
-// unpacked.0 : Replacement number
-// unpacked.1 : Necessary tiles
-//
 // Index:
 // [0] : 0 pair, 0 melds
 // [1] : 0 pair, 1 melds
@@ -25,8 +22,12 @@ use std::cmp::min;
 // [7] : 1 pair, 2 melds
 // [8] : 1 pair, 3 melds
 // [9] : 1 pair, 4 melds
-type Unpacked = ([u8; 10], [u16; 10]);
 type UnpackedNumbers = [u8; 10];
+type UnpackedTiles = [u16; 10];
+
+// unpacked.0 : Replacement number
+// unpacked.1 : Necessary tiles
+type Unpacked = (UnpackedNumbers, UnpackedTiles);
 
 #[inline]
 fn unpack(pack: &MapValue) -> Unpacked {
