@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+use super::common::YAOJIUPAI_INDICES;
 use crate::shoupai::Shoupai;
 use crate::tile::TileFlags;
 
@@ -10,7 +11,6 @@ pub(in super::super) fn calculate_necessary_tiles(shoupai: &Shoupai) -> (u8, Til
         return (u8::MAX, 0);
     }
 
-    const YAOJIUPAI_INDICES: [usize; 13] = [0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33];
     let (num_kinds, has_jiangpai, waits, wait_candidates) = YAOJIUPAI_INDICES
         .iter()
         .map(|&i| &shoupai.bingpai[i])
