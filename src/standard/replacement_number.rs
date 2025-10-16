@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::MapValue;
+use super::core::{MapValue, Unpacked, UnpackedNumbers};
 use super::hash::{hash_19m, hash_shupai, hash_zipai};
 use super::shupai_map::SHUPAI_MAP;
 use super::wanzi_19_map::WANZI_19_MAP;
@@ -10,24 +10,6 @@ use super::zipai_map::ZIPAI_MAP;
 use crate::shoupai::{Shoupai, Shoupai3Player};
 use crate::tile::TileCounts;
 use std::cmp::min;
-
-// Index:
-// [0] : 0 pair, 0 melds
-// [1] : 0 pair, 1 melds
-// [2] : 0 pair, 2 melds
-// [3] : 0 pair, 3 melds
-// [4] : 0 pair, 4 melds
-// [5] : 1 pair, 0 melds
-// [6] : 1 pair, 1 melds
-// [7] : 1 pair, 2 melds
-// [8] : 1 pair, 3 melds
-// [9] : 1 pair, 4 melds
-type UnpackedNumbers = [u8; 10];
-type UnpackedTiles = [u16; 10];
-
-// unpacked.0 : Replacement number
-// unpacked.1 : Necessary tiles
-type Unpacked = (UnpackedNumbers, UnpackedTiles);
 
 #[inline]
 fn unpack(pack: &MapValue) -> Unpacked {
