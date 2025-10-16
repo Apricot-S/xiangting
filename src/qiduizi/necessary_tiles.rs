@@ -68,7 +68,7 @@ pub(in super::super) fn calculate_necessary_tiles_3_player(
 mod tests {
     use super::*;
     use crate::test_utils::FromTileCode;
-    use crate::tile::TileCounts;
+    use crate::tile::{TileCounts, TileFlags};
 
     #[test]
     fn calculate_necessary_tiles_without_pair() {
@@ -76,7 +76,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
         assert_eq!(replacement_number, 7);
-        assert_eq!(necessary_tiles, 0b1111111_100000001_100000001_100000001);
+        assert_eq!(necessary_tiles, TileFlags::from_code("19m19p19s1234567z"));
     }
 
     #[test]
@@ -85,7 +85,10 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(necessary_tiles, 0b1111110_111101111_101111111_101111110);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("2345679m12345679p12346789s234567z")
+        );
     }
 
     #[test]
@@ -94,7 +97,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(necessary_tiles, 0b0000000_000000000_000000110_000000000);
+        assert_eq!(necessary_tiles, TileFlags::from_code("23p"));
     }
 
     #[test]
@@ -103,7 +106,10 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(necessary_tiles, 0b1111110_111101111_101111111_101111110);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("2345679m12345679p12346789s234567z")
+        );
     }
 
     #[test]
@@ -112,7 +118,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
         assert_eq!(replacement_number, 1);
-        assert_eq!(necessary_tiles, 0b0000000_000000000_000000010_000000000);
+        assert_eq!(necessary_tiles, TileFlags::from_code("2p"));
     }
 
     #[test]
@@ -121,7 +127,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
         assert_eq!(replacement_number, 0);
-        assert_eq!(necessary_tiles, 0b0000000_000000000_000000000_000000000);
+        assert_eq!(necessary_tiles, TileFlags::from_code(""));
     }
 
     #[test]
@@ -130,7 +136,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
         assert_eq!(replacement_number, u8::MAX);
-        assert_eq!(necessary_tiles, 0b0000000_000000000_000000000_000000000);
+        assert_eq!(necessary_tiles, TileFlags::from_code(""));
     }
 
     #[test]
@@ -139,6 +145,9 @@ mod tests {
         let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3_player(&shoupai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(necessary_tiles, 0b1111110_111101111_101111111_000000000);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("12345679p12346789s234567z")
+        );
     }
 }
