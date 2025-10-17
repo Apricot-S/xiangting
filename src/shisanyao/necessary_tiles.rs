@@ -7,13 +7,13 @@ use crate::shoupai::Shoupai;
 use crate::tile::TileFlags;
 
 pub(in super::super) fn calculate_necessary_tiles(shoupai: &Shoupai) -> (u8, TileFlags) {
-    if shoupai.num_required_bingpai_mianzi < 4 {
+    if shoupai.num_required_bingpai_mianzi() < 4 {
         return (u8::MAX, 0);
     }
 
     let (num_kinds, has_jiangpai, waits, wait_candidates) = YAOJIUPAI_INDICES
         .iter()
-        .map(|&i| (i, &shoupai.bingpai[i]))
+        .map(|&i| (i, &shoupai.bingpai()[i]))
         .fold(
             (0, false, 0u64, 0u64),
             |(num_kinds, has_jiangpai, waits, wait_candidates), (i, &count)| match count {

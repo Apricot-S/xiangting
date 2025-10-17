@@ -5,12 +5,12 @@
 use crate::shoupai::Shoupai;
 
 pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
-    if shoupai.num_required_bingpai_mianzi < 4 {
+    if shoupai.num_required_bingpai_mianzi() < 4 {
         return u8::MAX;
     }
 
     let (num_kinds, num_duizi) = shoupai
-        .bingpai
+        .bingpai()
         .iter()
         .filter(|&&count| count > 0)
         .fold((0, 0), |(num_kinds, num_duizi), &count| {

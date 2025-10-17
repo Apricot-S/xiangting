@@ -73,20 +73,20 @@ fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
 }
 
 pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
-    let h0 = hash_shupai(&shoupai.bingpai[0..9]);
-    let h1 = hash_shupai(&shoupai.bingpai[9..18]);
-    let h2 = hash_shupai(&shoupai.bingpai[18..27]);
-    let h3 = hash_zipai(&shoupai.bingpai[27..34]);
+    let h0 = hash_shupai(&shoupai.bingpai()[0..9]);
+    let h1 = hash_shupai(&shoupai.bingpai()[9..18]);
+    let h2 = hash_shupai(&shoupai.bingpai()[18..27]);
+    let h3 = hash_zipai(&shoupai.bingpai()[27..34]);
 
     let unpacked0 = unpack(&SHUPAI_MAP[h0]);
     let unpacked1 = unpack(&SHUPAI_MAP[h1]);
     let unpacked2 = unpack(&SHUPAI_MAP[h2]);
     let unpacked3 = unpack(&ZIPAI_MAP[h3]);
 
-    let (mut entry0, entry1, entry2, entry3) = match shoupai.tile_counts {
+    let (mut entry0, entry1, entry2, entry3) = match shoupai.tile_counts() {
         None => (unpacked0.0, unpacked1.0, unpacked2.0, unpacked3.0),
         Some(s) => {
-            let four_tiles = count_4_tiles_in_shoupai(&s);
+            let four_tiles = count_4_tiles_in_shoupai(s);
             let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
 
             (
@@ -102,24 +102,24 @@ pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
     update_dp(&mut entry0, &entry2);
     update_dp(&mut entry0, &entry3);
 
-    entry0[5 + shoupai.num_required_bingpai_mianzi as usize]
+    entry0[5 + shoupai.num_required_bingpai_mianzi() as usize]
 }
 
 pub(in super::super) fn calculate_replacement_number_3_player(shoupai: &Shoupai3Player) -> u8 {
-    let h0 = hash_19m(&shoupai.bingpai[0..9]);
-    let h1 = hash_shupai(&shoupai.bingpai[9..18]);
-    let h2 = hash_shupai(&shoupai.bingpai[18..27]);
-    let h3 = hash_zipai(&shoupai.bingpai[27..34]);
+    let h0 = hash_19m(&shoupai.bingpai()[0..9]);
+    let h1 = hash_shupai(&shoupai.bingpai()[9..18]);
+    let h2 = hash_shupai(&shoupai.bingpai()[18..27]);
+    let h3 = hash_zipai(&shoupai.bingpai()[27..34]);
 
     let unpacked0 = unpack(&WANZI_19_MAP[h0]);
     let unpacked1 = unpack(&SHUPAI_MAP[h1]);
     let unpacked2 = unpack(&SHUPAI_MAP[h2]);
     let unpacked3 = unpack(&ZIPAI_MAP[h3]);
 
-    let (mut entry0, entry1, entry2, entry3) = match shoupai.tile_counts {
+    let (mut entry0, entry1, entry2, entry3) = match shoupai.tile_counts() {
         None => (unpacked0.0, unpacked1.0, unpacked2.0, unpacked3.0),
         Some(s) => {
-            let four_tiles = count_4_tiles_in_shoupai(&s);
+            let four_tiles = count_4_tiles_in_shoupai(s);
             let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
 
             (
@@ -135,7 +135,7 @@ pub(in super::super) fn calculate_replacement_number_3_player(shoupai: &Shoupai3
     update_dp(&mut entry0, &entry2);
     update_dp(&mut entry0, &entry3);
 
-    entry0[5 + shoupai.num_required_bingpai_mianzi as usize]
+    entry0[5 + shoupai.num_required_bingpai_mianzi() as usize]
 }
 
 #[cfg(test)]
