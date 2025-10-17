@@ -6,12 +6,12 @@ use crate::shoupai::{Shoupai, Shoupai3Player};
 use crate::tile::TileFlags;
 
 pub(in super::super) fn calculate_unnecessary_tiles(shoupai: &Shoupai) -> (u8, TileFlags) {
-    if shoupai.num_required_bingpai_mianzi < 4 {
+    if shoupai.num_required_bingpai_mianzi() < 4 {
         return (u8::MAX, 0);
     }
 
     let (num_duizi, num_kinds, discards, discard_candidates) =
-        shoupai.bingpai.iter().enumerate().fold(
+        shoupai.bingpai().iter().enumerate().fold(
             (0, 0, 0u64, 0u64),
             |(num_duizi, num_kinds, discards, discard_candidates), (i, &count)| match count {
                 0 => (num_duizi, num_kinds, discards, discard_candidates),
@@ -46,12 +46,12 @@ pub(in super::super) fn calculate_unnecessary_tiles(shoupai: &Shoupai) -> (u8, T
 pub(in super::super) fn calculate_unnecessary_tiles_3_player(
     shoupai: &Shoupai3Player,
 ) -> (u8, TileFlags) {
-    if shoupai.num_required_bingpai_mianzi < 4 {
+    if shoupai.num_required_bingpai_mianzi() < 4 {
         return (u8::MAX, 0);
     }
 
     let (num_duizi, num_kinds, discards, discard_candidates) = shoupai
-        .bingpai
+        .bingpai()
         .iter()
         .enumerate()
         .filter(|(i, _)| !matches!(i, 1..=7))

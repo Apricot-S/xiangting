@@ -7,13 +7,13 @@ use crate::shoupai::Shoupai;
 use crate::tile::TileFlags;
 
 pub(in super::super) fn calculate_unnecessary_tiles(shoupai: &Shoupai) -> (u8, TileFlags) {
-    if shoupai.num_required_bingpai_mianzi < 4 {
+    if shoupai.num_required_bingpai_mianzi() < 4 {
         return (u8::MAX, 0);
     }
 
     let (num_kinds, num_jiangpai, discards, discard_candidates) = YAOJIUPAI_INDICES
         .iter()
-        .map(|&i| (i, &shoupai.bingpai[i]))
+        .map(|&i| (i, &shoupai.bingpai()[i]))
         .fold(
             (0, 0, 0u64, 0u64),
             |(num_kinds, num_jiangpai, discards, discard_candidates), (i, &count)| match count {
@@ -40,7 +40,7 @@ pub(in super::super) fn calculate_unnecessary_tiles(shoupai: &Shoupai) -> (u8, T
     ];
     let discards = DUANYAOJIUPAI_INDICES
         .iter()
-        .map(|&i| (i, &shoupai.bingpai[i]))
+        .map(|&i| (i, &shoupai.bingpai()[i]))
         .filter(|(_, count)| **count > 0)
         .fold(discards, |d, (i, _)| d | (1 << i));
 

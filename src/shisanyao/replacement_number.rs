@@ -6,13 +6,13 @@ use super::common::YAOJIUPAI_INDICES;
 use crate::shoupai::Shoupai;
 
 pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
-    if shoupai.num_required_bingpai_mianzi < 4 {
+    if shoupai.num_required_bingpai_mianzi() < 4 {
         return u8::MAX;
     }
 
     let (num_kinds, has_jiangpai) = YAOJIUPAI_INDICES
         .iter()
-        .map(|&i| &shoupai.bingpai[i])
+        .map(|&i| &shoupai.bingpai()[i])
         .filter(|&&count| count > 0)
         .fold((0, false), |(num_kinds, has_jiangpai), &count| {
             (num_kinds + 1, has_jiangpai || count >= 2)

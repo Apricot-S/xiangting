@@ -81,9 +81,9 @@ impl FuluMianziListExt for FuluMianziList {
 }
 
 pub(crate) struct Shoupai<'a> {
-    pub(crate) bingpai: &'a TileCounts,
-    pub(crate) tile_counts: Option<TileCounts>,
-    pub(crate) num_required_bingpai_mianzi: u8,
+    bingpai: &'a TileCounts,
+    tile_counts: Option<TileCounts>,
+    num_required_bingpai_mianzi: u8,
 }
 
 impl<'a> Shoupai<'a> {
@@ -111,12 +111,30 @@ impl<'a> Shoupai<'a> {
             num_required_bingpai_mianzi,
         })
     }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn bingpai(&self) -> &'a TileCounts {
+        self.bingpai
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn tile_counts(&self) -> Option<&TileCounts> {
+        self.tile_counts.as_ref()
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn num_required_bingpai_mianzi(&self) -> u8 {
+        self.num_required_bingpai_mianzi
+    }
 }
 
 pub(crate) struct Shoupai3Player<'a> {
-    pub(crate) bingpai: &'a TileCounts,
-    pub(crate) tile_counts: Option<TileCounts>,
-    pub(crate) num_required_bingpai_mianzi: u8,
+    bingpai: &'a TileCounts,
+    tile_counts: Option<TileCounts>,
+    num_required_bingpai_mianzi: u8,
 }
 
 impl<'a> Shoupai3Player<'a> {
@@ -143,6 +161,24 @@ impl<'a> Shoupai3Player<'a> {
             tile_counts,
             num_required_bingpai_mianzi,
         })
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn bingpai(&self) -> &'a TileCounts {
+        self.bingpai
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn tile_counts(&self) -> Option<&TileCounts> {
+        self.tile_counts.as_ref()
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn num_required_bingpai_mianzi(&self) -> u8 {
+        self.num_required_bingpai_mianzi
     }
 }
 
