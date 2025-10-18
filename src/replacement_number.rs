@@ -5,8 +5,9 @@
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
+use crate::error::XiangtingError;
 use crate::fulu_mianzi::FuluMianzi;
-use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
+use crate::shoupai::{Shoupai, Shoupai3Player};
 use crate::tile::TileCounts;
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
@@ -192,7 +193,7 @@ mod tests {
     use super::*;
     use crate::bingpai::BingpaiError;
     use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianziError};
-    use crate::shoupai::{ShoupaiError, XiangtingError};
+    use crate::shoupai::ShoupaiError;
     use crate::test_utils::FromTileCode;
 
     #[test]
@@ -222,8 +223,8 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidBingpai(
-                BingpaiError::InvalidTileCount(0)
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidBingpai(BingpaiError::InvalidTileCount(0))
             ))
         ));
     }
@@ -248,8 +249,8 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidBingpai(
-                BingpaiError::InvalidTileCount(3)
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidBingpai(BingpaiError::InvalidTileCount(3))
             ))
         ));
     }
@@ -260,9 +261,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidBingpai(BingpaiError::TooManyTiles(
-                15
-            )))
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidBingpai(BingpaiError::TooManyTiles(15))
+            ))
         ));
     }
 
@@ -272,8 +273,8 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidBingpai(
-                BingpaiError::TooManyCopies { tile: 0, count: 5 }
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidBingpai(BingpaiError::TooManyCopies { tile: 0, count: 5 })
             ))
         ));
     }
@@ -285,8 +286,8 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidFuluMianzi(
-                FuluMianziError::IndexOutOfRange(34)
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidFuluMianzi(FuluMianziError::IndexOutOfRange(34))
             ))
         ));
     }
@@ -298,8 +299,8 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidFuluMianzi(
-                FuluMianziError::ShunziWithZipai(27)
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidFuluMianzi(FuluMianziError::ShunziWithZipai(27))
             ))
         ));
     }
@@ -311,8 +312,11 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidFuluMianzi(
-                FuluMianziError::InvalidShunziCombination(0, ClaimedTilePosition::Middle)
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidFuluMianzi(FuluMianziError::InvalidShunziCombination(
+                    0,
+                    ClaimedTilePosition::Middle
+                ))
             ))
         ));
     }
@@ -370,8 +374,8 @@ mod tests {
         let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidBingpai(
-                BingpaiError::InvalidTileFor3Player(1)
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidBingpai(BingpaiError::InvalidTileFor3Player(1))
             ))
         ));
     }
@@ -384,10 +388,9 @@ mod tests {
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidFuluMianzi(
-                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
-                    9,
-                    ClaimedTilePosition::Low
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidFuluMianzi(FuluMianziError::InvalidFuluMianziFor3Player(
+                    FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)
                 ))
             ))
         ));
@@ -401,8 +404,10 @@ mod tests {
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidFuluMianzi(
-                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
+            Err(XiangtingError::InvalidShoupai(
+                ShoupaiError::InvalidFuluMianzi(FuluMianziError::InvalidFuluMianziFor3Player(
+                    FuluMianzi::Kezi(1)
+                ))
             ))
         ));
     }

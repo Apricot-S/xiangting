@@ -4,8 +4,9 @@
 
 use super::qiduizi;
 use super::shisanyao;
+use crate::error::XiangtingError;
 use crate::fulu_mianzi::FuluMianzi;
-use crate::shoupai::{Shoupai, Shoupai3Player, XiangtingError};
+use crate::shoupai::{Shoupai, Shoupai3Player};
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
