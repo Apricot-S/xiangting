@@ -37,6 +37,8 @@ mod bingpai;
 #[cfg(not(feature = "build-file"))]
 mod constants;
 #[cfg(not(feature = "build-file"))]
+mod error;
+#[cfg(not(feature = "build-file"))]
 mod fulu_mianzi;
 #[cfg(not(feature = "build-file"))]
 mod necessary_tiles;
@@ -61,13 +63,15 @@ mod test_utils;
 #[cfg(not(feature = "build-file"))]
 pub use bingpai::BingpaiError;
 #[cfg(not(feature = "build-file"))]
+pub use error::XiangtingError;
+#[cfg(not(feature = "build-file"))]
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 #[cfg(not(feature = "build-file"))]
 pub use necessary_tiles::{calculate_necessary_tiles, calculate_necessary_tiles_3_player};
 #[cfg(not(feature = "build-file"))]
 pub use replacement_number::{calculate_replacement_number, calculate_replacement_number_3_player};
 #[cfg(not(feature = "build-file"))]
-pub use shoupai::{ShoupaiError, XiangtingError};
+pub use shoupai::ShoupaiError;
 #[cfg(not(feature = "build-file"))]
 pub use tile::{Tile, TileCounts, TileFlags, TileFlagsExt};
 #[cfg(not(feature = "build-file"))]

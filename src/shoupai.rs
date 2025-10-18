@@ -11,6 +11,12 @@ use thiserror::Error;
 /// Errors that occur when an invalid hand (手牌) is provided.
 #[derive(Debug, Error)]
 pub enum ShoupaiError {
+    /// The hand contains an invalid pure hand.
+    #[error("hand contains an invalid pure hand: {0}")]
+    InvalidBingpai(#[from] BingpaiError),
+    /// The hand contains an invalid meld.
+    #[error("hand contains an invalid meld: {0}")]
+    InvalidFuluMianzi(#[from] FuluMianziError),
     /// The number of melds in the hand exceeds the allowed maximum.
     #[error("the number of melds must be at most {max}, but was {count}")]
     TooManyFuluMianzi {
@@ -27,20 +33,6 @@ pub enum ShoupaiError {
         /// The actual number of copies found in the hand.
         count: u8,
     },
-}
-
-/// Errors that can occur when calculating the deficiency number for a hand.
-#[derive(Debug, Error)]
-pub enum XiangtingError {
-    /// The hand contains an invalid pure hand.
-    #[error("hand contains an invalid pure hand: {0}")]
-    InvalidBingpai(#[from] BingpaiError),
-    /// The hand contains an invalid meld.
-    #[error("hand contains an invalid meld: {0}")]
-    InvalidFuluMianzi(#[from] FuluMianziError),
-    /// The hand contains an invalid combination of pure hand and melds.
-    #[error("hand contains an invalid combination of pure hand and melds: {0}")]
-    InvalidShoupai(#[from] ShoupaiError),
 }
 
 type FuluMianziList = [FuluMianzi];
@@ -90,7 +82,7 @@ impl<'a> Shoupai<'a> {
     pub(crate) fn new(
         bingpai: &'a TileCounts,
         fulu_mianzi_list: Option<&[FuluMianzi]>,
-    ) -> Result<Self, XiangtingError> {
+    ) -> Result<Self, ShoupaiError> {
         let num_bingpai = bingpai.count()?;
         let num_required_bingpai_mianzi = num_bingpai / 3;
 
@@ -141,7 +133,7 @@ impl<'a> Shoupai3Player<'a> {
     pub(crate) fn new(
         bingpai: &'a TileCounts,
         fulu_mianzi_list: Option<&[FuluMianzi]>,
-    ) -> Result<Self, XiangtingError> {
+    ) -> Result<Self, ShoupaiError> {
         let num_bingpai = bingpai.count_3_player()?;
         let num_required_bingpai_mianzi = num_bingpai / 3;
 
