@@ -20,37 +20,6 @@ use xiangting::standard::zipai_table::ZIPAI_SIZE;
 
 type Map = Vec<MapValue>;
 
-fn pack_replacement_number(num_pair: u8, num_meld: u8, replacement_number: u8, pack: &mut u32) {
-    const OFFSETS: [[u32; 5]; 2] = [
-        // num_pair = 0 (u_n)
-        [0, 0, 2, 5, 9], // u_0 is omitted (always 0)
-        // num_pair = 1 (t_n)
-        [13, 15, 18, 22, 26],
-    ];
-    const WIDTHS: [[u32; 5]; 2] = [
-        [0, 2, 3, 4, 4], // u_0 = 0bit
-        [2, 3, 4, 4, 4],
-    ];
-
-    let shift = OFFSETS[num_pair as usize][num_meld as usize];
-    let width = WIDTHS[num_pair as usize][num_meld as usize];
-    if width == 0 {
-        return; // u_0 is not stored
-    }
-    let max_value = (1u8 << width) - 1;
-
-    debug_assert!(
-        replacement_number <= max_value,
-        "replacement_number {} out of range (max {}) for (pair={}, meld={})",
-        replacement_number,
-        max_value,
-        num_pair,
-        num_meld
-    );
-
-    *pack |= (replacement_number as u32) << shift;
-}
-
 fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
     debug_assert!([9, 7, 2].contains(&N));
     const MAX_REPLACEMENT_NUMBER: u8 = 14;
@@ -112,6 +81,19 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
             };
 
             match (num_pair, num_meld) {
+                (0, 1) => pack[0] |= replacement_number as u32,
+                (0, 2) => pack[0] |= (replacement_number as u32) << 2,
+                (0, 3) => pack[0] |= (replacement_number as u32) << 5,
+                (0, 4) => pack[0] |= (replacement_number as u32) << 9,
+                (1, 0) => pack[0] |= (replacement_number as u32) << 13,
+                (1, 1) => pack[0] |= (replacement_number as u32) << 15,
+                (1, 2) => pack[0] |= (replacement_number as u32) << 18,
+                (1, 3) => pack[0] |= (replacement_number as u32) << 22,
+                (1, 4) => pack[0] |= (replacement_number as u32) << 26,
+                _ => unreachable!(),
+            }
+
+            match (num_pair, num_meld) {
                 (0, 1) => pack[1] |= necessary_tiles as u32,
                 (0, 2) => pack[1] |= (necessary_tiles as u32) << 9,
                 (0, 3) => pack[1] |= (necessary_tiles as u32) << (9 * 2),
@@ -123,8 +105,6 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
                 (1, 4) => pack[3] |= (necessary_tiles as u32) << (9 * 2),
                 _ => unreachable!(),
             }
-
-            pack_replacement_number(num_pair, num_meld, replacement_number, &mut pack[0]);
         }
     }
     pack
