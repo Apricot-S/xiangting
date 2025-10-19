@@ -286,7 +286,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+            Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
                 FuluMianziError::IndexOutOfRange(34)
             )))
         ));
@@ -299,7 +299,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+            Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
                 FuluMianziError::ShunziWithZipai(27)
             )))
         ));
@@ -312,7 +312,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+            Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
                 FuluMianziError::InvalidShunziCombination(0, ClaimedTilePosition::Middle)
             )))
         ));
@@ -387,7 +387,7 @@ mod tests {
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+            Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
                 FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
                     9,
                     ClaimedTilePosition::Low
@@ -404,7 +404,7 @@ mod tests {
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+            Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
                 FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
             )))
         ));

@@ -16,7 +16,7 @@ pub enum ShoupaiError {
     Bingpai(#[from] BingpaiError),
     /// The hand contains an invalid meld.
     #[error("hand contains an invalid meld: {0}")]
-    InvalidFuluMianzi(#[from] FuluMianziError),
+    FuluMianzi(#[from] FuluMianziError),
     /// The number of melds in the hand exceeds the allowed maximum.
     #[error("the number of melds must be at most {max}, but was {count}")]
     TooManyFuluMianzi {
