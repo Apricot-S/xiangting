@@ -10,5 +10,5 @@ use thiserror::Error;
 pub enum XiangtingError {
     /// The hand is invalid.
     #[error("hand is invalid: {0}")]
-    InvalidShoupai(#[from] ShoupaiError),
+    Shoupai(#[from] ShoupaiError),
 }

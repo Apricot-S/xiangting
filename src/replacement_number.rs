@@ -223,9 +223,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidBingpai(BingpaiError::InvalidTileCount(0))
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+                BingpaiError::InvalidTileCount(0)
+            )))
         ));
     }
 
@@ -249,9 +249,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidBingpai(BingpaiError::InvalidTileCount(3))
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+                BingpaiError::InvalidTileCount(3)
+            )))
         ));
     }
 
@@ -261,9 +261,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidBingpai(BingpaiError::TooManyTiles(15))
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+                BingpaiError::TooManyTiles(15)
+            )))
         ));
     }
 
@@ -273,9 +273,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidBingpai(BingpaiError::TooManyCopies { tile: 0, count: 5 })
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+                BingpaiError::TooManyCopies { tile: 0, count: 5 }
+            )))
         ));
     }
 
@@ -286,9 +286,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidFuluMianzi(FuluMianziError::IndexOutOfRange(34))
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+                FuluMianziError::IndexOutOfRange(34)
+            )))
         ));
     }
 
@@ -299,9 +299,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidFuluMianzi(FuluMianziError::ShunziWithZipai(27))
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+                FuluMianziError::ShunziWithZipai(27)
+            )))
         ));
     }
 
@@ -312,12 +312,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidFuluMianzi(FuluMianziError::InvalidShunziCombination(
-                    0,
-                    ClaimedTilePosition::Middle
-                ))
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+                FuluMianziError::InvalidShunziCombination(0, ClaimedTilePosition::Middle)
+            )))
         ));
     }
 
@@ -328,9 +325,10 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::TooManyFuluMianzi { max: 0, count: 1 }
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::TooManyFuluMianzi {
+                max: 0,
+                count: 1
+            }))
         ));
     }
 
@@ -341,9 +339,10 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::TooManyCopies { tile: 0, count: 5 }
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::TooManyCopies {
+                tile: 0,
+                count: 5
+            }))
         ));
     }
 
@@ -374,9 +373,9 @@ mod tests {
         let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidBingpai(BingpaiError::InvalidTileFor3Player(1))
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+                BingpaiError::InvalidTileFor3Player(1)
+            )))
         ));
     }
 
@@ -388,11 +387,12 @@ mod tests {
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidFuluMianzi(FuluMianziError::InvalidFuluMianziFor3Player(
-                    FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
+                    9,
+                    ClaimedTilePosition::Low
                 ))
-            ))
+            )))
         ));
     }
 
@@ -404,11 +404,9 @@ mod tests {
             calculate_replacement_number_3_player(&bingpai, Some(&fulu_mianzi_list));
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::InvalidShoupai(
-                ShoupaiError::InvalidFuluMianzi(FuluMianziError::InvalidFuluMianziFor3Player(
-                    FuluMianzi::Kezi(1)
-                ))
-            ))
+            Err(XiangtingError::Shoupai(ShoupaiError::InvalidFuluMianzi(
+                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
+            )))
         ));
     }
 }
