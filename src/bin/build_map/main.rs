@@ -20,7 +20,38 @@ use xiangting::standard::zipai_table::ZIPAI_SIZE;
 
 type Map = Vec<MapValue>;
 
-fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
+fn pack_replacement_number(num_pair: u8, num_meld: u8, replacement_number: u8, pack: &mut u32) {
+    const OFFSETS: [[u32; 5]; 2] = [
+        // num_pair = 0 (u_n)
+        [0, 0, 2, 5, 9], // u_0 is omitted (always 0)
+        // num_pair = 1 (t_n)
+        [13, 15, 18, 22, 26],
+    ];
+    const WIDTHS: [[u32; 5]; 2] = [
+        [0, 2, 3, 4, 4], // u_0 = 0bit
+        [2, 3, 4, 4, 4],
+    ];
+
+    let shift = OFFSETS[num_pair as usize][num_meld as usize];
+    let width = WIDTHS[num_pair as usize][num_meld as usize];
+    if width == 0 {
+        return; // u_0 is not stored
+    }
+    let max_value = (1u8 << width) - 1;
+
+    debug_assert!(
+        replacement_number <= max_value,
+        "replacement_number {} out of range (max {}) for (pair={}, meld={})",
+        replacement_number,
+        max_value,
+        num_pair,
+        num_meld
+    );
+
+    *pack |= (replacement_number as u32) << shift;
+}
+
+fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
     debug_assert!([9, 7, 2].contains(&N));
     const MAX_REPLACEMENT_NUMBER: u8 = 14;
 
@@ -93,12 +124,7 @@ fn pack_replacement_numbers<const N: usize>(hand: &[u8; N]) -> MapValue {
                 _ => unreachable!(),
             }
 
-            if num_pair == 1 && num_meld == 4 {
-                pack[3] |= (replacement_number as u32) << (9 * 3);
-            } else {
-                let shift = 4 * (5 * num_pair + num_meld) - 4;
-                pack[0] |= (replacement_number as u32) << shift;
-            }
+            pack_replacement_number(num_pair, num_meld, replacement_number, &mut pack[0]);
         }
     }
     pack
@@ -116,7 +142,7 @@ fn create_entry<const N: usize>(hand: &[u8; N], map: &mut Map) {
         }
         _ => unreachable!(),
     };
-    map[h] = pack_replacement_numbers(hand);
+    map[h] = pack_values(hand);
 }
 
 fn build_map<const N: usize>(hand: &mut [u8; N], i: usize, n: usize, map: &mut Map) {

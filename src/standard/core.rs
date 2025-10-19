@@ -15,14 +15,15 @@ pub type Wanzi19Table = Table<2>;
 // Each element contains the following structure:
 //
 // Index [0]:
-//  0- 3 Bits: Replacement number of 0 pair 1 melds
-//  4- 7 Bits: Replacement number of 0 pair 2 melds
-//  8-11 Bits: Replacement number of 0 pair 3 melds
-// 12-15 Bits: Replacement number of 0 pair 4 melds
-// 16-19 Bits: Replacement number of 1 pair 0 melds
-// 20-23 Bits: Replacement number of 1 pair 1 melds
-// 24-27 Bits: Replacement number of 1 pair 2 melds
-// 28-31 Bits: Replacement number of 1 pair 3 melds
+//  0- 1 Bits: Replacement number of 0 pair 1 melds
+//  2- 4 Bits: Replacement number of 0 pair 2 melds
+//  5- 8 Bits: Replacement number of 0 pair 3 melds
+//  9-12 Bits: Replacement number of 0 pair 4 melds
+// 13-14 Bits: Replacement number of 1 pair 0 melds
+// 15-17 Bits: Replacement number of 1 pair 1 melds
+// 18-21 Bits: Replacement number of 1 pair 2 melds
+// 22-25 Bits: Replacement number of 1 pair 3 melds
+// 26-29 Bits: Replacement number of 1 pair 4 melds
 //
 // Index [1]:
 //  0- 8 Bits: Necessary tiles of 0 pair 1 melds
@@ -40,8 +41,7 @@ pub type Wanzi19Table = Table<2>;
 //  0- 8 Bits: Necessary tiles of 1 pair 2 melds
 //  9-17 Bits: Necessary tiles of 1 pair 3 melds
 // 18-26 Bits: Necessary tiles of 1 pair 4 melds
-// 27-30 Bits: Replacement number of 1 pair 4 melds
-//    31  Bit: Unused
+// 27-31 Bits: Unused
 pub type MapValue = [u32; 4];
 
 // Index:
@@ -67,15 +67,15 @@ pub(super) fn unpack(pack: &MapValue) -> Unpacked {
     (
         [
             0u8,
-            (pack[0] & 0x0F) as u8,
-            ((pack[0] >> 4) & 0x0F) as u8,
-            ((pack[0] >> (4 * 2)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 3)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 4)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 5)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 6)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 7)) & 0x0F) as u8,
-            ((pack[3] >> (9 * 3)) & 0x0F) as u8,
+            (pack[0] & 0b11) as u8,
+            ((pack[0] >> 2) & 0b111) as u8,
+            ((pack[0] >> 5) & 0b1111) as u8,
+            ((pack[0] >> 9) & 0b1111) as u8,
+            ((pack[0] >> 13) & 0b11) as u8,
+            ((pack[0] >> 15) & 0b111) as u8,
+            ((pack[0] >> 18) & 0b1111) as u8,
+            ((pack[0] >> 22) & 0b1111) as u8,
+            ((pack[0] >> 26) & 0b1111) as u8,
         ],
         [
             0u16,
