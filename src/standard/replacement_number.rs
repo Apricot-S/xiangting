@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::{Unpacked, UnpackedNumbers, unpack};
 use super::hash::{hash_19m, hash_shupai, hash_zipai};
 use super::shupai_map::SHUPAI_MAP;
+use super::unpack::{Unpacked, UnpackedNumbers, unpack};
 use super::wanzi_19_map::WANZI_19_MAP;
 use super::zipai_map::ZIPAI_MAP;
 use crate::shoupai::{Shoupai, Shoupai3Player};

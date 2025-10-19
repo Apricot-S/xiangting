@@ -13,6 +13,8 @@ mod shupai_map;
 #[cfg(not(feature = "build-file"))]
 mod shupai_table;
 #[cfg(not(feature = "build-file"))]
+mod unpack;
+#[cfg(not(feature = "build-file"))]
 mod wanzi_19_map;
 #[cfg(not(feature = "build-file"))]
 mod wanzi_19_table;
