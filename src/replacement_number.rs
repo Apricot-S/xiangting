@@ -223,7 +223,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
                 BingpaiError::InvalidTileCount(0)
             )))
         ));
@@ -249,7 +249,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
                 BingpaiError::InvalidTileCount(3)
             )))
         ));
@@ -261,7 +261,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
                 BingpaiError::TooManyTiles(15)
             )))
         ));
@@ -273,7 +273,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
                 BingpaiError::TooManyCopies { tile: 0, count: 5 }
             )))
         ));
@@ -373,7 +373,7 @@ mod tests {
         let replacement_number = calculate_replacement_number_3_player(&bingpai, None);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::InvalidBingpai(
+            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
                 BingpaiError::InvalidTileFor3Player(1)
             )))
         ));

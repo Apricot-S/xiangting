@@ -13,7 +13,7 @@ use thiserror::Error;
 pub enum ShoupaiError {
     /// The hand contains an invalid pure hand.
     #[error("hand contains an invalid pure hand: {0}")]
-    InvalidBingpai(#[from] BingpaiError),
+    Bingpai(#[from] BingpaiError),
     /// The hand contains an invalid meld.
     #[error("hand contains an invalid meld: {0}")]
     InvalidFuluMianzi(#[from] FuluMianziError),
