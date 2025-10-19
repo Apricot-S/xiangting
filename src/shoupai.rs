@@ -13,10 +13,10 @@ use thiserror::Error;
 pub enum ShoupaiError {
     /// The hand contains an invalid pure hand.
     #[error("hand contains an invalid pure hand: {0}")]
-    InvalidBingpai(#[from] BingpaiError),
+    Bingpai(#[from] BingpaiError),
     /// The hand contains an invalid meld.
     #[error("hand contains an invalid meld: {0}")]
-    InvalidFuluMianzi(#[from] FuluMianziError),
+    FuluMianzi(#[from] FuluMianziError),
     /// The number of melds in the hand exceeds the allowed maximum.
     #[error("the number of melds must be at most {max}, but was {count}")]
     TooManyFuluMianzi {
