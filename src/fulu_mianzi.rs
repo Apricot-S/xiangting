@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::constants::{MAX_SHUPAI_INDEX, MAX_TILE_INDEX};
-use crate::tile::Tile;
+use crate::tile::{Tile, TileExt};
 use thiserror::Error;
 
 /// Position of the claimed tile in the melded sequence.
@@ -97,8 +96,8 @@ impl FuluMianzi {
     pub(crate) fn validate(&self) -> Result<(), FuluMianziError> {
         match self {
             FuluMianzi::Shunzi(t, p) => {
-                if *t > MAX_SHUPAI_INDEX {
-                    if *t > MAX_TILE_INDEX {
+                if !t.is_shupai() {
+                    if !t.is_valid() {
                         return Err(FuluMianziError::IndexOutOfRange(*t));
                     }
                     return Err(FuluMianziError::ShunziWithZipai(*t));
@@ -108,7 +107,7 @@ impl FuluMianzi {
                 }
             }
             FuluMianzi::Kezi(t) | FuluMianzi::Gangzi(t) => {
-                if *t > MAX_TILE_INDEX {
+                if !t.is_valid() {
                     return Err(FuluMianziError::IndexOutOfRange(*t));
                 }
             }

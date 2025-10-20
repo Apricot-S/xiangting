@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::constants::NUM_TILE_INDEX;
+use crate::constants::{MAX_SHUPAI_INDEX, MAX_TILE_INDEX, NUM_TILE_INDEX};
 
 /// 牌: Tile.
 ///
@@ -25,6 +25,23 @@ use crate::constants::NUM_TILE_INDEX;
 /// | ----- | --------- | ---------- | --------- | ---------- | ---------- | ---------- | -------- |
 /// | Tile  | East (1z) | South (2z) | West (3z) | North (4z) | White (5z) | Green (6z) | Red (7z) |
 pub type Tile = u8;
+
+pub(crate) trait TileExt {
+    fn is_valid(&self) -> bool;
+    fn is_shupai(&self) -> bool;
+}
+
+impl TileExt for Tile {
+    #[inline(always)]
+    fn is_valid(&self) -> bool {
+        *self <= MAX_TILE_INDEX
+    }
+
+    #[inline(always)]
+    fn is_shupai(&self) -> bool {
+        *self <= MAX_SHUPAI_INDEX
+    }
+}
 
 /// A type representing the number of tiles for each kind.
 ///
@@ -112,6 +129,36 @@ impl TileFlagsExt for TileFlags {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn is_valid_7z() {
+        let t_7z: Tile = 33;
+        assert!(t_7z.is_valid());
+    }
+
+    #[test]
+    fn is_invalid_8z() {
+        let t_8z: Tile = 34;
+        assert!(!t_8z.is_valid());
+    }
+
+    #[test]
+    fn is_shupai_9s() {
+        let t_9s: Tile = 26;
+        assert!(t_9s.is_shupai());
+    }
+
+    #[test]
+    fn is_not_shupai_1z() {
+        let t_1z: Tile = 27;
+        assert!(!t_1z.is_shupai());
+    }
+
+    #[test]
+    fn is_not_shupai_8z() {
+        let t_8z: Tile = 34;
+        assert!(!t_8z.is_shupai());
+    }
 
     #[test]
     fn to_array_empty() {
