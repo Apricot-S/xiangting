@@ -6,6 +6,7 @@ use super::shupai_table::SHUPAI_TABLE;
 use super::wanzi_19_table::WANZI_19_TABLE;
 use super::zipai_table::ZIPAI_TABLE;
 
+#[inline]
 pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
     let (hash, _) = single_color_bingpai
         .iter()
@@ -21,6 +22,7 @@ pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
     hash
 }
 
+#[inline]
 pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
     let (hash, _) = zipai_bingpai
         .iter()
@@ -36,6 +38,7 @@ pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
     hash
 }
 
+#[inline]
 pub fn hash_19m(wanzi_bingpai: &[u8]) -> usize {
     let (hash, _) = wanzi_bingpai
         .iter()
