@@ -12,11 +12,25 @@ use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
-use xiangting::standard::core::MapValue;
+use xiangting::standard::core::{NecessaryTilesMapValue, ReplacementNumberMapValue};
 use xiangting::standard::hash::{hash_19m, hash_shupai, hash_zipai};
 use xiangting::standard::shupai_table::SHUPAI_SIZE;
 use xiangting::standard::wanzi_19_table::WANZI_19_SIZE;
 use xiangting::standard::zipai_table::ZIPAI_SIZE;
+
+struct MapValue {
+    replacement_number: ReplacementNumberMapValue,
+    necessary_tiles: NecessaryTilesMapValue,
+}
+
+impl Default for MapValue {
+    fn default() -> Self {
+        MapValue {
+            replacement_number: 0u32,
+            necessary_tiles: [0u32; 3],
+        }
+    }
+}
 
 type Map = Vec<MapValue>;
 
@@ -24,7 +38,8 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
     debug_assert!([9, 7, 2].contains(&N));
     const MAX_REPLACEMENT_NUMBER: u8 = 14;
 
-    let mut pack: MapValue = [0u32; 4];
+    let mut pack = MapValue::default();
+
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
             if num_pair == 0 && num_meld == 0 {
@@ -81,32 +96,33 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
             };
 
             match (num_pair, num_meld) {
-                (0, 1) => pack[0] |= replacement_number as u32,
-                (0, 2) => pack[0] |= (replacement_number as u32) << 2,
-                (0, 3) => pack[0] |= (replacement_number as u32) << 5,
-                (0, 4) => pack[0] |= (replacement_number as u32) << 9,
-                (1, 0) => pack[0] |= (replacement_number as u32) << 13,
-                (1, 1) => pack[0] |= (replacement_number as u32) << 15,
-                (1, 2) => pack[0] |= (replacement_number as u32) << 18,
-                (1, 3) => pack[0] |= (replacement_number as u32) << 22,
-                (1, 4) => pack[0] |= (replacement_number as u32) << 26,
+                (0, 1) => pack.replacement_number |= replacement_number as u32,
+                (0, 2) => pack.replacement_number |= (replacement_number as u32) << 2,
+                (0, 3) => pack.replacement_number |= (replacement_number as u32) << 5,
+                (0, 4) => pack.replacement_number |= (replacement_number as u32) << 9,
+                (1, 0) => pack.replacement_number |= (replacement_number as u32) << 13,
+                (1, 1) => pack.replacement_number |= (replacement_number as u32) << 15,
+                (1, 2) => pack.replacement_number |= (replacement_number as u32) << 18,
+                (1, 3) => pack.replacement_number |= (replacement_number as u32) << 22,
+                (1, 4) => pack.replacement_number |= (replacement_number as u32) << 26,
                 _ => unreachable!(),
             }
 
             match (num_pair, num_meld) {
-                (0, 1) => pack[1] |= necessary_tiles as u32,
-                (0, 2) => pack[1] |= (necessary_tiles as u32) << 9,
-                (0, 3) => pack[1] |= (necessary_tiles as u32) << (9 * 2),
-                (0, 4) => pack[2] |= necessary_tiles as u32,
-                (1, 0) => pack[2] |= (necessary_tiles as u32) << 9,
-                (1, 1) => pack[2] |= (necessary_tiles as u32) << (9 * 2),
-                (1, 2) => pack[3] |= necessary_tiles as u32,
-                (1, 3) => pack[3] |= (necessary_tiles as u32) << 9,
-                (1, 4) => pack[3] |= (necessary_tiles as u32) << (9 * 2),
+                (0, 1) => pack.necessary_tiles[0] |= necessary_tiles as u32,
+                (0, 2) => pack.necessary_tiles[0] |= (necessary_tiles as u32) << 9,
+                (0, 3) => pack.necessary_tiles[0] |= (necessary_tiles as u32) << (9 * 2),
+                (0, 4) => pack.necessary_tiles[1] |= necessary_tiles as u32,
+                (1, 0) => pack.necessary_tiles[1] |= (necessary_tiles as u32) << 9,
+                (1, 1) => pack.necessary_tiles[1] |= (necessary_tiles as u32) << (9 * 2),
+                (1, 2) => pack.necessary_tiles[2] |= necessary_tiles as u32,
+                (1, 3) => pack.necessary_tiles[2] |= (necessary_tiles as u32) << 9,
+                (1, 4) => pack.necessary_tiles[2] |= (necessary_tiles as u32) << (9 * 2),
                 _ => unreachable!(),
             }
         }
     }
+
     pack
 }
 
@@ -184,12 +200,12 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
         _ => unreachable!(),
     }
 
-    for &entry in map {
+    for entry in map {
         write!(w, "[")?;
-        for (i, pack) in entry.iter().enumerate() {
-            let separator = if i < 3 { "," } else { "" };
-            write!(w, "{}{}", pack, separator)?;
-        }
+        write!(w, "{},", entry.replacement_number)?;
+        write!(w, "{},", entry.necessary_tiles[0])?;
+        write!(w, "{},", entry.necessary_tiles[1])?;
+        write!(w, "{}", entry.necessary_tiles[2])?;
         write!(w, "],")?;
     }
 
@@ -218,7 +234,7 @@ fn main() {
 
     {
         let mut shupai_map = Map::new();
-        shupai_map.resize(SHUPAI_SIZE, [0u32; 4]);
+        shupai_map.resize_with(SHUPAI_SIZE, Default::default);
         let mut hand = [0u8; 9];
         build_map(&mut hand, 0, 0, &mut shupai_map);
 
@@ -227,7 +243,7 @@ fn main() {
 
     {
         let mut zipai_map = Map::new();
-        zipai_map.resize(ZIPAI_SIZE, [0u32; 4]);
+        zipai_map.resize_with(ZIPAI_SIZE, Default::default);
         let mut hand = [0u8; 7];
         build_map(&mut hand, 0, 0, &mut zipai_map);
 
@@ -236,7 +252,7 @@ fn main() {
 
     {
         let mut wanzi_19_map = Map::new();
-        wanzi_19_map.resize(WANZI_19_SIZE, [0u32; 4]);
+        wanzi_19_map.resize_with(WANZI_19_SIZE, Default::default);
         let mut hand = [0u8; 2];
         build_map(&mut hand, 0, 0, &mut wanzi_19_map);
 
