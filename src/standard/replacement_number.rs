@@ -57,8 +57,8 @@ fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
         // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
         let mut r = min(lhs[i], rhs[i]);
         for j in 5..i {
-            r = *[r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
-                .iter()
+            r = [r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
+                .into_iter()
                 .min()
                 .unwrap();
         }
