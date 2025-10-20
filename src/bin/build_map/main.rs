@@ -175,7 +175,10 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
         "// This file is part of https://github.com/Apricot-S/xiangting"
     )?;
     writeln!(w)?;
-    writeln!(w, "use super::core::MapValue;")?;
+    writeln!(
+        w,
+        "use super::core::{{NecessaryTilesMapValue, ReplacementNumberMapValue}};"
+    )?;
 
     match N {
         9 => writeln!(w, "use super::shupai_table::SHUPAI_SIZE;")?,
@@ -190,19 +193,46 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     match N {
         9 => write!(
             w,
-            "pub(super) static SHUPAI_MAP: [MapValue; SHUPAI_SIZE] = ["
+            "pub(super) static SHUPAI_REPLACEMENT_NUMBER_MAP: [ReplacementNumberMapValue; SHUPAI_SIZE] = ["
         )?,
-        7 => write!(w, "pub(super) static ZIPAI_MAP: [MapValue; ZIPAI_SIZE] = [")?,
+        7 => write!(
+            w,
+            "pub(super) static ZIPAI_REPLACEMENT_NUMBER_MAP: [ReplacementNumberMapValue; ZIPAI_SIZE] = ["
+        )?,
         2 => write!(
             w,
-            "pub(super) static WANZI_19_MAP: [MapValue; WANZI_19_SIZE] = ["
+            "pub(super) static WANZI_19_REPLACEMENT_NUMBER_MAP: [ReplacementNumberMapValue; WANZI_19_SIZE] = ["
+        )?,
+        _ => unreachable!(),
+    }
+
+    for entry in map {
+        write!(w, "{},", entry.replacement_number)?;
+    }
+
+    writeln!(w, "];")?;
+
+    writeln!(w)?;
+    writeln!(w, "#[rustfmt::skip]")?;
+
+    match N {
+        9 => write!(
+            w,
+            "pub(super) static SHUPAI_NECESSARY_TILES_MAP: [NecessaryTilesMapValue; SHUPAI_SIZE] = ["
+        )?,
+        7 => write!(
+            w,
+            "pub(super) static ZIPAI_NECESSARY_TILES_MAP: [NecessaryTilesMapValue; ZIPAI_SIZE] = ["
+        )?,
+        2 => write!(
+            w,
+            "pub(super) static WANZI_19_NECESSARY_TILES_MAP: [NecessaryTilesMapValue; WANZI_19_SIZE] = ["
         )?,
         _ => unreachable!(),
     }
 
     for entry in map {
         write!(w, "[")?;
-        write!(w, "{},", entry.replacement_number)?;
         write!(w, "{},", entry.necessary_tiles[0])?;
         write!(w, "{},", entry.necessary_tiles[1])?;
         write!(w, "{}", entry.necessary_tiles[2])?;
