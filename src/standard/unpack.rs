@@ -18,36 +18,34 @@ use super::core::MapValue;
 pub(super) type UnpackedNumbers = [u8; 10];
 pub(super) type UnpackedTiles = [u16; 10];
 
-// unpacked.0 : Replacement number
-// unpacked.1 : Necessary tiles
-pub(super) type Unpacked = (UnpackedNumbers, UnpackedTiles);
+#[inline]
+pub(super) fn unpack_replacement_number(pack: &MapValue) -> UnpackedNumbers {
+    [
+        0u8,
+        (pack[0] & 0b11) as u8,
+        ((pack[0] >> 2) & 0b111) as u8,
+        ((pack[0] >> 5) & 0b1111) as u8,
+        ((pack[0] >> 9) & 0b1111) as u8,
+        ((pack[0] >> 13) & 0b11) as u8,
+        ((pack[0] >> 15) & 0b111) as u8,
+        ((pack[0] >> 18) & 0b1111) as u8,
+        ((pack[0] >> 22) & 0b1111) as u8,
+        ((pack[0] >> 26) & 0b1111) as u8,
+    ]
+}
 
 #[inline]
-pub(super) fn unpack(pack: &MapValue) -> Unpacked {
-    (
-        [
-            0u8,
-            (pack[0] & 0b11) as u8,
-            ((pack[0] >> 2) & 0b111) as u8,
-            ((pack[0] >> 5) & 0b1111) as u8,
-            ((pack[0] >> 9) & 0b1111) as u8,
-            ((pack[0] >> 13) & 0b11) as u8,
-            ((pack[0] >> 15) & 0b111) as u8,
-            ((pack[0] >> 18) & 0b1111) as u8,
-            ((pack[0] >> 22) & 0b1111) as u8,
-            ((pack[0] >> 26) & 0b1111) as u8,
-        ],
-        [
-            0u16,
-            (pack[1] & 0x01FF) as u16,
-            ((pack[1] >> 9) & 0x01FF) as u16,
-            ((pack[1] >> (9 * 2)) & 0x01FF) as u16,
-            (pack[2] & 0x01FF) as u16,
-            ((pack[2] >> 9) & 0x01FF) as u16,
-            ((pack[2] >> (9 * 2)) & 0x01FF) as u16,
-            (pack[3] & 0x01FF) as u16,
-            ((pack[3] >> 9) & 0x01FF) as u16,
-            ((pack[3] >> (9 * 2)) & 0x01FF) as u16,
-        ],
-    )
+pub(super) fn unpack_necessary_tiles(pack: &MapValue) -> UnpackedTiles {
+    [
+        0u16,
+        (pack[1] & 0x01FF) as u16,
+        ((pack[1] >> 9) & 0x01FF) as u16,
+        ((pack[1] >> (9 * 2)) & 0x01FF) as u16,
+        (pack[2] & 0x01FF) as u16,
+        ((pack[2] >> 9) & 0x01FF) as u16,
+        ((pack[2] >> (9 * 2)) & 0x01FF) as u16,
+        (pack[3] & 0x01FF) as u16,
+        ((pack[3] >> 9) & 0x01FF) as u16,
+        ((pack[3] >> (9 * 2)) & 0x01FF) as u16,
+    ]
 }
