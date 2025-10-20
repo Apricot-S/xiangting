@@ -12,82 +12,36 @@ pub type ShupaiTable = Table<9>;
 pub type ZipaiTable = Table<7>;
 pub type Wanzi19Table = Table<2>;
 
+// Value contains the following structure:
+//
+//  0- 1 Bits: Replacement number of 0 pair 1 melds
+//  2- 4 Bits: Replacement number of 0 pair 2 melds
+//  5- 8 Bits: Replacement number of 0 pair 3 melds
+//  9-12 Bits: Replacement number of 0 pair 4 melds
+// 13-14 Bits: Replacement number of 1 pair 0 melds
+// 15-17 Bits: Replacement number of 1 pair 1 melds
+// 18-21 Bits: Replacement number of 1 pair 2 melds
+// 22-25 Bits: Replacement number of 1 pair 3 melds
+// 26-29 Bits: Replacement number of 1 pair 4 melds
+pub type ReplacementNumberMapValue = u32;
+
 // Each element contains the following structure:
 //
 // Index [0]:
-//  0- 3 Bits: Replacement number of 0 pair 1 melds
-//  4- 7 Bits: Replacement number of 0 pair 2 melds
-//  8-11 Bits: Replacement number of 0 pair 3 melds
-// 12-15 Bits: Replacement number of 0 pair 4 melds
-// 16-19 Bits: Replacement number of 1 pair 0 melds
-// 20-23 Bits: Replacement number of 1 pair 1 melds
-// 24-27 Bits: Replacement number of 1 pair 2 melds
-// 28-31 Bits: Replacement number of 1 pair 3 melds
-//
-// Index [1]:
 //  0- 8 Bits: Necessary tiles of 0 pair 1 melds
 //  9-17 Bits: Necessary tiles of 0 pair 2 melds
 // 18-26 Bits: Necessary tiles of 0 pair 3 melds
 // 27-31 Bits: Unused
 //
-// Index [2]:
+// Index [1]:
 //  0- 8 Bits: Necessary tiles of 0 pair 4 melds
 //  9-17 Bits: Necessary tiles of 1 pair 0 melds
 // 18-26 Bits: Necessary tiles of 1 pair 1 melds
 // 27-31 Bits: Unused
 //
-// Index [3]:
+// Index [2]:
 //  0- 8 Bits: Necessary tiles of 1 pair 2 melds
 //  9-17 Bits: Necessary tiles of 1 pair 3 melds
 // 18-26 Bits: Necessary tiles of 1 pair 4 melds
-// 27-30 Bits: Replacement number of 1 pair 4 melds
-//    31  Bit: Unused
-pub type MapValue = [u32; 4];
-
-// Index:
-// [0] : 0 pair, 0 melds
-// [1] : 0 pair, 1 melds
-// [2] : 0 pair, 2 melds
-// [3] : 0 pair, 3 melds
-// [4] : 0 pair, 4 melds
-// [5] : 1 pair, 0 melds
-// [6] : 1 pair, 1 melds
-// [7] : 1 pair, 2 melds
-// [8] : 1 pair, 3 melds
-// [9] : 1 pair, 4 melds
-pub(super) type UnpackedNumbers = [u8; 10];
-pub(super) type UnpackedTiles = [u16; 10];
-
-// unpacked.0 : Replacement number
-// unpacked.1 : Necessary tiles
-pub(super) type Unpacked = (UnpackedNumbers, UnpackedTiles);
-
-#[inline]
-pub(super) fn unpack(pack: &MapValue) -> Unpacked {
-    (
-        [
-            0u8,
-            (pack[0] & 0x0F) as u8,
-            ((pack[0] >> 4) & 0x0F) as u8,
-            ((pack[0] >> (4 * 2)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 3)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 4)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 5)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 6)) & 0x0F) as u8,
-            ((pack[0] >> (4 * 7)) & 0x0F) as u8,
-            ((pack[3] >> (9 * 3)) & 0x0F) as u8,
-        ],
-        [
-            0u16,
-            (pack[1] & 0x01FF) as u16,
-            ((pack[1] >> 9) & 0x01FF) as u16,
-            ((pack[1] >> (9 * 2)) & 0x01FF) as u16,
-            (pack[2] & 0x01FF) as u16,
-            ((pack[2] >> 9) & 0x01FF) as u16,
-            ((pack[2] >> (9 * 2)) & 0x01FF) as u16,
-            (pack[3] & 0x01FF) as u16,
-            ((pack[3] >> 9) & 0x01FF) as u16,
-            ((pack[3] >> (9 * 2)) & 0x01FF) as u16,
-        ],
-    )
-}
+// 27-31 Bits: Unused
+pub type NecessaryTilesMapValue = [u32; 3];

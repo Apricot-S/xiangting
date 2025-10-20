@@ -2,11 +2,13 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::{Unpacked, UnpackedNumbers, unpack};
 use super::hash::{hash_19m, hash_shupai, hash_zipai};
-use super::shupai_map::SHUPAI_MAP;
-use super::wanzi_19_map::WANZI_19_MAP;
-use super::zipai_map::ZIPAI_MAP;
+use super::shupai_map::{SHUPAI_NECESSARY_TILES_MAP, SHUPAI_REPLACEMENT_NUMBER_MAP};
+use super::unpack::{
+    UnpackedNumbers, UnpackedTiles, unpack_necessary_tiles, unpack_replacement_number,
+};
+use super::wanzi_19_map::{WANZI_19_NECESSARY_TILES_MAP, WANZI_19_REPLACEMENT_NUMBER_MAP};
+use super::zipai_map::{ZIPAI_NECESSARY_TILES_MAP, ZIPAI_REPLACEMENT_NUMBER_MAP};
 use crate::shoupai::{Shoupai, Shoupai3Player};
 use crate::tile::TileCounts;
 use std::cmp::min;
@@ -40,8 +42,12 @@ fn modify_number(replacement_number: u8, necessary_tiles: u16, four_tiles: u16) 
     }
 }
 
-fn modify_numbers(entry: Unpacked, four_tiles: u16) -> UnpackedNumbers {
-    std::array::from_fn(|i| modify_number(entry.0[i], entry.1[i], four_tiles))
+fn modify_numbers(
+    numbers: UnpackedNumbers,
+    tiles: UnpackedTiles,
+    four_tiles: u16,
+) -> UnpackedNumbers {
+    std::array::from_fn(|i| modify_number(numbers[i], tiles[i], four_tiles))
 }
 
 fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
@@ -73,27 +79,47 @@ fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
 }
 
 pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
-    let h0 = hash_shupai(&shoupai.bingpai()[0..9]);
-    let h1 = hash_shupai(&shoupai.bingpai()[9..18]);
-    let h2 = hash_shupai(&shoupai.bingpai()[18..27]);
-    let h3 = hash_zipai(&shoupai.bingpai()[27..34]);
+    let hash_m = hash_shupai(&shoupai.bingpai()[0..9]);
+    let hash_p = hash_shupai(&shoupai.bingpai()[9..18]);
+    let hash_s = hash_shupai(&shoupai.bingpai()[18..27]);
+    let hash_z = hash_zipai(&shoupai.bingpai()[27..34]);
 
-    let unpacked0 = unpack(&SHUPAI_MAP[h0]);
-    let unpacked1 = unpack(&SHUPAI_MAP[h1]);
-    let unpacked2 = unpack(&SHUPAI_MAP[h2]);
-    let unpacked3 = unpack(&ZIPAI_MAP[h3]);
+    let packed_rn_m = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_m];
+    let packed_rn_p = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_p];
+    let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
+    let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
+
+    let replacement_number_m = unpack_replacement_number(packed_rn_m);
+    let replacement_number_p = unpack_replacement_number(packed_rn_p);
+    let replacement_number_s = unpack_replacement_number(packed_rn_s);
+    let replacement_number_z = unpack_replacement_number(packed_rn_z);
 
     let (mut entry0, entry1, entry2, entry3) = match shoupai.tile_counts() {
-        None => (unpacked0.0, unpacked1.0, unpacked2.0, unpacked3.0),
+        None => (
+            replacement_number_m,
+            replacement_number_p,
+            replacement_number_s,
+            replacement_number_z,
+        ),
         Some(s) => {
+            let packed_nt_m = &SHUPAI_NECESSARY_TILES_MAP[hash_m];
+            let packed_nt_p = &SHUPAI_NECESSARY_TILES_MAP[hash_p];
+            let packed_nt_s = &SHUPAI_NECESSARY_TILES_MAP[hash_s];
+            let packed_nt_z = &ZIPAI_NECESSARY_TILES_MAP[hash_z];
+
+            let necessary_tiles_m = unpack_necessary_tiles(packed_nt_m);
+            let necessary_tiles_p = unpack_necessary_tiles(packed_nt_p);
+            let necessary_tiles_s = unpack_necessary_tiles(packed_nt_s);
+            let necessary_tiles_z = unpack_necessary_tiles(packed_nt_z);
+
             let four_tiles = count_4_tiles_in_shoupai(s);
             let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
 
             (
-                modify_numbers(unpacked0, four_tiles_m),
-                modify_numbers(unpacked1, four_tiles_p),
-                modify_numbers(unpacked2, four_tiles_s),
-                modify_numbers(unpacked3, four_tiles_z),
+                modify_numbers(replacement_number_m, necessary_tiles_m, four_tiles_m),
+                modify_numbers(replacement_number_p, necessary_tiles_p, four_tiles_p),
+                modify_numbers(replacement_number_s, necessary_tiles_s, four_tiles_s),
+                modify_numbers(replacement_number_z, necessary_tiles_z, four_tiles_z),
             )
         }
     };
@@ -106,27 +132,47 @@ pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
 }
 
 pub(in super::super) fn calculate_replacement_number_3_player(shoupai: &Shoupai3Player) -> u8 {
-    let h0 = hash_19m(&shoupai.bingpai()[0..9]);
-    let h1 = hash_shupai(&shoupai.bingpai()[9..18]);
-    let h2 = hash_shupai(&shoupai.bingpai()[18..27]);
-    let h3 = hash_zipai(&shoupai.bingpai()[27..34]);
+    let hash_m = hash_19m(&shoupai.bingpai()[0..9]);
+    let hash_p = hash_shupai(&shoupai.bingpai()[9..18]);
+    let hash_s = hash_shupai(&shoupai.bingpai()[18..27]);
+    let hash_z = hash_zipai(&shoupai.bingpai()[27..34]);
 
-    let unpacked0 = unpack(&WANZI_19_MAP[h0]);
-    let unpacked1 = unpack(&SHUPAI_MAP[h1]);
-    let unpacked2 = unpack(&SHUPAI_MAP[h2]);
-    let unpacked3 = unpack(&ZIPAI_MAP[h3]);
+    let packed_rn_m = &WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m];
+    let packed_rn_p = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_p];
+    let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
+    let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
+
+    let replacement_number_m = unpack_replacement_number(packed_rn_m);
+    let replacement_number_p = unpack_replacement_number(packed_rn_p);
+    let replacement_number_s = unpack_replacement_number(packed_rn_s);
+    let replacement_number_z = unpack_replacement_number(packed_rn_z);
 
     let (mut entry0, entry1, entry2, entry3) = match shoupai.tile_counts() {
-        None => (unpacked0.0, unpacked1.0, unpacked2.0, unpacked3.0),
+        None => (
+            replacement_number_m,
+            replacement_number_p,
+            replacement_number_s,
+            replacement_number_z,
+        ),
         Some(s) => {
+            let packed_nt_m = &WANZI_19_NECESSARY_TILES_MAP[hash_m];
+            let packed_nt_p = &SHUPAI_NECESSARY_TILES_MAP[hash_p];
+            let packed_nt_s = &SHUPAI_NECESSARY_TILES_MAP[hash_s];
+            let packed_nt_z = &ZIPAI_NECESSARY_TILES_MAP[hash_z];
+
+            let necessary_tiles_m = unpack_necessary_tiles(packed_nt_m);
+            let necessary_tiles_p = unpack_necessary_tiles(packed_nt_p);
+            let necessary_tiles_s = unpack_necessary_tiles(packed_nt_s);
+            let necessary_tiles_z = unpack_necessary_tiles(packed_nt_z);
+
             let four_tiles = count_4_tiles_in_shoupai(s);
             let (four_tiles_m, four_tiles_p, four_tiles_s, four_tiles_z) = split_flags(four_tiles);
 
             (
-                modify_numbers(unpacked0, four_tiles_m),
-                modify_numbers(unpacked1, four_tiles_p),
-                modify_numbers(unpacked2, four_tiles_s),
-                modify_numbers(unpacked3, four_tiles_z),
+                modify_numbers(replacement_number_m, necessary_tiles_m, four_tiles_m),
+                modify_numbers(replacement_number_p, necessary_tiles_p, four_tiles_p),
+                modify_numbers(replacement_number_s, necessary_tiles_s, four_tiles_s),
+                modify_numbers(replacement_number_z, necessary_tiles_z, four_tiles_z),
             )
         }
     };
