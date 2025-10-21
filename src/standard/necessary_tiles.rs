@@ -408,15 +408,20 @@ mod tests {
         );
     }
 
-    // #[test]
-    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_4() {
-    //     // Pair wait for a tile already called as a pon
-    //     let bingpai = TileCounts::from_code("123m456p789s1z");
-    //     let fulu_mianzi_list = [FuluMianzi::Kezi(27)];
-    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    #[ignore]
+    fn calculate_necessary_tiles_waiting_for_the_5th_tile_4() {
+        // Pair wait for a tile already called as a pon
+        let bingpai = TileCounts::from_code("123m456p789s1z");
+        let fulu_mianzi_list = [FuluMianzi::Kezi(27)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("123456789m123456789p123456789s234567z")
+        );
+    }
 
     // #[test]
     // fn calculate_necessary_tiles_waiting_for_the_5th_tile_5() {
