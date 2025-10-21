@@ -43,7 +43,7 @@ fn update_dp(lhs: &mut Entry, rhs: &Entry) {
         //     &mut number,
         //     &mut tiles,
         //     lhs.numbers[0] + rhs.numbers[i],
-        //     rhs.tiles[i] | rhs.tiles[i],
+        //     rhs.tiles[0] | rhs.tiles[i],
         // );
         // ```
         // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
@@ -226,4 +226,437 @@ mod tests {
             TileFlags::from_code("123789m123789p123789s1234567z")
         );
     }
+
+    #[test]
+    fn calculate_necessary_tiles_shisanyao_14() {
+        let bingpai = TileCounts::from_code("119m19p19s1234567z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 8);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("1789m123789p123789s1234567z")
+        );
+    }
+
+    // #[test]
+    // fn calculate_necessary_tiles_tenpai() {
+    //     let bingpai = TileCounts::from_code("123m456p789s1122z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 1);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_win() {
+    //     let bingpai = TileCounts::from_code("123m456p789s11222z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 0);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_with_meld_exclude() {
+    //     let bingpai = TileCounts::from_code("123m456p789s2z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 1);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_with_meld_include() {
+    //     let bingpai = TileCounts::from_code("123m456p789s2z");
+    //     let fulu_mianzi_list = [FuluMianzi::Kezi(27)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 1);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_without_pair() {
+    //     // Source: https://blog.kobalab.net/entry/20151216/1450191666 雀頭がない場合
+    //     let bingpai = TileCounts::from_code("12389m456p12789s1z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_too_many_meld_candidates() {
+    //     // Source: https://blog.kobalab.net/entry/20151216/1450191666 搭子過多の場合
+    //     let bingpai = TileCounts::from_code("12389m456p1289s11z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_not_enough_meld_candidates() {
+    //     // Source: https://blog.kobalab.net/entry/20151216/1450191666 搭子不足の場合
+    //     let bingpai = TileCounts::from_code("133345568m23677z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 3);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_incomplete_melds() {
+    //     let bingpai = TileCounts::from_code("123m1z");
+
+    //     let fulu_mianzi_list = [
+    //         FuluMianzi::Shunzi(12, ClaimedTilePosition::Low),
+    //         FuluMianzi::Gangzi(24),
+    //     ];
+
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 1);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_triplet_sequence() {
+    //     let bingpai = TileCounts::from_code("222345p1234567z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 5);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_sequence_isolated_sequence() {
+    //     let bingpai = TileCounts::from_code("2344456p123456z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 5);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_pair_triplet_sequence() {
+    //     let bingpai = TileCounts::from_code("11222345p12345z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 4);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_pair_sequence_sequence_pair() {
+    //     let bingpai = TileCounts::from_code("2234556788p123z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 3);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_prioritize_meld_candidates() {
+    //     // Source: https://blog.kobalab.net/entry/2022/04/17/174206 面子の分け方
+    //     let bingpai = TileCounts::from_code("133345568s11567z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 3);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_1() {
+    //     // Source: https://blog.kobalab.net/entry/2022/04/17/174206 5枚目の牌を待つ形
+    //     let bingpai = TileCounts::from_code("1111m123p112233s");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_2() {
+    //     let bingpai = TileCounts::from_code("1111234444m1111p");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_3() {
+    //     // Source: http://cmj3.web.fc2.com/#syanten
+    //     let bingpai = TileCounts::from_code("11112222333444z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_4() {
+    //     // Pair wait for a tile already called as a pon
+    //     let bingpai = TileCounts::from_code("123m456p789s1z");
+    //     let fulu_mianzi_list = [FuluMianzi::Kezi(27)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_5() {
+    //     // Middle wait for a tile already called as a kan
+    //     let bingpai = TileCounts::from_code("13m456p789s11z");
+    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(1)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_6() {
+    //     // Edge wait for a tile already called as a kan (12-3)
+    //     let bingpai = TileCounts::from_code("123m12p789s11z");
+    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(11)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_7() {
+    //     // Edge wait for a tile already called as a kan (7-89)
+    //     let bingpai = TileCounts::from_code("123m123p89s11z");
+    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(24)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_8() {
+    //     // Open wait for tiles already called as kans
+    //     let bingpai = TileCounts::from_code("23m456p11z");
+    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(0), FuluMianzi::Gangzi(3)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_9() {
+    //     // Middle wait for a tile already called as a kan with a isolated 4th tile
+    //     let bingpai = TileCounts::from_code("13333m11z");
+    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(1), FuluMianzi::Gangzi(3)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_10() {
+    //     // Edge wait for a tile already called as a kan with a isolated 4th tile (12-3)
+    //     let bingpai = TileCounts::from_code("12222m11z");
+    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(2), FuluMianzi::Gangzi(3)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_11() {
+    //     // Edge wait for a tile already called as a kan with a isolated 4th tile (7-89)
+    //     let bingpai = TileCounts::from_code("88889m11z");
+    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(5), FuluMianzi::Gangzi(6)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_12() {
+    //     // Open wait for a tile already called as a kan with a isolated 4th tile
+    //     let bingpai = TileCounts::from_code("23333m11z");
+    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(0), FuluMianzi::Gangzi(3)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_13() {
+    //     // Edge wait for a tile already called as a kan with a isolated 4th tile (12-3)
+    //     // and tiles of meld candidates is 4th tile
+    //     let bingpai = TileCounts::from_code("12p11z");
+    //     let fulu_mianzi_list = [
+    //         FuluMianzi::Kezi(9),
+    //         FuluMianzi::Kezi(10),
+    //         FuluMianzi::Gangzi(11),
+    //     ];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 3);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_14() {
+    //     let bingpai = TileCounts::from_code("2233p111z");
+    //     let fulu_mianzi_list = [
+    //         FuluMianzi::Shunzi(9, ClaimedTilePosition::Low),
+    //         FuluMianzi::Shunzi(9, ClaimedTilePosition::Low),
+    //     ];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_15() {
+    //     let bingpai = TileCounts::from_code("13m13p1s11z");
+    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(1), FuluMianzi::Gangzi(10)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 4);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_16() {
+    //     // A form that can be interpreted as either open wait or edge wait
+    //     let bingpai = TileCounts::from_code("12345m22z");
+    //     let fulu_mianzi_list = [FuluMianzi::Kezi(2), FuluMianzi::Gangzi(5)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_17() {
+    //     // A form that can be interpreted as either middle wait or edge wait
+    //     let bingpai = TileCounts::from_code("12234m22z");
+    //     let fulu_mianzi_list = [FuluMianzi::Kezi(2), FuluMianzi::Gangzi(5)];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_18() {
+    //     // A suit that cannot be a pair or a joint
+    //     let bingpai = TileCounts::from_code("1111m");
+    //     let fulu_mianzi_list = [
+    //         FuluMianzi::Gangzi(1),
+    //         FuluMianzi::Gangzi(2),
+    //         FuluMianzi::Gangzi(4),
+    //     ];
+    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_2_isolated_4_tiles_1() {
+    //     let bingpai = TileCounts::from_code("1111247777m");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_2_isolated_4_tiles_2() {
+    //     let bingpai = TileCounts::from_code("1111247777m1112z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_2_isolated_4_tiles_3() {
+    //     let bingpai = TileCounts::from_code("11114444m");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_2_isolated_4_tiles_4() {
+    //     let bingpai = TileCounts::from_code("111124m1111z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_2_isolated_4_tiles_5() {
+    //     let bingpai = TileCounts::from_code("1111444478m");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 3);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_3_isolated_4_tiles() {
+    //     let bingpai = TileCounts::from_code("1111247777m1111z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_4_honors_1() {
+    //     let bingpai = TileCounts::from_code("1111z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_4_honors_2() {
+    //     let bingpai = TileCounts::from_code("123m1111z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_4_honors_3() {
+    //     let bingpai = TileCounts::from_code("11112222z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_4_honors_4() {
+    //     let bingpai = TileCounts::from_code("123m11p11112222z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 3);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_different_3_player_and_4_player() {
+    //     let bingpai = TileCounts::from_code("1111m111122233z");
+    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_3_player_different_3_player_and_4_player() {
+    //     let bingpai = TileCounts::from_code("1111m111122233z");
+    //     let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles_3_player(&shoupai);
+    //     assert_eq!(replacement_number, 3);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_3_player_4_19m_1() {
+    //     let bingpai = TileCounts::from_code("1111m");
+    //     let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles_3_player(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_3_player_4_19m_2() {
+    //     let bingpai = TileCounts::from_code("1111m123p");
+    //     let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles_3_player(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
+
+    // #[test]
+    // fn calculate_necessary_tiles_3_player_4_19m_3() {
+    //     let bingpai = TileCounts::from_code("11119999m");
+    //     let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
+    //     let replacement_number = calculate_necessary_tiles_3_player(&shoupai);
+    //     assert_eq!(replacement_number, 2);
+    // }
 }
