@@ -26,7 +26,7 @@ mod zipai_map;
 mod zipai_table;
 
 #[cfg(not(feature = "build-file"))]
-pub(super) use necessary_tiles::calculate_necessary_tiles;
+pub(super) use necessary_tiles::{calculate_necessary_tiles, calculate_necessary_tiles_3_player};
 #[cfg(not(feature = "build-file"))]
 pub(super) use replacement_number::{
     calculate_replacement_number, calculate_replacement_number_3_player,

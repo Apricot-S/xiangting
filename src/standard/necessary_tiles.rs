@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::hash::{hash_shupai, hash_zipai};
+use super::hash::{hash_19m, hash_shupai, hash_zipai};
 use super::shupai_map::{SHUPAI_NECESSARY_TILES_MAP, SHUPAI_REPLACEMENT_NUMBER_MAP};
 use super::unpack::{UnpackedNumbers, unpack_necessary_tiles, unpack_replacement_number};
+use super::wanzi_19_map::{WANZI_19_NECESSARY_TILES_MAP, WANZI_19_REPLACEMENT_NUMBER_MAP};
 use super::zipai_map::{ZIPAI_NECESSARY_TILES_MAP, ZIPAI_REPLACEMENT_NUMBER_MAP};
-use crate::shoupai::Shoupai;
+use crate::shoupai::{Shoupai, Shoupai3Player};
 use crate::tile::TileFlags;
 use std::cmp::Ordering;
 
@@ -105,6 +106,64 @@ pub(in super::super) fn calculate_necessary_tiles(shoupai: &Shoupai) -> (u8, Til
     let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
     let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
     let packed_nt_m = &SHUPAI_NECESSARY_TILES_MAP[hash_m];
+    let packed_nt_p = &SHUPAI_NECESSARY_TILES_MAP[hash_p];
+    let packed_nt_s = &SHUPAI_NECESSARY_TILES_MAP[hash_s];
+    let packed_nt_z = &ZIPAI_NECESSARY_TILES_MAP[hash_z];
+
+    let replacement_number_m = unpack_replacement_number(packed_rn_m);
+    let replacement_number_p = unpack_replacement_number(packed_rn_p);
+    let replacement_number_s = unpack_replacement_number(packed_rn_s);
+    let replacement_number_z = unpack_replacement_number(packed_rn_z);
+    let necessary_tiles_m = unpack_necessary_tiles(packed_nt_m);
+    let necessary_tiles_p = unpack_necessary_tiles(packed_nt_p);
+    let necessary_tiles_s = unpack_necessary_tiles(packed_nt_s);
+    let necessary_tiles_z = unpack_necessary_tiles(packed_nt_z);
+
+    let (mut entry0, entry1, entry2, entry3) = match shoupai.tile_counts() {
+        None => (
+            Entry {
+                numbers: replacement_number_m,
+                tiles: necessary_tiles_m.map(|t| t as TileFlags),
+            },
+            Entry {
+                numbers: replacement_number_p,
+                tiles: necessary_tiles_p.map(|t| (t as TileFlags) << 9),
+            },
+            Entry {
+                numbers: replacement_number_s,
+                tiles: necessary_tiles_s.map(|t| (t as TileFlags) << 18),
+            },
+            Entry {
+                numbers: replacement_number_z,
+                tiles: necessary_tiles_z.map(|t| (t as TileFlags) << 27),
+            },
+        ),
+        Some(_) => {
+            unimplemented!();
+        }
+    };
+
+    update_dp(&mut entry0, &entry1);
+    update_dp(&mut entry0, &entry2);
+    update_dp(&mut entry0, &entry3);
+
+    let n = 5 + shoupai.num_required_bingpai_mianzi() as usize;
+    (entry0.numbers[n], entry0.tiles[n])
+}
+
+pub(in super::super) fn calculate_necessary_tiles_3_player(
+    shoupai: &Shoupai3Player,
+) -> (u8, TileFlags) {
+    let hash_m = hash_19m(&shoupai.bingpai()[0..9]);
+    let hash_p = hash_shupai(&shoupai.bingpai()[9..18]);
+    let hash_s = hash_shupai(&shoupai.bingpai()[18..27]);
+    let hash_z = hash_zipai(&shoupai.bingpai()[27..34]);
+
+    let packed_rn_m = &WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m];
+    let packed_rn_p = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_p];
+    let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
+    let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
+    let packed_nt_m = &WANZI_19_NECESSARY_TILES_MAP[hash_m];
     let packed_nt_p = &SHUPAI_NECESSARY_TILES_MAP[hash_p];
     let packed_nt_s = &SHUPAI_NECESSARY_TILES_MAP[hash_s];
     let packed_nt_z = &ZIPAI_NECESSARY_TILES_MAP[hash_z];
