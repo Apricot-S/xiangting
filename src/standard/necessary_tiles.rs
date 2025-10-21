@@ -435,25 +435,29 @@ mod tests {
         assert_eq!(necessary_tiles, TileFlags::from_code("134m1z"));
     }
 
-    // #[test]
-    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_6() {
-    //     // Edge wait for a tile already called as a kan (12-3)
-    //     let bingpai = TileCounts::from_code("123m12p789s11z");
-    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(11)];
-    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    #[ignore]
+    fn calculate_necessary_tiles_waiting_for_the_5th_tile_6() {
+        // Edge wait for a tile already called as a kan (12-3)
+        let bingpai = TileCounts::from_code("123m12p789s11z");
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(11)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(necessary_tiles, TileFlags::from_code("12p1z"));
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_7() {
-    //     // Edge wait for a tile already called as a kan (7-89)
-    //     let bingpai = TileCounts::from_code("123m123p89s11z");
-    //     let fulu_mianzi_list = [FuluMianzi::Gangzi(24)];
-    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    #[ignore]
+    fn calculate_necessary_tiles_waiting_for_the_5th_tile_7() {
+        // Edge wait for a tile already called as a kan (7-89)
+        let bingpai = TileCounts::from_code("123m123p89s11z");
+        let fulu_mianzi_list = [FuluMianzi::Gangzi(24)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(necessary_tiles, TileFlags::from_code("89s1z"));
+    }
 
     // #[test]
     // fn calculate_necessary_tiles_waiting_for_the_5th_tile_8() {
