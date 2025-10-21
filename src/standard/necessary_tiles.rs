@@ -360,31 +360,40 @@ mod tests {
         assert_eq!(necessary_tiles, TileFlags::from_code("28p123z"));
     }
 
-    // #[test]
-    // fn calculate_necessary_tiles_prioritize_meld_candidates() {
-    //     // Source: https://blog.kobalab.net/entry/2022/04/17/174206 面子の分け方
-    //     let bingpai = TileCounts::from_code("133345568s11567z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 3);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_prioritize_meld_candidates() {
+        // Source: https://blog.kobalab.net/entry/2022/04/17/174206 面子の分け方
+        let bingpai = TileCounts::from_code("133345568s11567z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 3);
+        assert_eq!(necessary_tiles, TileFlags::from_code("247s"));
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_1() {
-    //     // Source: https://blog.kobalab.net/entry/2022/04/17/174206 5枚目の牌を待つ形
-    //     let bingpai = TileCounts::from_code("1111m123p112233s");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_waiting_for_the_5th_tile_1() {
+        // Source: https://blog.kobalab.net/entry/2022/04/17/174206 5枚目の牌を待つ形
+        let bingpai = TileCounts::from_code("1111m123p112233s");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("23456789m123456789p123456789s1234567z")
+        );
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_2() {
-    //     let bingpai = TileCounts::from_code("1111234444m1111p");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_waiting_for_the_5th_tile_2() {
+        let bingpai = TileCounts::from_code("1111234444m1111p");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("2356789m23456789p123456789s1234567z")
+        );
+    }
 
     // #[test]
     // fn calculate_necessary_tiles_waiting_for_the_5th_tile_3() {
