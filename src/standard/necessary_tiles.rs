@@ -592,29 +592,35 @@ mod tests {
     //     assert_eq!(replacement_number, 2);
     // }
 
-    // #[test]
-    // fn calculate_necessary_tiles_2_isolated_4_tiles_4() {
-    //     let bingpai = TileCounts::from_code("111124m1111z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_2_isolated_4_tiles_4() {
+        let bingpai = TileCounts::from_code("111124m1111z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(necessary_tiles, TileFlags::from_code("34m"));
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_2_isolated_4_tiles_5() {
-    //     let bingpai = TileCounts::from_code("1111444478m");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 3);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_2_isolated_4_tiles_5() {
+        let bingpai = TileCounts::from_code("1111444478m");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 3);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("2356789m123456789p123456789s1234567z")
+        );
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_3_isolated_4_tiles() {
-    //     let bingpai = TileCounts::from_code("1111247777m1111z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_3_isolated_4_tiles() {
+        let bingpai = TileCounts::from_code("1111247777m1111z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(necessary_tiles, TileFlags::from_code("34m"));
+    }
 
     #[test]
     fn calculate_necessary_tiles_4_honors_1() {
