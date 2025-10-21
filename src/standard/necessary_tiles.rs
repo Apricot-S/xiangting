@@ -212,6 +212,7 @@ pub(in super::super) fn calculate_necessary_tiles_3_player(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::fulu_mianzi::FuluMianzi;
     use crate::test_utils::FromTileCode;
     use crate::tile::{TileCounts, TileFlags};
 
@@ -266,32 +267,36 @@ mod tests {
         assert_eq!(necessary_tiles, TileFlags::from_code("2z"));
     }
 
-    // #[test]
-    // fn calculate_necessary_tiles_with_meld_include() {
-    //     let bingpai = TileCounts::from_code("123m456p789s2z");
-    //     let fulu_mianzi_list = [FuluMianzi::Kezi(27)];
-    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 1);
-    // }
+    #[test]
+    #[ignore]
+    fn calculate_necessary_tiles_with_meld_include() {
+        let bingpai = TileCounts::from_code("123m456p789s2z");
+        let fulu_mianzi_list = [FuluMianzi::Kezi(27)];
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 1);
+        assert_eq!(necessary_tiles, TileFlags::from_code("2z"));
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_without_pair() {
-    //     // Source: https://blog.kobalab.net/entry/20151216/1450191666 雀頭がない場合
-    //     let bingpai = TileCounts::from_code("12389m456p12789s1z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_without_pair() {
+        // Source: https://blog.kobalab.net/entry/20151216/1450191666 雀頭がない場合
+        let bingpai = TileCounts::from_code("12389m456p12789s1z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(necessary_tiles, TileFlags::from_code("789m123s1z"));
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_too_many_meld_candidates() {
-    //     // Source: https://blog.kobalab.net/entry/20151216/1450191666 搭子過多の場合
-    //     let bingpai = TileCounts::from_code("12389m456p1289s11z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_too_many_meld_candidates() {
+        // Source: https://blog.kobalab.net/entry/20151216/1450191666 搭子過多の場合
+        let bingpai = TileCounts::from_code("12389m456p1289s11z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(necessary_tiles, TileFlags::from_code("7m37s"));
+    }
 
     // #[test]
     // fn calculate_necessary_tiles_not_enough_meld_candidates() {
