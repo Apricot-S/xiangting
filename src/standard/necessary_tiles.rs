@@ -239,29 +239,32 @@ mod tests {
         );
     }
 
-    // #[test]
-    // fn calculate_necessary_tiles_tenpai() {
-    //     let bingpai = TileCounts::from_code("123m456p789s1122z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 1);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_tenpai() {
+        let bingpai = TileCounts::from_code("123m456p789s1122z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 1);
+        assert_eq!(necessary_tiles, TileFlags::from_code("12z"));
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_win() {
-    //     let bingpai = TileCounts::from_code("123m456p789s11222z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 0);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_win() {
+        let bingpai = TileCounts::from_code("123m456p789s11222z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 0);
+        assert_eq!(necessary_tiles, TileFlags::from_code(""));
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_with_meld_exclude() {
-    //     let bingpai = TileCounts::from_code("123m456p789s2z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 1);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_with_meld_exclude() {
+        let bingpai = TileCounts::from_code("123m456p789s2z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 1);
+        assert_eq!(necessary_tiles, TileFlags::from_code("2z"));
+    }
 
     // #[test]
     // fn calculate_necessary_tiles_with_meld_include() {
