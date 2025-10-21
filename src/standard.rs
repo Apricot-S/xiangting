@@ -7,6 +7,8 @@ mod core;
 #[cfg(not(feature = "build-file"))]
 mod hash;
 #[cfg(not(feature = "build-file"))]
+mod necessary_tiles;
+#[cfg(not(feature = "build-file"))]
 mod replacement_number;
 #[cfg(not(feature = "build-file"))]
 mod shupai_map;
@@ -23,6 +25,8 @@ mod zipai_map;
 #[cfg(not(feature = "build-file"))]
 mod zipai_table;
 
+#[cfg(not(feature = "build-file"))]
+pub(super) use necessary_tiles::calculate_necessary_tiles;
 #[cfg(not(feature = "build-file"))]
 pub(super) use replacement_number::{
     calculate_replacement_number, calculate_replacement_number_3_player,

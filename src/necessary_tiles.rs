@@ -4,6 +4,7 @@
 
 use super::qiduizi;
 use super::shisanyao;
+use super::standard;
 use crate::error::XiangtingError;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, Shoupai3Player};
@@ -16,7 +17,8 @@ pub fn calculate_necessary_tiles(
 ) -> Result<(u8, TileFlags), XiangtingError> {
     let shoupai = Shoupai::new(bingpai, fulu_mianzi_list)?;
 
-    let (mut replacement_number, mut necessary_tiles) = (u8::MAX, 0u64);
+    let (mut replacement_number, mut necessary_tiles) =
+        standard::calculate_necessary_tiles(&shoupai);
 
     let (r1, n1) = qiduizi::calculate_necessary_tiles(&shoupai);
     match r1.cmp(&replacement_number) {
