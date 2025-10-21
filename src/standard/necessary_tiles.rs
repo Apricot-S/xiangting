@@ -616,13 +616,17 @@ mod tests {
     //     assert_eq!(replacement_number, 2);
     // }
 
-    // #[test]
-    // fn calculate_necessary_tiles_4_honors_1() {
-    //     let bingpai = TileCounts::from_code("1111z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_4_honors_1() {
+        let bingpai = TileCounts::from_code("1111z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("123456789m123456789p123456789s234567z")
+        );
+    }
 
     #[test]
     fn calculate_necessary_tiles_4_honors_2() {
