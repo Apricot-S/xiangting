@@ -579,13 +579,14 @@ mod tests {
     //     assert_eq!(replacement_number, 2);
     // }
 
-    // #[test]
-    // fn calculate_necessary_tiles_2_isolated_4_tiles_1() {
-    //     let bingpai = TileCounts::from_code("1111247777m");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_2_isolated_4_tiles_1() {
+        let bingpai = TileCounts::from_code("1111247777m");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(necessary_tiles, TileFlags::from_code("34m"));
+    }
 
     #[test]
     fn calculate_necessary_tiles_2_isolated_4_tiles_2() {
