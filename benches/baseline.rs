@@ -29,7 +29,18 @@ pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
                 bingpai[tile] -= 1;
             }
         }
-        n if n % 3 == 2 => (),
+        n if n % 3 == 2 => {
+            for tile in 0..34 {
+                if bingpai[tile] >= 4 {
+                    continue;
+                }
+
+                let new_replacement_number = calculate_replacement_number(&bingpai, None).unwrap();
+                if new_replacement_number < replacement_number {
+                    necessary_tiles |= 1 << tile;
+                }
+            }
+        }
         _ => panic!("invalid hand"),
     }
 
@@ -46,7 +57,17 @@ pub fn calculate_unnecessary_tiles(bingpai: &TileCounts) -> u64 {
 
     let mut unnecessary_tiles = 0u64;
     match bingpai.iter().sum::<u8>() {
-        n if n % 3 == 1 => (),
+        n if n % 3 == 1 => {
+            for tile in 0..34 {
+                if bingpai[tile] > 0 {
+                    let new_replacement_number =
+                        calculate_replacement_number(&bingpai, None).unwrap();
+                    if new_replacement_number == replacement_number {
+                        unnecessary_tiles |= 1 << tile;
+                    }
+                }
+            }
+        }
         n if n % 3 == 2 => {
             for tile in 0..34 {
                 if bingpai[tile] > 0 {
