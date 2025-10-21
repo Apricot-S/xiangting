@@ -149,3 +149,22 @@ pub(in super::super) fn calculate_necessary_tiles(shoupai: &Shoupai) -> (u8, Til
     let n = 5 + shoupai.num_required_bingpai_mianzi() as usize;
     (entry0.numbers[n], entry0.tiles[n])
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_utils::FromTileCode;
+    use crate::tile::{TileCounts, TileFlags};
+
+    #[test]
+    fn calculate_necessary_tiles_shisanyao_13() {
+        let bingpai = TileCounts::from_code("19m19p19s1234567z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 9);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("123789m123789p123789s1234567z")
+        );
+    }
+}
