@@ -395,14 +395,18 @@ mod tests {
         );
     }
 
-    // #[test]
-    // fn calculate_necessary_tiles_waiting_for_the_5th_tile_3() {
-    //     // Source: http://cmj3.web.fc2.com/#syanten
-    //     let bingpai = TileCounts::from_code("11112222333444z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 2);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_waiting_for_the_5th_tile_3() {
+        // Source: http://cmj3.web.fc2.com/#syanten
+        let bingpai = TileCounts::from_code("11112222333444z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 2);
+        assert_eq!(
+            necessary_tiles,
+            TileFlags::from_code("123456789m123456789p123456789s567z")
+        );
+    }
 
     // #[test]
     // fn calculate_necessary_tiles_waiting_for_the_5th_tile_4() {
