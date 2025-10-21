@@ -212,7 +212,7 @@ pub(in super::super) fn calculate_necessary_tiles_3_player(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::fulu_mianzi::FuluMianzi;
+    use crate::fulu_mianzi::{ClaimedTilePosition, FuluMianzi};
     use crate::test_utils::FromTileCode;
     use crate::tile::{TileCounts, TileFlags};
 
@@ -298,28 +298,31 @@ mod tests {
         assert_eq!(necessary_tiles, TileFlags::from_code("7m37s"));
     }
 
-    // #[test]
-    // fn calculate_necessary_tiles_not_enough_meld_candidates() {
-    //     // Source: https://blog.kobalab.net/entry/20151216/1450191666 搭子不足の場合
-    //     let bingpai = TileCounts::from_code("133345568m23677z");
-    //     let shoupai = Shoupai::new(&bingpai, None).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 3);
-    // }
+    #[test]
+    fn calculate_necessary_tiles_not_enough_meld_candidates() {
+        // Source: https://blog.kobalab.net/entry/20151216/1450191666 搭子不足の場合
+        let bingpai = TileCounts::from_code("133345568m23677z");
+        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 3);
+        assert_eq!(necessary_tiles, TileFlags::from_code("247m"));
+    }
 
-    // #[test]
-    // fn calculate_necessary_tiles_incomplete_melds() {
-    //     let bingpai = TileCounts::from_code("123m1z");
+    #[test]
+    #[ignore]
+    fn calculate_necessary_tiles_incomplete_melds() {
+        let bingpai = TileCounts::from_code("123m1z");
 
-    //     let fulu_mianzi_list = [
-    //         FuluMianzi::Shunzi(12, ClaimedTilePosition::Low),
-    //         FuluMianzi::Gangzi(24),
-    //     ];
+        let fulu_mianzi_list = [
+            FuluMianzi::Shunzi(12, ClaimedTilePosition::Low),
+            FuluMianzi::Gangzi(24),
+        ];
 
-    //     let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
-    //     let replacement_number = calculate_necessary_tiles(&shoupai);
-    //     assert_eq!(replacement_number, 1);
-    // }
+        let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
+        assert_eq!(replacement_number, 1);
+        assert_eq!(necessary_tiles, TileFlags::from_code("1z"));
+    }
 
     // #[test]
     // fn calculate_necessary_tiles_triplet_sequence() {
