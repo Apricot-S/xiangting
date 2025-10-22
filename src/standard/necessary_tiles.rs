@@ -76,12 +76,19 @@ fn update_dp(lhs: &mut Entry, rhs: &Entry) {
         // ```
         // let mut number = lhs.numbers[i] + rhs.numbers[0];
         // let mut tiles = lhs.tiles[i] | rhs.tiles[0];
+        // update_min(
+        //     &mut number,
+        //     &mut tiles,
+        //     lhs.numbers[0] + rhs.numbers[i],
+        //     rhs.tiles[0] | rhs.tiles[i],
+        // );
         // ```
-        // However, since rhs[0] is always 0, the calculation can be omitted.
+        // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
         let mut number = lhs.numbers[i];
         let mut tiles = lhs.tiles[i];
+        update_min(&mut number, &mut tiles, rhs.numbers[i], rhs.tiles[i]);
 
-        for j in 0..i {
+        for j in 1..i {
             update_min(
                 &mut number,
                 &mut tiles,

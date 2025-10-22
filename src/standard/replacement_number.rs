@@ -71,11 +71,11 @@ fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
     for i in (1..5).rev() {
         // The original expression is
         // ```
-        // let mut r = lhs[i] + rhs[0];
+        // let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
         // ```
-        // However, since rhs[0] is always 0, the calculation can be omitted.
-        let mut r = lhs[i];
-        for j in 0..i {
+        // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
+        let mut r = min(lhs[i], rhs[i]);
+        for j in 1..i {
             r = min(r, lhs[j] + rhs[i - j]);
         }
         lhs[i] = r;
