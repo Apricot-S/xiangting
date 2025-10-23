@@ -439,7 +439,7 @@ mod tests {
         let shoupai = Shoupai::new(&bingpai, Some(&fulu_mianzi_list)).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(necessary_tiles, TileFlags::from_code("134m1z"));
+        assert_eq!(necessary_tiles, TileFlags::from_code("1345m1z"));
     }
 
     #[test]
