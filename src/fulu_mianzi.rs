@@ -78,7 +78,7 @@ pub enum FuluMianzi {
 /// Errors that occur when an invalid meld is provided.
 #[derive(Debug, Error)]
 pub enum FuluMianziError {
-    /// The tile index is outside the range of 0-33.
+    /// The tile index is outside the valid range (0-33).
     #[error("tile index must be between 0 and 33 but was {0}")]
     IndexOutOfRange(Tile),
     /// An attempt was made to create a sequence using honors (字牌).
