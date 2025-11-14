@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::{NecessaryTilesMapValue, ReplacementNumberMapValue};
+use super::core::{NecessaryTilesMapValue, ReplacementNumberMapValue, UnnecessaryTilesMapValue};
 
 // Index:
 // [0] : 0 pair, 0 melds
@@ -44,6 +44,22 @@ pub(super) fn unpack_necessary_tiles(pack: &NecessaryTilesMapValue) -> UnpackedT
         (pack[1] & 0x01FF) as u16,
         ((pack[1] >> 9) & 0x01FF) as u16,
         ((pack[1] >> (9 * 2)) & 0x01FF) as u16,
+        (pack[2] & 0x01FF) as u16,
+        ((pack[2] >> 9) & 0x01FF) as u16,
+        ((pack[2] >> (9 * 2)) & 0x01FF) as u16,
+    ]
+}
+
+#[inline]
+pub(super) fn unpack_unnecessary_tiles(pack: &UnnecessaryTilesMapValue) -> UnpackedTiles {
+    [
+        (pack[0] & 0x01FF) as u16,
+        ((pack[0] >> 9) & 0x01FF) as u16,
+        ((pack[0] >> (9 * 2)) & 0x01FF) as u16,
+        (((pack[0] >> (27 - 4)) & 0x01F0) | (pack[1] & 0x0F)) as u16,
+        ((pack[1] >> 4) & 0x01FF) as u16,
+        ((pack[1] >> (4 + 9)) & 0x01FF) as u16,
+        ((pack[1] >> (4 + 9 * 2)) & 0x01FF) as u16,
         (pack[2] & 0x01FF) as u16,
         ((pack[2] >> 9) & 0x01FF) as u16,
         ((pack[2] >> (9 * 2)) & 0x01FF) as u16,

@@ -45,3 +45,25 @@ pub type ReplacementNumberMapValue = u32;
 // 18-26 Bits: Necessary tiles of 1 pair 4 melds
 // 27-31 Bits: Unused
 pub type NecessaryTilesMapValue = [u32; 3];
+
+// Each element contains the following structure:
+//
+// Index [0]:
+//  0- 8 Bits: Unnecessary tiles of 0 pair 0 melds
+//  9-17 Bits: Unnecessary tiles of 0 pair 1 melds
+// 18-26 Bits: Unnecessary tiles of 0 pair 2 melds
+// 27-31 Bits: Upper 5 bits of Unnecessary tiles of 0 pair 3 melds
+//
+// Index [1]:
+//  0- 3 Bits: Lower 4 bits of Unnecessary tiles of 0 pair 3 melds
+//  4-12 Bits: Unnecessary tiles of 0 pair 4 melds
+// 13-21 Bits: Unnecessary tiles of 1 pair 0 melds
+// 22-30 Bits: Unnecessary tiles of 1 pair 1 melds
+//    31 Bit : Unused
+//
+// Index [2]:
+//  0- 8 Bits: Unnecessary tiles of 1 pair 2 melds
+//  9-17 Bits: Unnecessary tiles of 1 pair 3 melds
+// 18-26 Bits: Unnecessary tiles of 1 pair 4 melds
+// 27-31 Bits: Unused
+pub type UnnecessaryTilesMapValue = [u32; 3];
