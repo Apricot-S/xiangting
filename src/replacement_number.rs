@@ -7,7 +7,7 @@ use super::shisanyao;
 use super::standard;
 use crate::error::XiangtingError;
 use crate::fulu_mianzi::FuluMianzi;
-use crate::shoupai::{Shoupai, Shoupai3Player};
+use crate::shoupai::{Shoupai, Shoupai3p};
 use crate::tile::TileCounts;
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
@@ -176,7 +176,7 @@ pub fn calculate_replacement_number_3_player(
     bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<u8, XiangtingError> {
-    let shoupai_3p = Shoupai3Player::new(bingpai, fulu_mianzi_list)?;
+    let shoupai_3p = Shoupai3p::new(bingpai, fulu_mianzi_list)?;
 
     let r0 = standard::calculate_replacement_number_3_player(&shoupai_3p);
 

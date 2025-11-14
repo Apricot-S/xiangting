@@ -123,13 +123,13 @@ impl<'a> Shoupai<'a> {
     }
 }
 
-pub(crate) struct Shoupai3Player<'a> {
+pub(crate) struct Shoupai3p<'a> {
     bingpai: &'a TileCounts,
     tile_counts: Option<TileCounts>,
     num_required_bingpai_mianzi: u8,
 }
 
-impl<'a> Shoupai3Player<'a> {
+impl<'a> Shoupai3p<'a> {
     pub(crate) fn new(
         bingpai: &'a TileCounts,
         fulu_mianzi_list: Option<&[FuluMianzi]>,
@@ -174,8 +174,8 @@ impl<'a> Shoupai3Player<'a> {
     }
 }
 
-impl<'a> From<Shoupai3Player<'a>> for Shoupai<'a> {
-    fn from(value: Shoupai3Player<'a>) -> Self {
+impl<'a> From<Shoupai3p<'a>> for Shoupai<'a> {
+    fn from(value: Shoupai3p<'a>) -> Self {
         Self {
             bingpai: value.bingpai,
             tile_counts: value.tile_counts,

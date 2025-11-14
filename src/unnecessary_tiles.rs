@@ -6,7 +6,7 @@ use super::qiduizi;
 use super::shisanyao;
 use crate::error::XiangtingError;
 use crate::fulu_mianzi::FuluMianzi;
-use crate::shoupai::{Shoupai, Shoupai3Player};
+use crate::shoupai::{Shoupai, Shoupai3p};
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
@@ -45,7 +45,7 @@ pub fn calculate_unnecessary_tiles_3_player(
     bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<(u8, TileFlags), XiangtingError> {
-    let shoupai_3p = Shoupai3Player::new(bingpai, fulu_mianzi_list)?;
+    let shoupai_3p = Shoupai3p::new(bingpai, fulu_mianzi_list)?;
 
     let (mut replacement_number, mut unnecessary_tiles) = (u8::MAX, 0u64);
 
