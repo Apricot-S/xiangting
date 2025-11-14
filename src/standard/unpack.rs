@@ -56,7 +56,7 @@ pub(super) fn unpack_unnecessary_tiles(pack: &UnnecessaryTilesMapValue) -> Unpac
         (pack[0] & 0x01FF) as u16,
         ((pack[0] >> 9) & 0x01FF) as u16,
         ((pack[0] >> (9 * 2)) & 0x01FF) as u16,
-        (((pack[0] >> (27 - 4)) & 0x01F0) | (pack[1] & 0x0F)) as u16,
+        (((pack[0] >> (9 * 3 - 4)) & 0x01F0) | (pack[1] & 0x0F)) as u16,
         ((pack[1] >> 4) & 0x01FF) as u16,
         ((pack[1] >> (4 + 9)) & 0x01FF) as u16,
         ((pack[1] >> (4 + 9 * 2)) & 0x01FF) as u16,
