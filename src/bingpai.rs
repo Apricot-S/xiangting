@@ -30,7 +30,7 @@ pub enum BingpaiError {
 
 pub(crate) trait TileCountsExt {
     fn count(&self) -> Result<u8, BingpaiError>;
-    fn count_3_player(&self) -> Result<u8, BingpaiError>;
+    fn count_3p(&self) -> Result<u8, BingpaiError>;
 }
 
 impl TileCountsExt for TileCounts {
@@ -52,7 +52,7 @@ impl TileCountsExt for TileCounts {
         }
     }
 
-    fn count_3_player(&self) -> Result<u8, BingpaiError> {
+    fn count_3p(&self) -> Result<u8, BingpaiError> {
         if let Some(i) = self[1..8].iter().position(|&t| t > 0) {
             return Err(BingpaiError::InvalidTileFor3Player((i + 1) as u8));
         }

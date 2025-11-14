@@ -50,9 +50,9 @@ pub fn calculate_necessary_tiles_3_player(
     let shoupai_3p = Shoupai3p::new(bingpai, fulu_mianzi_list)?;
 
     let (mut replacement_number, mut necessary_tiles) =
-        standard::calculate_necessary_tiles_3_player(&shoupai_3p);
+        standard::calculate_necessary_tiles_3p(&shoupai_3p);
 
-    let (r1, n1) = qiduizi::calculate_necessary_tiles_3_player(&shoupai_3p);
+    let (r1, n1) = qiduizi::calculate_necessary_tiles_3p(&shoupai_3p);
     match r1.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r1;

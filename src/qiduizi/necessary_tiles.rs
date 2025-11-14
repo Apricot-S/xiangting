@@ -31,7 +31,7 @@ pub(in super::super) fn calculate_necessary_tiles(shoupai: &Shoupai) -> (u8, Til
     (replacement_number, necessary_tiles)
 }
 
-pub(in super::super) fn calculate_necessary_tiles_3_player(shoupai: &Shoupai3p) -> (u8, TileFlags) {
+pub(in super::super) fn calculate_necessary_tiles_3p(shoupai: &Shoupai3p) -> (u8, TileFlags) {
     if shoupai.num_required_bingpai_mianzi() < 4 {
         return (u8::MAX, 0);
     }
@@ -138,10 +138,10 @@ mod tests {
     }
 
     #[test]
-    fn calculate_necessary_tiles_3_player_with_quadruple() {
+    fn calculate_necessary_tiles_3p_with_quadruple() {
         let bingpai = TileCounts::from_code("1199m288p55s1111z");
         let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
-        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3_player(&shoupai);
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3p(&shoupai);
         assert_eq!(replacement_number, 3);
         assert_eq!(
             necessary_tiles,

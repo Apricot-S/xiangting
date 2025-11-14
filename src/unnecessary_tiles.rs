@@ -49,7 +49,7 @@ pub fn calculate_unnecessary_tiles_3_player(
 
     let (mut replacement_number, mut unnecessary_tiles) = (u8::MAX, 0u64);
 
-    let (r1, u1) = qiduizi::calculate_unnecessary_tiles_3_player(&shoupai_3p);
+    let (r1, u1) = qiduizi::calculate_unnecessary_tiles_3p(&shoupai_3p);
     match r1.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r1;

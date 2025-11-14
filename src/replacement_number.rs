@@ -178,7 +178,7 @@ pub fn calculate_replacement_number_3_player(
 ) -> Result<u8, XiangtingError> {
     let shoupai_3p = Shoupai3p::new(bingpai, fulu_mianzi_list)?;
 
-    let r0 = standard::calculate_replacement_number_3_player(&shoupai_3p);
+    let r0 = standard::calculate_replacement_number_3p(&shoupai_3p);
 
     let shoupai = shoupai_3p.into();
 

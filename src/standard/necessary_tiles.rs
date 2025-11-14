@@ -158,7 +158,7 @@ pub(in super::super) fn calculate_necessary_tiles(shoupai: &Shoupai) -> (u8, Til
     (entry0.numbers[n], entry0.tiles[n])
 }
 
-pub(in super::super) fn calculate_necessary_tiles_3_player(shoupai: &Shoupai3p) -> (u8, TileFlags) {
+pub(in super::super) fn calculate_necessary_tiles_3p(shoupai: &Shoupai3p) -> (u8, TileFlags) {
     let hash_m = hash_19m(&shoupai.bingpai()[0..9]);
     let hash_p = hash_shupai(&shoupai.bingpai()[9..18]);
     let hash_s = hash_shupai(&shoupai.bingpai()[18..27]);
@@ -693,7 +693,7 @@ mod tests {
     }
 
     #[test]
-    fn calculate_necessary_tiles_different_3_player_and_4_player() {
+    fn calculate_necessary_tiles_different_3p_and_4p() {
         let bingpai = TileCounts::from_code("1111m111122233z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&shoupai);
@@ -702,10 +702,10 @@ mod tests {
     }
 
     #[test]
-    fn calculate_necessary_tiles_3_player_different_3_player_and_4_player() {
+    fn calculate_necessary_tiles_3p_different_3p_and_4p() {
         let bingpai = TileCounts::from_code("1111m111122233z");
         let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
-        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3_player(&shoupai);
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3p(&shoupai);
         assert_eq!(replacement_number, 3);
         assert_eq!(
             necessary_tiles,
@@ -714,10 +714,10 @@ mod tests {
     }
 
     #[test]
-    fn calculate_necessary_tiles_3_player_4_19m_1() {
+    fn calculate_necessary_tiles_3p_4_19m_1() {
         let bingpai = TileCounts::from_code("1111m");
         let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
-        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3_player(&shoupai);
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3p(&shoupai);
         assert_eq!(replacement_number, 2);
         assert_eq!(
             necessary_tiles,
@@ -726,10 +726,10 @@ mod tests {
     }
 
     #[test]
-    fn calculate_necessary_tiles_3_player_4_19m_2() {
+    fn calculate_necessary_tiles_3p_4_19m_2() {
         let bingpai = TileCounts::from_code("1111m123p");
         let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
-        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3_player(&shoupai);
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3p(&shoupai);
         assert_eq!(replacement_number, 2);
         assert_eq!(
             necessary_tiles,
@@ -738,10 +738,10 @@ mod tests {
     }
 
     #[test]
-    fn calculate_necessary_tiles_3_player_4_19m_3() {
+    fn calculate_necessary_tiles_3p_4_19m_3() {
         let bingpai = TileCounts::from_code("11119999m");
         let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
-        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3_player(&shoupai);
+        let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3p(&shoupai);
         assert_eq!(replacement_number, 2);
         assert_eq!(
             necessary_tiles,

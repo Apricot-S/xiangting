@@ -134,7 +134,7 @@ impl<'a> Shoupai3p<'a> {
         bingpai: &'a TileCounts,
         fulu_mianzi_list: Option<&[FuluMianzi]>,
     ) -> Result<Self, ShoupaiError> {
-        let num_bingpai = bingpai.count_3_player()?;
+        let num_bingpai = bingpai.count_3p()?;
         let num_required_bingpai_mianzi = num_bingpai / 3;
 
         let max_num_fulu = MAX_NUM_MIANZI - num_required_bingpai_mianzi;
@@ -142,7 +142,7 @@ impl<'a> Shoupai3p<'a> {
         validate_num_fulu(num_fulu, max_num_fulu)?;
 
         fulu_mianzi_list
-            .map(|fl| fl.iter().try_for_each(|f| f.validate_3_player()))
+            .map(|fl| fl.iter().try_for_each(|f| f.validate_3p()))
             .transpose()?;
 
         let tile_counts = get_tile_counts(bingpai, fulu_mianzi_list);
