@@ -263,6 +263,35 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
 
     writeln!(w, "];")?;
 
+    writeln!(w)?;
+    writeln!(w, "#[rustfmt::skip]")?;
+
+    match N {
+        9 => write!(
+            w,
+            "pub(super) static SHUPAI_UNNECESSARY_TILES_MAP: [UnnecessaryTilesMapValue; SHUPAI_SIZE] = ["
+        )?,
+        7 => write!(
+            w,
+            "pub(super) static ZIPAI_UNNECESSARY_TILES_MAP: [UnnecessaryTilesMapValue; ZIPAI_SIZE] = ["
+        )?,
+        2 => write!(
+            w,
+            "pub(super) static WANZI_19_UNNECESSARY_TILES_MAP: [UnnecessaryTilesMapValue; WANZI_19_SIZE] = ["
+        )?,
+        _ => unreachable!(),
+    }
+
+    for entry in map {
+        write!(w, "[")?;
+        write!(w, "{},", entry.unnecessary_tiles[0])?;
+        write!(w, "{},", entry.unnecessary_tiles[1])?;
+        write!(w, "{}", entry.unnecessary_tiles[2])?;
+        write!(w, "],")?;
+    }
+
+    writeln!(w, "];")?;
+
     w.flush()?;
 
     Ok(())
