@@ -115,7 +115,7 @@ impl FuluMianzi {
         Ok(())
     }
 
-    pub(crate) fn validate_3_player(&self) -> Result<(), FuluMianziError> {
+    pub(crate) fn validate_3p(&self) -> Result<(), FuluMianziError> {
         match self {
             FuluMianzi::Shunzi(..) => {
                 Err(FuluMianziError::InvalidFuluMianziFor3Player(self.clone()))

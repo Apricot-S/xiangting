@@ -9,7 +9,7 @@ use super::unpack::{
 };
 use super::wanzi_19_map::{WANZI_19_NECESSARY_TILES_MAP, WANZI_19_REPLACEMENT_NUMBER_MAP};
 use super::zipai_map::{ZIPAI_NECESSARY_TILES_MAP, ZIPAI_REPLACEMENT_NUMBER_MAP};
-use crate::shoupai::{Shoupai, Shoupai3Player};
+use crate::shoupai::{Shoupai, Shoupai3p};
 use crate::tile::TileCounts;
 use std::cmp::min;
 
@@ -135,7 +135,7 @@ pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
     entry0[5 + shoupai.num_required_bingpai_mianzi() as usize]
 }
 
-pub(in super::super) fn calculate_replacement_number_3_player(shoupai: &Shoupai3Player) -> u8 {
+pub(in super::super) fn calculate_replacement_number_3p(shoupai: &Shoupai3p) -> u8 {
     let hash_m = hash_19m(&shoupai.bingpai()[0..9]);
     let hash_p = hash_shupai(&shoupai.bingpai()[9..18]);
     let hash_s = hash_shupai(&shoupai.bingpai()[18..27]);
@@ -592,7 +592,7 @@ mod tests {
     }
 
     #[test]
-    fn calculate_replacement_number_different_3_player_and_4_player() {
+    fn calculate_replacement_number_different_3p_and_4p() {
         let bingpai = TileCounts::from_code("1111m111122233z");
         let shoupai = Shoupai::new(&bingpai, None).unwrap();
         let replacement_number = calculate_replacement_number(&shoupai);
@@ -600,34 +600,34 @@ mod tests {
     }
 
     #[test]
-    fn calculate_replacement_number_3_player_different_3_player_and_4_player() {
+    fn calculate_replacement_number_3p_different_3p_and_4p() {
         let bingpai = TileCounts::from_code("1111m111122233z");
-        let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
-        let replacement_number = calculate_replacement_number_3_player(&shoupai);
+        let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
+        let replacement_number = calculate_replacement_number_3p(&shoupai);
         assert_eq!(replacement_number, 3);
     }
 
     #[test]
-    fn calculate_replacement_number_3_player_4_19m_1() {
+    fn calculate_replacement_number_3p_4_19m_1() {
         let bingpai = TileCounts::from_code("1111m");
-        let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
-        let replacement_number = calculate_replacement_number_3_player(&shoupai);
+        let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
+        let replacement_number = calculate_replacement_number_3p(&shoupai);
         assert_eq!(replacement_number, 2);
     }
 
     #[test]
-    fn calculate_replacement_number_3_player_4_19m_2() {
+    fn calculate_replacement_number_3p_4_19m_2() {
         let bingpai = TileCounts::from_code("1111m123p");
-        let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
-        let replacement_number = calculate_replacement_number_3_player(&shoupai);
+        let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
+        let replacement_number = calculate_replacement_number_3p(&shoupai);
         assert_eq!(replacement_number, 2);
     }
 
     #[test]
-    fn calculate_replacement_number_3_player_4_19m_3() {
+    fn calculate_replacement_number_3p_4_19m_3() {
         let bingpai = TileCounts::from_code("11119999m");
-        let shoupai = Shoupai3Player::new(&bingpai, None).unwrap();
-        let replacement_number = calculate_replacement_number_3_player(&shoupai);
+        let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
+        let replacement_number = calculate_replacement_number_3p(&shoupai);
         assert_eq!(replacement_number, 2);
     }
 }
