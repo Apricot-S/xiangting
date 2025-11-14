@@ -12,7 +12,9 @@ use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
-use xiangting::standard::core::{NecessaryTilesMapValue, ReplacementNumberMapValue};
+use xiangting::standard::core::{
+    NecessaryTilesMapValue, ReplacementNumberMapValue, UnnecessaryTilesMapValue,
+};
 use xiangting::standard::hash::{hash_19m, hash_shupai, hash_zipai};
 use xiangting::standard::shupai_table::SHUPAI_SIZE;
 use xiangting::standard::wanzi_19_table::WANZI_19_SIZE;
@@ -21,6 +23,7 @@ use xiangting::standard::zipai_table::ZIPAI_SIZE;
 struct MapValue {
     replacement_number: ReplacementNumberMapValue,
     necessary_tiles: NecessaryTilesMapValue,
+    unnecessary_tiles: UnnecessaryTilesMapValue,
 }
 
 impl Default for MapValue {
@@ -28,6 +31,7 @@ impl Default for MapValue {
         MapValue {
             replacement_number: 0u32,
             necessary_tiles: [0u32; 3],
+            unnecessary_tiles: [0u32; 3],
         }
     }
 }
@@ -119,6 +123,23 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
                 (1, 2) => pack.necessary_tiles[2] |= necessary_tiles as u32,
                 (1, 3) => pack.necessary_tiles[2] |= (necessary_tiles as u32) << 9,
                 (1, 4) => pack.necessary_tiles[2] |= (necessary_tiles as u32) << (9 * 2),
+                _ => unreachable!(),
+            }
+
+            match (num_pair, num_meld) {
+                (0, 0) => pack.unnecessary_tiles[0] |= unnecessary_tiles as u32,
+                (0, 1) => pack.unnecessary_tiles[0] |= (unnecessary_tiles as u32) << 9,
+                (0, 2) => pack.unnecessary_tiles[0] |= (unnecessary_tiles as u32) << (9 * 2),
+                (0, 3) => {
+                    pack.unnecessary_tiles[0] |= (unnecessary_tiles as u32 & 0x01F0) << (9 * 3 - 4);
+                    pack.unnecessary_tiles[1] |= unnecessary_tiles as u32 & 0x0F;
+                }
+                (0, 4) => pack.unnecessary_tiles[1] |= (unnecessary_tiles as u32) << 4,
+                (1, 0) => pack.unnecessary_tiles[1] |= (unnecessary_tiles as u32) << (4 + 9),
+                (1, 1) => pack.unnecessary_tiles[1] |= (unnecessary_tiles as u32) << (4 + 9 * 2),
+                (1, 2) => pack.unnecessary_tiles[2] |= unnecessary_tiles as u32,
+                (1, 3) => pack.unnecessary_tiles[2] |= (unnecessary_tiles as u32) << 9,
+                (1, 4) => pack.unnecessary_tiles[2] |= (unnecessary_tiles as u32) << (9 * 2),
                 _ => unreachable!(),
             }
         }
