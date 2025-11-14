@@ -199,7 +199,7 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     writeln!(w)?;
     writeln!(
         w,
-        "use super::core::{{NecessaryTilesMapValue, ReplacementNumberMapValue}};"
+        "use super::core::{{NecessaryTilesMapValue, ReplacementNumberMapValue, UnnecessaryTilesMapValue}};"
     )?;
 
     match N {

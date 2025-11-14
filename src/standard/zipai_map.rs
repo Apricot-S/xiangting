@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::{NecessaryTilesMapValue, ReplacementNumberMapValue};
+use super::core::{NecessaryTilesMapValue, ReplacementNumberMapValue, UnnecessaryTilesMapValue};
 use super::zipai_table::ZIPAI_SIZE;
 
 #[rustfmt::skip]

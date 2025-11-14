@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::{NecessaryTilesMapValue, ReplacementNumberMapValue};
+use super::core::{NecessaryTilesMapValue, ReplacementNumberMapValue, UnnecessaryTilesMapValue};
 use super::wanzi_19_table::WANZI_19_SIZE;
 
 #[rustfmt::skip]
