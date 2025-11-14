@@ -17,7 +17,7 @@ use crate::tile::TileCounts;
 ///
 /// * `bingpai` - 兵牌: A reference to a hand excluding melds (a.k.a. pure hand, 純手牌).
 /// * `fulu_mianzi_list` - An `Option` containing a reference to a slice of melds.
-/// * `player_count` - The number of players.
+/// * `player_count` - A reference to the number of players.
 ///
 /// # Errors
 ///
