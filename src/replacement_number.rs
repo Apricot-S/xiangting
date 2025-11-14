@@ -11,7 +11,7 @@ use crate::shoupai::{Shoupai, Shoupai3p};
 use crate::tile::TileCounts;
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
-/// This function is for 4-player mahjong.
+/// This function is for four-player mahjong.
 ///
 /// In some rulesets, melded tiles are excluded when checking whether a hand contains
 /// four identical tiles. In others, melded tiles are included in the calculation.
@@ -98,7 +98,7 @@ pub fn calculate_replacement_number(
 }
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
-/// This function is for 3-player mahjong.
+/// This function is for three-player mahjong.
 ///
 /// Tiles from 2m (二萬) to 8m (八萬) are not used.
 /// In addition, melded sequences (明順子) are not allowed.
@@ -374,7 +374,7 @@ mod tests {
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::InvalidTileFor3Player(1)
+                BingpaiError::InvalidTileForThreePlayer(1)
             )))
         ));
     }
@@ -388,7 +388,7 @@ mod tests {
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
-                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
+                FuluMianziError::InvalidFuluMianziForThreePlayer(FuluMianzi::Shunzi(
                     9,
                     ClaimedTilePosition::Low
                 ))
@@ -405,7 +405,7 @@ mod tests {
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
-                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
+                FuluMianziError::InvalidFuluMianziForThreePlayer(FuluMianzi::Kezi(1))
             )))
         ));
     }
