@@ -15,7 +15,7 @@
 //! # Example
 //!
 //! ```
-//! # use xiangting::calculate_replacement_number;
+//! # use xiangting::{PlayerCount, calculate_replacement_number};
 //! # use xiangting::XiangtingError;
 //! # fn main() -> Result<(), XiangtingError> {
 //! // 123m456p789s11222z
@@ -26,7 +26,7 @@
 //!     2, 3, 0, 0, 0, 0, 0, // z
 //! ];
 //!
-//! let replacement_number = calculate_replacement_number(&hand, None);
+//! let replacement_number = calculate_replacement_number(&hand, None, &PlayerCount::Four);
 //! assert_eq!(replacement_number?, 0u8);
 //! # Ok(())
 //! # }
@@ -73,7 +73,7 @@ pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 #[cfg(not(feature = "build-file"))]
 pub use necessary_tiles::{calculate_necessary_tiles, calculate_necessary_tiles_3_player};
 #[cfg(not(feature = "build-file"))]
-pub use replacement_number::{calculate_replacement_number, calculate_replacement_number_3_player};
+pub use replacement_number::calculate_replacement_number;
 #[cfg(not(feature = "build-file"))]
 pub use shoupai::ShoupaiError;
 #[cfg(not(feature = "build-file"))]
