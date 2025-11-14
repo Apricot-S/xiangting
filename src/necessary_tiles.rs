@@ -5,13 +5,26 @@
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
+use crate::config::PlayerCount;
 use crate::error::XiangtingError;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, Shoupai3p};
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
+#[inline]
 pub fn calculate_necessary_tiles(
+    bingpai: &TileCounts,
+    fulu_mianzi_list: Option<&[FuluMianzi]>,
+    player_count: &PlayerCount,
+) -> Result<(u8, TileFlags), XiangtingError> {
+    match player_count {
+        PlayerCount::Four => calculate_necessary_tiles_4p(bingpai, fulu_mianzi_list),
+        PlayerCount::Three => calculate_necessary_tiles_3p(bingpai, fulu_mianzi_list),
+    }
+}
+
+fn calculate_necessary_tiles_4p(
     bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<(u8, TileFlags), XiangtingError> {
@@ -43,7 +56,7 @@ pub fn calculate_necessary_tiles(
     Ok((replacement_number, necessary_tiles))
 }
 
-pub fn calculate_necessary_tiles_3_player(
+fn calculate_necessary_tiles_3p(
     bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<(u8, TileFlags), XiangtingError> {
@@ -88,7 +101,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_ok_standard_tenpai() {
         let bingpai = TileCounts::from_code("123m456p789s1122z");
-        let ret = calculate_necessary_tiles(&bingpai, None);
+        let ret = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Four);
         let (replacement_number, necessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(necessary_tiles, TileFlags::from_code("12z"));
@@ -97,7 +110,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_ok_qiduizi_tenpai() {
         let bingpai = TileCounts::from_code("1188m288p55s1177z");
-        let ret = calculate_necessary_tiles(&bingpai, None);
+        let ret = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Four);
         let (replacement_number, necessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(necessary_tiles, TileFlags::from_code("2p"));
@@ -106,7 +119,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_ok_shisanyao_tenpai() {
         let bingpai = TileCounts::from_code("19m19p19s1234567z");
-        let ret = calculate_necessary_tiles(&bingpai, None);
+        let ret = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Four);
         let (replacement_number, necessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(necessary_tiles, TileFlags::from_code("19m19p19s1234567z"));
@@ -115,7 +128,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_err_bingpai_empty() {
         let bingpai = TileCounts::from_code("");
-        let replacement_number = calculate_necessary_tiles(&bingpai, None);
+        let replacement_number = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
@@ -127,21 +140,21 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_ok_bingpai_1_tile() {
         let bingpai = TileCounts::from_code("1m");
-        let replacement_number = calculate_necessary_tiles(&bingpai, None);
+        let replacement_number = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Four);
         assert!(replacement_number.is_ok());
     }
 
     #[test]
     fn calculate_necessary_tiles_ok_bingpai_2_tiles() {
         let bingpai = TileCounts::from_code("2p3s");
-        let replacement_number = calculate_necessary_tiles(&bingpai, None);
+        let replacement_number = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Four);
         assert!(replacement_number.is_ok());
     }
 
     #[test]
     fn calculate_necessary_tiles_err_bingpai_3_tiles() {
         let bingpai = TileCounts::from_code("2p3s7z");
-        let replacement_number = calculate_necessary_tiles(&bingpai, None);
+        let replacement_number = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
@@ -153,7 +166,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_err_bingpai_15_tiles() {
         let bingpai = TileCounts::from_code("111222333444555m");
-        let replacement_number = calculate_necessary_tiles(&bingpai, None);
+        let replacement_number = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
@@ -165,7 +178,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_err_bingpai_5_same_tiles() {
         let bingpai = TileCounts::from_code("11111m");
-        let replacement_number = calculate_necessary_tiles(&bingpai, None);
+        let replacement_number = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
@@ -178,7 +191,8 @@ mod tests {
     fn calculate_necessary_tiles_err_fulu_index_out_of_range() {
         let bingpai = TileCounts::from_code("1m");
         let fulu_mianzi_list = [FuluMianzi::Kezi(34)];
-        let replacement_number = calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list));
+        let replacement_number =
+            calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list), &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
@@ -191,7 +205,8 @@ mod tests {
     fn calculate_necessary_tiles_err_fulu_shunzi_with_zipai() {
         let bingpai = TileCounts::from_code("1p");
         let fulu_mianzi_list = [FuluMianzi::Shunzi(27, ClaimedTilePosition::Low)];
-        let replacement_number = calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list));
+        let replacement_number =
+            calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list), &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
@@ -204,7 +219,8 @@ mod tests {
     fn calculate_necessary_tiles_err_fulu_invalid_shunzi_combination() {
         let bingpai = TileCounts::from_code("1p");
         let fulu_mianzi_list = [FuluMianzi::Shunzi(0, ClaimedTilePosition::Middle)];
-        let replacement_number = calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list));
+        let replacement_number =
+            calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list), &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
@@ -217,7 +233,8 @@ mod tests {
     fn calculate_necessary_tiles_err_shoupai_too_many_fulu_mianzi() {
         let bingpai = TileCounts::from_code("11122233344455m");
         let fulu_mianzi_list = [FuluMianzi::Kezi(5)];
-        let replacement_number = calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list));
+        let replacement_number =
+            calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list), &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::TooManyFuluMianzi {
@@ -231,7 +248,8 @@ mod tests {
     fn calculate_necessary_tiles_err_shoupai_5_same_tiles() {
         let bingpai = TileCounts::from_code("1m");
         let fulu_mianzi_list = [FuluMianzi::Gangzi(0)];
-        let replacement_number = calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list));
+        let replacement_number =
+            calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list), &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::TooManyCopies {
@@ -244,7 +262,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_3_player_ok_standard_tenpai() {
         let bingpai = TileCounts::from_code("111m456p789s1122z");
-        let ret = calculate_necessary_tiles_3_player(&bingpai, None);
+        let ret = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Three);
         let (replacement_number, necessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(necessary_tiles, TileFlags::from_code("12z"));
@@ -253,7 +271,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_3_player_ok_qiduizi_tenpai() {
         let bingpai = TileCounts::from_code("1199m288p55s1177z");
-        let ret = calculate_necessary_tiles_3_player(&bingpai, None);
+        let ret = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Three);
         let (replacement_number, necessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(necessary_tiles, TileFlags::from_code("2p"));
@@ -262,7 +280,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_3_player_ok_shisanyao_tenpai() {
         let bingpai = TileCounts::from_code("19m19p19s1234567z");
-        let ret = calculate_necessary_tiles_3_player(&bingpai, None);
+        let ret = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Three);
         let (replacement_number, necessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(necessary_tiles, TileFlags::from_code("19m19p19s1234567z"));
@@ -271,7 +289,7 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_3_player_err_bingpai_2m() {
         let bingpai = TileCounts::from_code("2m");
-        let replacement_number = calculate_necessary_tiles_3_player(&bingpai, None);
+        let replacement_number = calculate_necessary_tiles(&bingpai, None, &PlayerCount::Three);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
@@ -285,7 +303,7 @@ mod tests {
         let bingpai = TileCounts::from_code("1m");
         let fulu_mianzi_list = [FuluMianzi::Shunzi(9, ClaimedTilePosition::Low)];
         let replacement_number =
-            calculate_necessary_tiles_3_player(&bingpai, Some(&fulu_mianzi_list));
+            calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list), &PlayerCount::Three);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
@@ -302,7 +320,7 @@ mod tests {
         let bingpai = TileCounts::from_code("1m");
         let fulu_mianzi_list = [FuluMianzi::Kezi(1)];
         let replacement_number =
-            calculate_necessary_tiles_3_player(&bingpai, Some(&fulu_mianzi_list));
+            calculate_necessary_tiles(&bingpai, Some(&fulu_mianzi_list), &PlayerCount::Three);
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(

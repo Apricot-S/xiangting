@@ -115,7 +115,9 @@ fn necessary_tiles_proposed(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Necessary tiles Proposed", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_necessary_tiles(hand.next().unwrap(), None))
+        b.iter(|| {
+            calculate_necessary_tiles(hand.next().unwrap(), None, &PlayerCount::Four).unwrap()
+        })
     });
     group.finish();
 }

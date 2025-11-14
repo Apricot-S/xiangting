@@ -4,13 +4,26 @@
 
 use super::qiduizi;
 use super::shisanyao;
+use crate::config::PlayerCount;
 use crate::error::XiangtingError;
 use crate::fulu_mianzi::FuluMianzi;
 use crate::shoupai::{Shoupai, Shoupai3p};
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
+#[inline]
 pub fn calculate_unnecessary_tiles(
+    bingpai: &TileCounts,
+    fulu_mianzi_list: Option<&[FuluMianzi]>,
+    player_count: &PlayerCount,
+) -> Result<(u8, TileFlags), XiangtingError> {
+    match player_count {
+        PlayerCount::Four => calculate_unnecessary_tiles_4p(bingpai, fulu_mianzi_list),
+        PlayerCount::Three => calculate_unnecessary_tiles_3p(bingpai, fulu_mianzi_list),
+    }
+}
+
+fn calculate_unnecessary_tiles_4p(
     bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<(u8, TileFlags), XiangtingError> {
@@ -41,7 +54,7 @@ pub fn calculate_unnecessary_tiles(
     Ok((replacement_number, unnecessary_tiles))
 }
 
-pub fn calculate_unnecessary_tiles_3_player(
+fn calculate_unnecessary_tiles_3p(
     bingpai: &TileCounts,
     fulu_mianzi_list: Option<&[FuluMianzi]>,
 ) -> Result<(u8, TileFlags), XiangtingError> {

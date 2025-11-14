@@ -71,7 +71,7 @@ pub use error::XiangtingError;
 #[cfg(not(feature = "build-file"))]
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 #[cfg(not(feature = "build-file"))]
-pub use necessary_tiles::{calculate_necessary_tiles, calculate_necessary_tiles_3_player};
+pub use necessary_tiles::calculate_necessary_tiles;
 #[cfg(not(feature = "build-file"))]
 pub use replacement_number::calculate_replacement_number;
 #[cfg(not(feature = "build-file"))]
@@ -79,7 +79,7 @@ pub use shoupai::ShoupaiError;
 #[cfg(not(feature = "build-file"))]
 pub use tile::{Tile, TileCounts, TileFlags, TileFlagsExt};
 #[cfg(not(feature = "build-file"))]
-pub use unnecessary_tiles::{calculate_unnecessary_tiles, calculate_unnecessary_tiles_3_player};
+pub use unnecessary_tiles::calculate_unnecessary_tiles;
 
 #[cfg(feature = "build-map")]
 #[doc(hidden)]
