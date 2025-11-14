@@ -35,6 +35,8 @@
 #[cfg(not(feature = "build-file"))]
 mod bingpai;
 #[cfg(not(feature = "build-file"))]
+mod config;
+#[cfg(not(feature = "build-file"))]
 mod constants;
 #[cfg(not(feature = "build-file"))]
 mod error;
@@ -62,6 +64,8 @@ mod test_utils;
 
 #[cfg(not(feature = "build-file"))]
 pub use bingpai::BingpaiError;
+#[cfg(not(feature = "build-file"))]
+pub use config::PlayerCount;
 #[cfg(not(feature = "build-file"))]
 pub use error::XiangtingError;
 #[cfg(not(feature = "build-file"))]
