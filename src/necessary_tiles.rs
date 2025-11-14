@@ -275,7 +275,7 @@ mod tests {
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::InvalidTileFor3Player(1)
+                BingpaiError::InvalidTileForThreePlayer(1)
             )))
         ));
     }
@@ -289,7 +289,7 @@ mod tests {
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
-                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Shunzi(
+                FuluMianziError::InvalidFuluMianziForThreePlayer(FuluMianzi::Shunzi(
                     9,
                     ClaimedTilePosition::Low
                 ))
@@ -306,7 +306,7 @@ mod tests {
         assert!(matches!(
             replacement_number,
             Err(XiangtingError::Shoupai(ShoupaiError::FuluMianzi(
-                FuluMianziError::InvalidFuluMianziFor3Player(FuluMianzi::Kezi(1))
+                FuluMianziError::InvalidFuluMianziForThreePlayer(FuluMianzi::Kezi(1))
             )))
         ));
     }

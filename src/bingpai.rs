@@ -23,9 +23,9 @@ pub enum BingpaiError {
     /// Total tile count in the pure hand is not of the form 3n+1 or 3n+2.
     #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidTileCount(u8),
-    /// The pure hand contains tiles that are not used in 3-player mahjong (2m-8m).
-    #[error("tile {0} cannot be used in 3-player mahjong")]
-    InvalidTileFor3Player(Tile),
+    /// The pure hand contains tiles that are not used in three-player mahjong (2m-8m).
+    #[error("tile {0} cannot be used in three-player mahjong")]
+    InvalidTileForThreePlayer(Tile),
 }
 
 pub(crate) trait TileCountsExt {
@@ -54,7 +54,7 @@ impl TileCountsExt for TileCounts {
 
     fn count_3p(&self) -> Result<u8, BingpaiError> {
         if let Some(i) = self[1..8].iter().position(|&t| t > 0) {
-            return Err(BingpaiError::InvalidTileFor3Player((i + 1) as u8));
+            return Err(BingpaiError::InvalidTileForThreePlayer((i + 1) as u8));
         }
         self.count()
     }
