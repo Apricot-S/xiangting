@@ -14,7 +14,7 @@ mod tests {
     use std::fs::File;
     use std::io::Write;
     use std::{env, thread};
-    use xiangting::calculate_replacement_number;
+    use xiangting::{PlayerCount, calculate_replacement_number};
 
     fn verify_correctness<const N: usize>() -> bool {
         let num_threads = env::var("NUM_THREADS")
@@ -47,7 +47,8 @@ mod tests {
                     let hand = decode(hash, &table);
                     let result_nyanten =
                         unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(34)) };
-                    let result_xiangting = calculate_replacement_number(&hand, None).unwrap();
+                    let result_xiangting =
+                        calculate_replacement_number(&hand, None, &PlayerCount::Four).unwrap();
 
                     if result_nyanten != result_xiangting {
                         return Some(format!(
