@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use xiangting::{ClaimedTilePosition, FuluMianzi, calculate_replacement_number};
+use xiangting::{ClaimedTilePosition, FuluMianzi, PlayerCount, calculate_replacement_number};
 
 fn main() {
     // 123m1z
@@ -20,9 +20,10 @@ fn main() {
         FuluMianzi::Kezi(27),
     ];
 
-    let replacement_number_wo_melds = calculate_replacement_number(&hand, None);
+    let replacement_number_wo_melds = calculate_replacement_number(&hand, None, &PlayerCount::Four);
     assert_eq!(replacement_number_wo_melds.unwrap(), 1u8);
 
-    let replacement_number_w_melds = calculate_replacement_number(&hand, Some(&melds));
+    let replacement_number_w_melds =
+        calculate_replacement_number(&hand, Some(&melds), &PlayerCount::Four);
     assert_eq!(replacement_number_w_melds.unwrap(), 2u8);
 }

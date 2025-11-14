@@ -10,7 +10,7 @@ use random_hand::{
     create_rng, generate_random_full_flush_pure_hand, generate_random_half_flush_pure_hand,
     generate_random_non_simple_pure_hand, generate_random_pure_hand,
 };
-use xiangting::{calculate_necessary_tiles, calculate_replacement_number};
+use xiangting::{PlayerCount, calculate_necessary_tiles, calculate_replacement_number};
 
 const NUM_HAND: usize = 100_000_000;
 const SAMPLE_SIZE: usize = 10_000;
@@ -27,7 +27,9 @@ fn xiangting_normal(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Normal", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), None).unwrap())
+        b.iter(|| {
+            calculate_replacement_number(hand.next().unwrap(), None, &PlayerCount::Four).unwrap()
+        })
     });
     group.finish();
 }
@@ -43,7 +45,9 @@ fn xiangting_half_flush(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Half Flush", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), None).unwrap())
+        b.iter(|| {
+            calculate_replacement_number(hand.next().unwrap(), None, &PlayerCount::Four).unwrap()
+        })
     });
     group.finish();
 }
@@ -59,7 +63,9 @@ fn xiangting_full_flush(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Full Flush", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), None).unwrap())
+        b.iter(|| {
+            calculate_replacement_number(hand.next().unwrap(), None, &PlayerCount::Four).unwrap()
+        })
     });
     group.finish();
 }
@@ -75,7 +81,9 @@ fn xiangting_non_simple(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Non-Simple", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), None).unwrap())
+        b.iter(|| {
+            calculate_replacement_number(hand.next().unwrap(), None, &PlayerCount::Four).unwrap()
+        })
     });
     group.finish();
 }
@@ -107,7 +115,9 @@ fn necessary_tiles_proposed(c: &mut Criterion) {
     group.nresamples(NUM_RESAMPLE);
     group.bench_function("Necessary tiles Proposed", |b| {
         let mut hand = hands.iter();
-        b.iter(|| calculate_necessary_tiles(hand.next().unwrap(), None))
+        b.iter(|| {
+            calculate_necessary_tiles(hand.next().unwrap(), None, &PlayerCount::Four).unwrap()
+        })
     });
     group.finish();
 }

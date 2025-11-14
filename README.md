@@ -57,7 +57,7 @@ The correspondence between the index and the tile is shown in the table below.
 Calculates the replacement number, which is equal to the deficiency number (a.k.a. xiangting number, 向聴数) + 1.
 
 ```rust
-use xiangting::calculate_replacement_number;
+use xiangting::{PlayerCount, calculate_replacement_number};
 
 fn main() {
     // 123m456p789s11222z
@@ -68,7 +68,7 @@ fn main() {
         2, 3, 0, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number = calculate_replacement_number(&hand, None);
+    let replacement_number = calculate_replacement_number(&hand, None, &PlayerCount::Four);
     assert_eq!(replacement_number.unwrap(), 0u8);
 }
 ```
@@ -83,7 +83,7 @@ If melds are excluded (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), specify `N
 If melds are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be included in the `fulu_mianzi_list`.
 
 ```rust
-use xiangting::{ClaimedTilePosition, FuluMianzi, calculate_replacement_number};
+use xiangting::{ClaimedTilePosition, FuluMianzi, PlayerCount, calculate_replacement_number};
 
 fn main() {
     // 123m1z
@@ -101,10 +101,11 @@ fn main() {
         FuluMianzi::Kezi(27),
     ];
 
-    let replacement_number_wo_melds = calculate_replacement_number(&hand, None);
+    let replacement_number_wo_melds = calculate_replacement_number(&hand, None, &PlayerCount::Four);
     assert_eq!(replacement_number_wo_melds.unwrap(), 1u8);
 
-    let replacement_number_w_melds = calculate_replacement_number(&hand, Some(&melds));
+    let replacement_number_w_melds =
+        calculate_replacement_number(&hand, Some(&melds), &PlayerCount::Four);
     assert_eq!(replacement_number_w_melds.unwrap(), 2u8);
 }
 ```
@@ -115,7 +116,7 @@ In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
 In addition, melded sequences (明順子) are not allowed.
 
 ```rust
-use xiangting::{calculate_replacement_number, calculate_replacement_number_3_player};
+use xiangting::{PlayerCount, calculate_replacement_number};
 
 fn main() {
     // 1111m111122233z
@@ -126,10 +127,10 @@ fn main() {
         4, 3, 2, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number_4p = calculate_replacement_number(&hand, None);
+    let replacement_number_4p = calculate_replacement_number(&hand, None, &PlayerCount::Four);
     assert_eq!(replacement_number_4p.unwrap(), 2u8);
 
-    let replacement_number_3p = calculate_replacement_number_3_player(&hand, None);
+    let replacement_number_3p = calculate_replacement_number(&hand, None, &PlayerCount::Three);
     assert_eq!(replacement_number_3p.unwrap(), 3u8);
 }
 ```

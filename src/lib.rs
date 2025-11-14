@@ -15,7 +15,7 @@
 //! # Example
 //!
 //! ```
-//! # use xiangting::calculate_replacement_number;
+//! # use xiangting::{PlayerCount, calculate_replacement_number};
 //! # use xiangting::XiangtingError;
 //! # fn main() -> Result<(), XiangtingError> {
 //! // 123m456p789s11222z
@@ -26,7 +26,7 @@
 //!     2, 3, 0, 0, 0, 0, 0, // z
 //! ];
 //!
-//! let replacement_number = calculate_replacement_number(&hand, None);
+//! let replacement_number = calculate_replacement_number(&hand, None, &PlayerCount::Four);
 //! assert_eq!(replacement_number?, 0u8);
 //! # Ok(())
 //! # }
@@ -34,6 +34,8 @@
 
 #[cfg(not(feature = "build-file"))]
 mod bingpai;
+#[cfg(not(feature = "build-file"))]
+mod config;
 #[cfg(not(feature = "build-file"))]
 mod constants;
 #[cfg(not(feature = "build-file"))]
@@ -63,19 +65,21 @@ mod test_utils;
 #[cfg(not(feature = "build-file"))]
 pub use bingpai::BingpaiError;
 #[cfg(not(feature = "build-file"))]
+pub use config::PlayerCount;
+#[cfg(not(feature = "build-file"))]
 pub use error::XiangtingError;
 #[cfg(not(feature = "build-file"))]
 pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 #[cfg(not(feature = "build-file"))]
-pub use necessary_tiles::{calculate_necessary_tiles, calculate_necessary_tiles_3_player};
+pub use necessary_tiles::calculate_necessary_tiles;
 #[cfg(not(feature = "build-file"))]
-pub use replacement_number::{calculate_replacement_number, calculate_replacement_number_3_player};
+pub use replacement_number::calculate_replacement_number;
 #[cfg(not(feature = "build-file"))]
 pub use shoupai::ShoupaiError;
 #[cfg(not(feature = "build-file"))]
 pub use tile::{Tile, TileCounts, TileFlags, TileFlagsExt};
 #[cfg(not(feature = "build-file"))]
-pub use unnecessary_tiles::{calculate_unnecessary_tiles, calculate_unnecessary_tiles_3_player};
+pub use unnecessary_tiles::calculate_unnecessary_tiles;
 
 #[cfg(feature = "build-map")]
 #[doc(hidden)]
