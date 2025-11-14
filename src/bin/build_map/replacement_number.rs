@@ -85,6 +85,16 @@ fn get_necessary_tiles<const N: usize>(target_hand: &[u8; N], hand: &[u8; N]) ->
         .fold(0u16, |necessary_tiles, bit| necessary_tiles | bit)
 }
 
+fn get_unnecessary_tiles<const N: usize>(target_hand: &[u8; N], hand: &[u8; N]) -> u16 {
+    target_hand
+        .iter()
+        .zip(hand.iter())
+        .enumerate()
+        .filter(|&(_, (&t, &h))| t < h)
+        .map(|(i, _)| 1 << i)
+        .fold(0u16, |unnecessary_tiles, bit| unnecessary_tiles | bit)
+}
+
 pub(super) fn get_shupai_replacement_number(
     hand: &[u8; 9],
     num_meld: u8,
@@ -95,7 +105,8 @@ pub(super) fn get_shupai_replacement_number(
     target_hand: &mut [u8; 9],
     mut upper_bound: u8,
     mut necessary_tiles: u16,
-) -> (u8, u16) {
+    mut unnecessary_tiles: u16,
+) -> (u8, u16, u16) {
     debug_assert!(num_meld <= 4);
     debug_assert!(num_pair <= 1);
     debug_assert!(current_rank <= 9);
@@ -103,6 +114,7 @@ pub(super) fn get_shupai_replacement_number(
     debug_assert!(current_num_pair <= num_pair);
     debug_assert!(target_hand.iter().all(|&c| c <= 4));
     debug_assert!(necessary_tiles <= 0x1FF);
+    debug_assert!(unnecessary_tiles <= 0x1FF);
 
     if current_rank == 9 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
@@ -111,12 +123,16 @@ pub(super) fn get_shupai_replacement_number(
                 Ordering::Less => {
                     upper_bound = distance;
                     necessary_tiles = get_necessary_tiles(target_hand, hand);
+                    unnecessary_tiles = get_unnecessary_tiles(target_hand, hand);
                 }
-                Ordering::Equal => necessary_tiles |= get_necessary_tiles(target_hand, hand),
+                Ordering::Equal => {
+                    necessary_tiles |= get_necessary_tiles(target_hand, hand);
+                    unnecessary_tiles |= get_unnecessary_tiles(target_hand, hand);
+                }
                 Ordering::Greater => (),
             }
         }
-        return (upper_bound, necessary_tiles);
+        return (upper_bound, necessary_tiles, unnecessary_tiles);
     }
 
     for (d, (&m, &n)) in D_TABLE.iter().zip(M_TABLE.iter().zip(N_TABLE.iter())) {
@@ -143,7 +159,7 @@ pub(super) fn get_shupai_replacement_number(
 
         let lower_bound = get_hand_distance(target_hand, hand);
         if lower_bound <= upper_bound {
-            let (temp_r, temp_n) = get_shupai_replacement_number(
+            let (temp_r, temp_n, temp_u) = get_shupai_replacement_number(
                 hand,
                 num_meld,
                 num_pair,
@@ -153,14 +169,19 @@ pub(super) fn get_shupai_replacement_number(
                 target_hand,
                 upper_bound,
                 necessary_tiles,
+                unnecessary_tiles,
             );
 
             match temp_r.cmp(&upper_bound) {
                 Ordering::Less => {
                     upper_bound = temp_r;
                     necessary_tiles = temp_n;
+                    unnecessary_tiles = temp_u;
                 }
-                Ordering::Equal => necessary_tiles |= temp_n,
+                Ordering::Equal => {
+                    necessary_tiles |= temp_n;
+                    unnecessary_tiles |= temp_u;
+                }
                 Ordering::Greater => (),
             }
         }
@@ -172,7 +193,7 @@ pub(super) fn get_shupai_replacement_number(
         target_hand[current_rank] -= n;
     }
 
-    (upper_bound, necessary_tiles)
+    (upper_bound, necessary_tiles, unnecessary_tiles)
 }
 
 pub(super) fn get_zipai_replacement_number(
@@ -185,7 +206,8 @@ pub(super) fn get_zipai_replacement_number(
     target_hand: &mut [u8; 7],
     mut upper_bound: u8,
     mut necessary_tiles: u16,
-) -> (u8, u16) {
+    mut unnecessary_tiles: u16,
+) -> (u8, u16, u16) {
     debug_assert!(num_meld <= 4);
     debug_assert!(num_pair <= 1);
     debug_assert!(current_rank <= 7);
@@ -193,6 +215,7 @@ pub(super) fn get_zipai_replacement_number(
     debug_assert!(current_num_pair <= num_pair);
     debug_assert!(target_hand.iter().all(|&c| c <= 4));
     debug_assert!(necessary_tiles <= 0x7F);
+    debug_assert!(unnecessary_tiles <= 0x7F);
 
     if current_rank == 7 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
@@ -201,12 +224,16 @@ pub(super) fn get_zipai_replacement_number(
                 Ordering::Less => {
                     upper_bound = distance;
                     necessary_tiles = get_necessary_tiles(target_hand, hand);
+                    unnecessary_tiles = get_unnecessary_tiles(target_hand, hand);
                 }
-                Ordering::Equal => necessary_tiles |= get_necessary_tiles(target_hand, hand),
+                Ordering::Equal => {
+                    necessary_tiles |= get_necessary_tiles(target_hand, hand);
+                    unnecessary_tiles |= get_unnecessary_tiles(target_hand, hand);
+                }
                 Ordering::Greater => (),
             }
         }
-        return (upper_bound, necessary_tiles);
+        return (upper_bound, necessary_tiles, unnecessary_tiles);
     }
 
     // Sequences cannot be formed with honors.
@@ -232,7 +259,7 @@ pub(super) fn get_zipai_replacement_number(
 
         let lower_bound = get_hand_distance(target_hand, hand);
         if lower_bound <= upper_bound {
-            let (temp_r, temp_n) = get_zipai_replacement_number(
+            let (temp_r, temp_n, temp_u) = get_zipai_replacement_number(
                 hand,
                 num_meld,
                 num_pair,
@@ -242,14 +269,19 @@ pub(super) fn get_zipai_replacement_number(
                 target_hand,
                 upper_bound,
                 necessary_tiles,
+                unnecessary_tiles,
             );
 
             match temp_r.cmp(&upper_bound) {
                 Ordering::Less => {
                     upper_bound = temp_r;
                     necessary_tiles = temp_n;
+                    unnecessary_tiles = temp_u;
                 }
-                Ordering::Equal => necessary_tiles |= temp_n,
+                Ordering::Equal => {
+                    necessary_tiles |= temp_n;
+                    unnecessary_tiles |= temp_u;
+                }
                 Ordering::Greater => (),
             }
         }
@@ -257,7 +289,7 @@ pub(super) fn get_zipai_replacement_number(
         target_hand[current_rank] -= n;
     }
 
-    (upper_bound, necessary_tiles)
+    (upper_bound, necessary_tiles, unnecessary_tiles)
 }
 
 pub(super) fn get_19m_replacement_number(
@@ -270,7 +302,8 @@ pub(super) fn get_19m_replacement_number(
     target_hand: &mut [u8; 9],
     mut upper_bound: u8,
     mut necessary_tiles: u16,
-) -> (u8, u16) {
+    mut unnecessary_tiles: u16,
+) -> (u8, u16, u16) {
     debug_assert!(num_meld <= 4);
     debug_assert!(num_pair <= 1);
     debug_assert!(matches!(current_rank, 0 | 8 | 16));
@@ -278,6 +311,7 @@ pub(super) fn get_19m_replacement_number(
     debug_assert!(current_num_pair <= num_pair);
     debug_assert!(target_hand.iter().all(|&c| c <= 4));
     debug_assert!(matches!(necessary_tiles, 0x0 | 0x1 | 0x100 | 0x101));
+    debug_assert!(matches!(unnecessary_tiles, 0x0 | 0x1 | 0x100 | 0x101));
 
     if current_rank == 16 {
         if current_num_meld == num_meld && current_num_pair == num_pair {
@@ -286,12 +320,16 @@ pub(super) fn get_19m_replacement_number(
                 Ordering::Less => {
                     upper_bound = distance;
                     necessary_tiles = get_necessary_tiles(target_hand, hand);
+                    unnecessary_tiles = get_unnecessary_tiles(target_hand, hand);
                 }
-                Ordering::Equal => necessary_tiles |= get_necessary_tiles(target_hand, hand),
+                Ordering::Equal => {
+                    necessary_tiles |= get_necessary_tiles(target_hand, hand);
+                    unnecessary_tiles |= get_unnecessary_tiles(target_hand, hand);
+                }
                 Ordering::Greater => (),
             }
         }
-        return (upper_bound, necessary_tiles);
+        return (upper_bound, necessary_tiles, unnecessary_tiles);
     }
 
     // Sequences cannot be formed with 1m or 9m in three-player mahjong.
@@ -317,7 +355,7 @@ pub(super) fn get_19m_replacement_number(
 
         let lower_bound = get_hand_distance(target_hand, hand);
         if lower_bound <= upper_bound {
-            let (temp_r, temp_n) = get_19m_replacement_number(
+            let (temp_r, temp_n, temp_u) = get_19m_replacement_number(
                 hand,
                 num_meld,
                 num_pair,
@@ -327,14 +365,19 @@ pub(super) fn get_19m_replacement_number(
                 target_hand,
                 upper_bound,
                 necessary_tiles,
+                unnecessary_tiles,
             );
 
             match temp_r.cmp(&upper_bound) {
                 Ordering::Less => {
                     upper_bound = temp_r;
                     necessary_tiles = temp_n;
+                    unnecessary_tiles = temp_u;
                 }
-                Ordering::Equal => necessary_tiles |= temp_n,
+                Ordering::Equal => {
+                    necessary_tiles |= temp_n;
+                    unnecessary_tiles |= temp_u;
+                }
                 Ordering::Greater => (),
             }
         }
@@ -342,7 +385,7 @@ pub(super) fn get_19m_replacement_number(
         target_hand[current_rank] -= n;
     }
 
-    (upper_bound, necessary_tiles)
+    (upper_bound, necessary_tiles, unnecessary_tiles)
 }
 
 #[cfg(test)]
@@ -354,10 +397,11 @@ mod tests {
         let hand = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         let mut replacement_number = [0u8; 10];
         let mut necessary_tiles = [0u16; 10];
+        let mut unnecessary_tiles = [0u16; 10];
         for num_pair in 0..=1 {
             for num_meld in 0..=4 {
                 let mut target = [0u8; 9];
-                let (r, n) = get_shupai_replacement_number(
+                let (r, n, u) = get_shupai_replacement_number(
                     &hand,
                     num_meld,
                     num_pair,
@@ -367,9 +411,11 @@ mod tests {
                     &mut target,
                     14,
                     0,
+                    0,
                 );
                 replacement_number[(num_pair * 5 + num_meld) as usize] = r;
                 necessary_tiles[(num_pair * 5 + num_meld) as usize] = n;
+                unnecessary_tiles[(num_pair * 5 + num_meld) as usize] = u;
             }
         }
 
@@ -394,6 +440,17 @@ mod tests {
         assert_eq!(necessary_tiles[7], 0b111111111);
         assert_eq!(necessary_tiles[8], 0b111111111);
         assert_eq!(necessary_tiles[9], 0b111111111);
+
+        assert_eq!(unnecessary_tiles[0], 0);
+        assert_eq!(unnecessary_tiles[1], 0);
+        assert_eq!(unnecessary_tiles[2], 0);
+        assert_eq!(unnecessary_tiles[3], 0);
+        assert_eq!(unnecessary_tiles[4], 0);
+        assert_eq!(unnecessary_tiles[5], 0);
+        assert_eq!(unnecessary_tiles[6], 0);
+        assert_eq!(unnecessary_tiles[7], 0);
+        assert_eq!(unnecessary_tiles[8], 0);
+        assert_eq!(unnecessary_tiles[9], 0);
     }
 
     #[test]
@@ -401,10 +458,11 @@ mod tests {
         let hand = [0, 0, 0, 0, 0, 0, 0];
         let mut replacement_number = [0u8; 10];
         let mut necessary_tiles = [0u16; 10];
+        let mut unnecessary_tiles = [0u16; 10];
         for num_pair in 0..=1 {
             for num_meld in 0..=4 {
                 let mut target = [0u8; 7];
-                let (r, n) = get_zipai_replacement_number(
+                let (r, n, u) = get_zipai_replacement_number(
                     &hand,
                     num_meld,
                     num_pair,
@@ -414,9 +472,11 @@ mod tests {
                     &mut target,
                     14,
                     0,
+                    0,
                 );
                 replacement_number[(num_pair * 5 + num_meld) as usize] = r;
                 necessary_tiles[(num_pair * 5 + num_meld) as usize] = n;
+                unnecessary_tiles[(num_pair * 5 + num_meld) as usize] = u;
             }
         }
 
@@ -441,6 +501,17 @@ mod tests {
         assert_eq!(necessary_tiles[7], 0b1111111);
         assert_eq!(necessary_tiles[8], 0b1111111);
         assert_eq!(necessary_tiles[9], 0b1111111);
+
+        assert_eq!(unnecessary_tiles[0], 0);
+        assert_eq!(unnecessary_tiles[1], 0);
+        assert_eq!(unnecessary_tiles[2], 0);
+        assert_eq!(unnecessary_tiles[3], 0);
+        assert_eq!(unnecessary_tiles[4], 0);
+        assert_eq!(unnecessary_tiles[5], 0);
+        assert_eq!(unnecessary_tiles[6], 0);
+        assert_eq!(unnecessary_tiles[7], 0);
+        assert_eq!(unnecessary_tiles[8], 0);
+        assert_eq!(unnecessary_tiles[9], 0);
     }
 
     #[test]
@@ -448,10 +519,11 @@ mod tests {
         let hand = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         let mut replacement_number = [0u8; 10];
         let mut necessary_tiles = [0u16; 10];
+        let mut unnecessary_tiles = [0u16; 10];
         for num_pair in 0..=1 {
             for num_meld in 0..=4 {
                 let mut target = [0u8; 9];
-                let (r, n) = get_19m_replacement_number(
+                let (r, n, u) = get_19m_replacement_number(
                     &hand,
                     num_meld,
                     num_pair,
@@ -461,9 +533,11 @@ mod tests {
                     &mut target,
                     14,
                     0,
+                    0,
                 );
                 replacement_number[(num_pair * 5 + num_meld) as usize] = r;
                 necessary_tiles[(num_pair * 5 + num_meld) as usize] = n;
+                unnecessary_tiles[(num_pair * 5 + num_meld) as usize] = u;
             }
         }
 
@@ -488,5 +562,16 @@ mod tests {
         assert_eq!(necessary_tiles[7], 0b000000000);
         assert_eq!(necessary_tiles[8], 0b000000000);
         assert_eq!(necessary_tiles[9], 0b000000000);
+
+        assert_eq!(unnecessary_tiles[0], 0);
+        assert_eq!(unnecessary_tiles[1], 0);
+        assert_eq!(unnecessary_tiles[2], 0);
+        assert_eq!(unnecessary_tiles[3], 0);
+        assert_eq!(unnecessary_tiles[4], 0);
+        assert_eq!(unnecessary_tiles[5], 0);
+        assert_eq!(unnecessary_tiles[6], 0);
+        assert_eq!(unnecessary_tiles[7], 0);
+        assert_eq!(unnecessary_tiles[8], 0);
+        assert_eq!(unnecessary_tiles[9], 0);
     }
 }

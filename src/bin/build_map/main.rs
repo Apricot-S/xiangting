@@ -42,11 +42,7 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
 
     for num_pair in 0..=1 {
         for num_meld in 0..=4 {
-            if num_pair == 0 && num_meld == 0 {
-                continue;
-            }
-
-            let (replacement_number, necessary_tiles) = match N {
+            let (replacement_number, necessary_tiles, unnecessary_tiles) = match N {
                 9 => {
                     let hand9 = hand.first_chunk::<9>().unwrap();
                     let mut initial_target_hand: [u8; 9] = [0u8; 9];
@@ -59,6 +55,7 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
                         0,
                         &mut initial_target_hand,
                         MAX_REPLACEMENT_NUMBER,
+                        0,
                         0,
                     )
                 }
@@ -75,6 +72,7 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
                         &mut initial_target_hand,
                         MAX_REPLACEMENT_NUMBER,
                         0,
+                        0,
                     )
                 }
                 2 => {
@@ -90,12 +88,14 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
                         &mut initial_target_hand,
                         MAX_REPLACEMENT_NUMBER,
                         0,
+                        0,
                     )
                 }
                 _ => unreachable!(),
             };
 
             match (num_pair, num_meld) {
+                (0, 0) => (),
                 (0, 1) => pack.replacement_number |= replacement_number as u32,
                 (0, 2) => pack.replacement_number |= (replacement_number as u32) << 2,
                 (0, 3) => pack.replacement_number |= (replacement_number as u32) << 5,
@@ -109,6 +109,7 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
             }
 
             match (num_pair, num_meld) {
+                (0, 0) => (),
                 (0, 1) => pack.necessary_tiles[0] |= necessary_tiles as u32,
                 (0, 2) => pack.necessary_tiles[0] |= (necessary_tiles as u32) << 9,
                 (0, 3) => pack.necessary_tiles[0] |= (necessary_tiles as u32) << (9 * 2),
