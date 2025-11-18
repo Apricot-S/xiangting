@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::constants::{MAX_NUM_SHOUPAI, MAX_TILE_COPIES};
+use crate::constants::{MAX_NUM_BINGPAI, MAX_TILE_COPIES};
 use crate::tile::{Tile, TileCounts};
 use thiserror::Error;
 
@@ -46,7 +46,7 @@ impl TileCountsExt for TileCounts {
 
         let num_bingpai: u8 = self.iter().sum();
         match num_bingpai {
-            n if n > MAX_NUM_SHOUPAI => Err(BingpaiError::TooManyTiles(n)),
+            n if n > MAX_NUM_BINGPAI => Err(BingpaiError::TooManyTiles(n)),
             n if n % 3 == 0 => Err(BingpaiError::InvalidTileCount(n)),
             n => Ok(n),
         }
