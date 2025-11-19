@@ -53,17 +53,10 @@ pub(in super::super) fn calculate_replacement_number(shoupai: &Shoupai) -> u8 {
     let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
     let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
 
-    let replacement_number_m = unpack_replacement_number(packed_rn_m);
-    let replacement_number_p = unpack_replacement_number(packed_rn_p);
-    let replacement_number_s = unpack_replacement_number(packed_rn_s);
-    let replacement_number_z = unpack_replacement_number(packed_rn_z);
-
-    let (mut entry0, entry1, entry2, entry3) = (
-        replacement_number_m,
-        replacement_number_p,
-        replacement_number_s,
-        replacement_number_z,
-    );
+    let mut entry0 = unpack_replacement_number(packed_rn_m);
+    let entry1 = unpack_replacement_number(packed_rn_p);
+    let entry2 = unpack_replacement_number(packed_rn_s);
+    let entry3 = unpack_replacement_number(packed_rn_z);
 
     update_dp(&mut entry0, &entry1);
     update_dp(&mut entry0, &entry2);
@@ -83,17 +76,10 @@ pub(in super::super) fn calculate_replacement_number_3p(shoupai: &Shoupai3p) -> 
     let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
     let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
 
-    let replacement_number_m = unpack_replacement_number(packed_rn_m);
-    let replacement_number_p = unpack_replacement_number(packed_rn_p);
-    let replacement_number_s = unpack_replacement_number(packed_rn_s);
-    let replacement_number_z = unpack_replacement_number(packed_rn_z);
-
-    let (mut entry0, entry1, entry2, entry3) = (
-        replacement_number_m,
-        replacement_number_p,
-        replacement_number_s,
-        replacement_number_z,
-    );
+    let mut entry0 = unpack_replacement_number(packed_rn_m);
+    let entry1 = unpack_replacement_number(packed_rn_p);
+    let entry2 = unpack_replacement_number(packed_rn_s);
+    let entry3 = unpack_replacement_number(packed_rn_z);
 
     update_dp(&mut entry0, &entry1);
     update_dp(&mut entry0, &entry2);
