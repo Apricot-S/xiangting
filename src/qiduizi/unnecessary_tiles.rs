@@ -94,7 +94,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_without_pair() {
         let bingpai = TileCounts::from_code("19m19p19s1234567z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let shoupai = Shoupai::new(&bingpai).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 7);
         assert_eq!(unnecessary_tiles, TileFlags::from_code("19m19p19s1234567z"));
@@ -103,7 +103,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_with_quadruple() {
         let bingpai = TileCounts::from_code("1188m288p55s1111z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let shoupai = Shoupai::new(&bingpai).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 3);
         assert_eq!(unnecessary_tiles, TileFlags::from_code("1z"));
@@ -112,7 +112,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_with_triplet() {
         let bingpai = TileCounts::from_code("1188m2388p55s111z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let shoupai = Shoupai::new(&bingpai).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 2);
         assert_eq!(unnecessary_tiles, TileFlags::from_code("1z"));
@@ -121,7 +121,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_with_2_triplets() {
         let bingpai = TileCounts::from_code("1188m288p555s111z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let shoupai = Shoupai::new(&bingpai).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 3);
         assert_eq!(unnecessary_tiles, TileFlags::from_code("5s1z"));
@@ -130,7 +130,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_tenpai() {
         let bingpai = TileCounts::from_code("1188m288p55s1177z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let shoupai = Shoupai::new(&bingpai).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 1);
         assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_win() {
         let bingpai = TileCounts::from_code("1188m2288p55s1177z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let shoupai = Shoupai::new(&bingpai).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, 0);
         assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
@@ -148,7 +148,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_incomplete_hand() {
         let bingpai = TileCounts::from_code("1188m55s1122z");
-        let shoupai = Shoupai::new(&bingpai, None).unwrap();
+        let shoupai = Shoupai::new(&bingpai).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&shoupai);
         assert_eq!(replacement_number, u8::MAX);
         assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
@@ -157,7 +157,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_3p_with_quadruple() {
         let bingpai = TileCounts::from_code("1199m288p55s1111z");
-        let shoupai = Shoupai3p::new(&bingpai, None).unwrap();
+        let shoupai = Shoupai3p::new(&bingpai).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles_3p(&shoupai);
         assert_eq!(replacement_number, 3);
         assert_eq!(unnecessary_tiles, TileFlags::from_code("1z"));

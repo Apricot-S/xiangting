@@ -26,7 +26,7 @@
 //!     2, 3, 0, 0, 0, 0, 0, // z
 //! ];
 //!
-//! let replacement_number = calculate_replacement_number(&hand, None, &PlayerCount::Four);
+//! let replacement_number = calculate_replacement_number(&hand, &PlayerCount::Four);
 //! assert_eq!(replacement_number?, 0u8);
 //! # Ok(())
 //! # }
@@ -40,8 +40,6 @@ mod config;
 mod constants;
 #[cfg(not(feature = "build-file"))]
 mod error;
-#[cfg(not(feature = "build-file"))]
-mod fulu_mianzi;
 #[cfg(not(feature = "build-file"))]
 mod necessary_tiles;
 #[cfg(not(feature = "build-file"))]
@@ -68,8 +66,6 @@ pub use bingpai::BingpaiError;
 pub use config::PlayerCount;
 #[cfg(not(feature = "build-file"))]
 pub use error::XiangtingError;
-#[cfg(not(feature = "build-file"))]
-pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
 #[cfg(not(feature = "build-file"))]
 pub use necessary_tiles::calculate_necessary_tiles;
 #[cfg(not(feature = "build-file"))]
