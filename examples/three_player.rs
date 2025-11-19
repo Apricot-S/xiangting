@@ -13,9 +13,9 @@ fn main() {
         4, 3, 2, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number_4p = calculate_replacement_number(&hand, None, &PlayerCount::Four);
+    let replacement_number_4p = calculate_replacement_number(&hand, &PlayerCount::Four);
     assert_eq!(replacement_number_4p.unwrap(), 2u8);
 
-    let replacement_number_3p = calculate_replacement_number(&hand, None, &PlayerCount::Three);
+    let replacement_number_3p = calculate_replacement_number(&hand, &PlayerCount::Three);
     assert_eq!(replacement_number_3p.unwrap(), 3u8);
 }

@@ -6,12 +6,6 @@
 
 A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
 
-This library is based on the algorithm in [Cryolite's Nyanten](https://github.com/Cryolite/nyanten).  
-However, it introduces the following additional features:
-
-- Supports rules that include and exclude melded tiles when determining if a hand contains four identical tiles.
-- Supports three-player mahjong.
-
 Documentation:
 
 - [API reference (main branch)](https://Apricot-S.github.io/xiangting/xiangting)
@@ -68,52 +62,14 @@ fn main() {
         2, 3, 0, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number = calculate_replacement_number(&hand, None, &PlayerCount::Four);
+    let replacement_number = calculate_replacement_number(&hand, &PlayerCount::Four);
     assert_eq!(replacement_number.unwrap(), 0u8);
-}
-```
-
-### Handling Melds
-
-In the calculation for a hand with melds (副露),
-the melded tiles can be included or excluded when counting tiles to determine if a hand contains four identical ones.
-
-If melds are excluded (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), specify `None` for `fulu_mianzi_list`.
-
-If melds are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be included in the `fulu_mianzi_list`.
-
-```rust
-use xiangting::{ClaimedTilePosition, FuluMianzi, PlayerCount, calculate_replacement_number};
-
-fn main() {
-    // 123m1z
-    let hand: [u8; 34] = [
-        1, 1, 1, 0, 0, 0, 0, 0, 0, // m
-        0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-        0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-        1, 0, 0, 0, 0, 0, 0, // z
-    ];
-
-    // 456p 7777s 111z
-    let melds = [
-        FuluMianzi::Shunzi(12, ClaimedTilePosition::Low),
-        FuluMianzi::Gangzi(24),
-        FuluMianzi::Kezi(27),
-    ];
-
-    let replacement_number_wo_melds = calculate_replacement_number(&hand, None, &PlayerCount::Four);
-    assert_eq!(replacement_number_wo_melds.unwrap(), 1u8);
-
-    let replacement_number_w_melds =
-        calculate_replacement_number(&hand, Some(&melds), &PlayerCount::Four);
-    assert_eq!(replacement_number_w_melds.unwrap(), 2u8);
 }
 ```
 
 ### Support for Three-Player Mahjong
 
 In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
-In addition, melded sequences (明順子) are not allowed.
 
 ```rust
 use xiangting::{PlayerCount, calculate_replacement_number};
@@ -127,10 +83,10 @@ fn main() {
         4, 3, 2, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number_4p = calculate_replacement_number(&hand, None, &PlayerCount::Four);
+    let replacement_number_4p = calculate_replacement_number(&hand, &PlayerCount::Four);
     assert_eq!(replacement_number_4p.unwrap(), 2u8);
 
-    let replacement_number_3p = calculate_replacement_number(&hand, None, &PlayerCount::Three);
+    let replacement_number_3p = calculate_replacement_number(&hand, &PlayerCount::Three);
     assert_eq!(replacement_number_3p.unwrap(), 3u8);
 }
 ```

@@ -7,8 +7,7 @@ use xiangting::{PlayerCount, TileCounts, calculate_replacement_number};
 pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
     let mut bingpai = bingpai.clone();
 
-    let replacement_number =
-        calculate_replacement_number(&bingpai, None, &PlayerCount::Four).unwrap();
+    let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four).unwrap();
     if replacement_number == 0 {
         return 0;
     }
@@ -24,7 +23,7 @@ pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
 
                 bingpai[tile] += 1;
                 let new_replacement_number =
-                    calculate_replacement_number(&bingpai, None, &PlayerCount::Four).unwrap();
+                    calculate_replacement_number(&bingpai, &PlayerCount::Four).unwrap();
                 if new_replacement_number < replacement_number {
                     necessary_tiles |= 1 << tile;
                 }
@@ -38,7 +37,7 @@ pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
                 }
 
                 let new_replacement_number =
-                    calculate_replacement_number(&bingpai, None, &PlayerCount::Four).unwrap();
+                    calculate_replacement_number(&bingpai, &PlayerCount::Four).unwrap();
                 if new_replacement_number < replacement_number {
                     necessary_tiles |= 1 << tile;
                 }
@@ -53,8 +52,7 @@ pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
 pub fn calculate_unnecessary_tiles(bingpai: &TileCounts) -> u64 {
     let mut bingpai = bingpai.clone();
 
-    let replacement_number =
-        calculate_replacement_number(&bingpai, None, &PlayerCount::Four).unwrap();
+    let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four).unwrap();
     if replacement_number == 0 {
         return 0;
     }
@@ -65,7 +63,7 @@ pub fn calculate_unnecessary_tiles(bingpai: &TileCounts) -> u64 {
             for tile in 0..34 {
                 if bingpai[tile] > 0 {
                     let new_replacement_number =
-                        calculate_replacement_number(&bingpai, None, &PlayerCount::Four).unwrap();
+                        calculate_replacement_number(&bingpai, &PlayerCount::Four).unwrap();
                     if new_replacement_number == replacement_number {
                         unnecessary_tiles |= 1 << tile;
                     }
@@ -77,7 +75,7 @@ pub fn calculate_unnecessary_tiles(bingpai: &TileCounts) -> u64 {
                 if bingpai[tile] > 0 {
                     bingpai[tile] -= 1;
                     let new_replacement_number =
-                        calculate_replacement_number(&bingpai, None, &PlayerCount::Four).unwrap();
+                        calculate_replacement_number(&bingpai, &PlayerCount::Four).unwrap();
                     if new_replacement_number == replacement_number {
                         unnecessary_tiles |= 1 << tile;
                     }
