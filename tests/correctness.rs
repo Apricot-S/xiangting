@@ -48,7 +48,7 @@ mod tests {
                     let result_nyanten =
                         unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(34)) };
                     let result_xiangting =
-                        calculate_replacement_number(&hand, None, &PlayerCount::Four).unwrap();
+                        calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
 
                     if result_nyanten != result_xiangting {
                         return Some(format!(
