@@ -1,8 +1,10 @@
 # xiangting
 
 [![Crate](https://img.shields.io/crates/v/xiangting.svg)](https://crates.io/crates/xiangting)
+[![Minimum Supported Rust Version](https://img.shields.io/crates/msrv/xiangting)](https://crates.io/crates/xiangting)
 [![API](https://img.shields.io/badge/api-main-yellow.svg)](https://apricot-s.github.io/xiangting/xiangting)
 [![API](https://docs.rs/xiangting/badge.svg)](https://docs.rs/xiangting)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Apricot-S/xiangting)
 
 A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
 
