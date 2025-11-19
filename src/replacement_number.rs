@@ -42,7 +42,6 @@ use crate::tile::TileCounts;
 /// ```
 ///
 /// In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
-/// In addition, melded sequences (明順子) are not allowed.
 ///
 /// ```
 /// # use xiangting::{PlayerCount, calculate_replacement_number};
