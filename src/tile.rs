@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::constants::NUM_TILE_INDEX;
+const NUM_TILE_INDEX: usize = 3 * 9 + 4 + 3;
 
 /// 牌: Tile.
 ///

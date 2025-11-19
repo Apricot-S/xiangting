@@ -31,8 +31,6 @@ mod bingpai;
 #[cfg(not(feature = "build-file"))]
 mod config;
 #[cfg(not(feature = "build-file"))]
-mod constants;
-#[cfg(not(feature = "build-file"))]
 mod error;
 #[cfg(not(feature = "build-file"))]
 mod necessary_tiles;

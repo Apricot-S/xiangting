@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::constants::{MAX_NUM_BINGPAI, MAX_TILE_COPIES};
 use crate::tile::{Tile, TileCounts};
 use thiserror::Error;
+
+const MAX_TILE_COPIES: u8 = 4;
+const MAX_NUM_BINGPAI: u8 = 14;
 
 /// Errors that occur when an invalid pure hand (純手牌) is provided.
 #[derive(Debug, Error)]
