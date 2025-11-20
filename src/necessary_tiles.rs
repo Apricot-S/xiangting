@@ -10,6 +10,64 @@ use crate::config::PlayerCount;
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
+/// Calculates the replacement number (= xiangting number + 1) and necessary tiles for a given hand.
+///
+/// # Arguments
+///
+/// * `bingpai` - 兵牌: A reference to a hand excluding melds (a.k.a. pure hand, 純手牌).
+/// * `player_count` - A reference to the number of players.
+///
+/// # Errors
+///
+/// Returns [`Err`] if the hand is invalid.
+///
+/// # Examples
+///
+/// ```
+/// # use xiangting::{PlayerCount, calculate_necessary_tiles};
+/// # use xiangting::BingpaiError;
+/// # fn main() -> Result<(), BingpaiError> {
+/// // 199m146779p12s246z
+/// let hand: [u8; 34] = [
+///     1, 0, 0, 0, 0, 0, 0, 0, 2, // m
+///     1, 0, 0, 1, 0, 1, 2, 0, 1, // p
+///     1, 1, 0, 0, 0, 0, 0, 0, 0, // s
+///     0, 1, 0, 1, 0, 1, 0, // z
+/// ];
+///
+/// let (replacement_number, necessary_tiles) = calculate_necessary_tiles(&hand, &PlayerCount::Four)?;
+/// assert_eq!(replacement_number, 5u8);
+/// assert_eq!(necessary_tiles, 0b1111111_100000111_111111111_100000111); // 1239m123456789p1239s1234567z
+/// # Ok(())
+/// # }
+/// ```
+///
+/// In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
+///
+/// ```
+/// # use xiangting::{PlayerCount, calculate_necessary_tiles};
+/// # use xiangting::BingpaiError;
+/// # fn main() -> Result<(), BingpaiError> {
+/// // 1111m111122233z
+/// let hand: [u8; 34] = [
+///     4, 0, 0, 0, 0, 0, 0, 0, 0, // m
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+///     4, 3, 2, 0, 0, 0, 0, // z
+/// ];
+///
+/// let (replacement_number_4p, necessary_tiles_4p) =
+///     calculate_necessary_tiles(&hand, &PlayerCount::Four)?;
+/// assert_eq!(replacement_number_4p, 2u8);
+/// assert_eq!(necessary_tiles_4p, 0b0000000_000000000_000000000_000000110); // 23m
+///
+/// let (replacement_number_3p, necessary_tiles_3p) =
+///     calculate_necessary_tiles(&hand, &PlayerCount::Three)?;
+/// assert_eq!(replacement_number_3p, 3u8);
+/// assert_eq!(necessary_tiles_3p, 0b1111100_111111111_111111111_100000000); // 9m123456789p123456789s34567z
+/// # Ok(())
+/// # }
+/// ```
 #[inline]
 pub fn calculate_necessary_tiles(
     bingpai: &TileCounts,
