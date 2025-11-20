@@ -8,6 +8,16 @@ use thiserror::Error;
 const MAX_TILE_COPIES: u8 = 4;
 const MAX_NUM_BINGPAI: u8 = 14;
 
+pub(crate) struct Bingpai<'a> {
+    tile_counts: &'a TileCounts,
+    num_required_bingpai_mianzi: u8,
+}
+
+pub(crate) struct Bingpai3p<'a> {
+    tile_counts: &'a TileCounts,
+    num_required_bingpai_mianzi: u8,
+}
+
 /// Errors that occur when an invalid pure hand (純手牌) is provided.
 #[derive(Debug, Error)]
 pub enum BingpaiError {
@@ -59,5 +69,62 @@ impl TileCountsExt for TileCounts {
             return Err(BingpaiError::InvalidTileForThreePlayer((i + 1) as u8));
         }
         self.count()
+    }
+}
+
+impl<'a> Bingpai<'a> {
+    pub(crate) fn new(tile_counts: &'a TileCounts) -> Result<Self, BingpaiError> {
+        let num_bingpai = tile_counts.count()?;
+        let num_required_bingpai_mianzi = num_bingpai / 3;
+
+        Ok(Self {
+            tile_counts,
+            num_required_bingpai_mianzi,
+        })
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn tile_counts(&self) -> &'a TileCounts {
+        self.tile_counts
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn num_required_bingpai_mianzi(&self) -> u8 {
+        self.num_required_bingpai_mianzi
+    }
+}
+
+impl<'a> Bingpai3p<'a> {
+    pub(crate) fn new(tile_counts: &'a TileCounts) -> Result<Self, BingpaiError> {
+        let num_bingpai = tile_counts.count_3p()?;
+        let num_required_bingpai_mianzi = num_bingpai / 3;
+
+        Ok(Self {
+            tile_counts,
+            num_required_bingpai_mianzi,
+        })
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn tile_counts(&self) -> &'a TileCounts {
+        self.tile_counts
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn num_required_bingpai_mianzi(&self) -> u8 {
+        self.num_required_bingpai_mianzi
+    }
+}
+
+impl<'a> From<Bingpai3p<'a>> for Bingpai<'a> {
+    fn from(value: Bingpai3p<'a>) -> Self {
+        Self {
+            tile_counts: value.tile_counts,
+            num_required_bingpai_mianzi: value.num_required_bingpai_mianzi,
+        }
     }
 }

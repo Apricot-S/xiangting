@@ -41,8 +41,6 @@ mod replacement_number;
 #[cfg(not(feature = "build-file"))]
 mod shisanyao;
 #[cfg(not(feature = "build-file"))]
-mod shoupai;
-#[cfg(not(feature = "build-file"))]
 mod standard;
 #[cfg(not(feature = "build-file"))]
 mod tile;
@@ -62,8 +60,6 @@ pub use error::XiangtingError;
 pub use necessary_tiles::calculate_necessary_tiles;
 #[cfg(not(feature = "build-file"))]
 pub use replacement_number::calculate_replacement_number;
-#[cfg(not(feature = "build-file"))]
-pub use shoupai::ShoupaiError;
 #[cfg(not(feature = "build-file"))]
 pub use tile::{Tile, TileCounts, TileFlags, TileFlagsExt};
 #[cfg(not(feature = "build-file"))]

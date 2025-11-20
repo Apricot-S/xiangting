@@ -5,9 +5,9 @@
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
+use crate::bingpai::{Bingpai, Bingpai3p};
 use crate::config::PlayerCount;
 use crate::error::XiangtingError;
-use crate::shoupai::{Shoupai, Shoupai3p};
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
@@ -22,13 +22,15 @@ pub fn calculate_necessary_tiles(
     }
 }
 
-fn calculate_necessary_tiles_4p(bingpai: &TileCounts) -> Result<(u8, TileFlags), XiangtingError> {
-    let shoupai = Shoupai::new(bingpai)?;
+fn calculate_necessary_tiles_4p(
+    tile_counts: &TileCounts,
+) -> Result<(u8, TileFlags), XiangtingError> {
+    let bingpai = Bingpai::new(tile_counts)?;
 
     let (mut replacement_number, mut necessary_tiles) =
-        standard::calculate_necessary_tiles(&shoupai);
+        standard::calculate_necessary_tiles(&bingpai);
 
-    let (r1, n1) = qiduizi::calculate_necessary_tiles(&shoupai);
+    let (r1, n1) = qiduizi::calculate_necessary_tiles(&bingpai);
     match r1.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r1;
@@ -38,7 +40,7 @@ fn calculate_necessary_tiles_4p(bingpai: &TileCounts) -> Result<(u8, TileFlags),
         Ordering::Greater => (),
     }
 
-    let (r2, n2) = shisanyao::calculate_necessary_tiles(&shoupai);
+    let (r2, n2) = shisanyao::calculate_necessary_tiles(&bingpai);
     match r2.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r2;
@@ -51,13 +53,15 @@ fn calculate_necessary_tiles_4p(bingpai: &TileCounts) -> Result<(u8, TileFlags),
     Ok((replacement_number, necessary_tiles))
 }
 
-fn calculate_necessary_tiles_3p(bingpai: &TileCounts) -> Result<(u8, TileFlags), XiangtingError> {
-    let shoupai_3p = Shoupai3p::new(bingpai)?;
+fn calculate_necessary_tiles_3p(
+    tile_counts: &TileCounts,
+) -> Result<(u8, TileFlags), XiangtingError> {
+    let bingpai_3p = Bingpai3p::new(tile_counts)?;
 
     let (mut replacement_number, mut necessary_tiles) =
-        standard::calculate_necessary_tiles_3p(&shoupai_3p);
+        standard::calculate_necessary_tiles_3p(&bingpai_3p);
 
-    let (r1, n1) = qiduizi::calculate_necessary_tiles_3p(&shoupai_3p);
+    let (r1, n1) = qiduizi::calculate_necessary_tiles_3p(&bingpai_3p);
     match r1.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r1;
@@ -67,9 +71,9 @@ fn calculate_necessary_tiles_3p(bingpai: &TileCounts) -> Result<(u8, TileFlags),
         Ordering::Greater => (),
     }
 
-    let shoupai = shoupai_3p.into();
+    let bingpai = bingpai_3p.into();
 
-    let (r2, n2) = shisanyao::calculate_necessary_tiles(&shoupai);
+    let (r2, n2) = shisanyao::calculate_necessary_tiles(&bingpai);
     match r2.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r2;
@@ -86,7 +90,6 @@ fn calculate_necessary_tiles_3p(bingpai: &TileCounts) -> Result<(u8, TileFlags),
 mod tests {
     use super::*;
     use crate::bingpai::BingpaiError;
-    use crate::shoupai::ShoupaiError;
     use crate::test_utils::FromTileCode;
 
     #[test]
@@ -122,9 +125,7 @@ mod tests {
         let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::InvalidTileCount(0)
-            )))
+            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(0)))
         ));
     }
 
@@ -148,9 +149,7 @@ mod tests {
         let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::InvalidTileCount(3)
-            )))
+            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(3)))
         ));
     }
 
@@ -160,9 +159,7 @@ mod tests {
         let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::TooManyTiles(15)
-            )))
+            Err(XiangtingError::Bingpai(BingpaiError::TooManyTiles(15)))
         ));
     }
 
@@ -172,9 +169,10 @@ mod tests {
         let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::TooManyCopies { tile: 0, count: 5 }
-            )))
+            Err(XiangtingError::Bingpai(BingpaiError::TooManyCopies {
+                tile: 0,
+                count: 5
+            }))
         ));
     }
 
@@ -211,9 +209,9 @@ mod tests {
         let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Three);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
+            Err(XiangtingError::Bingpai(
                 BingpaiError::InvalidTileForThreePlayer(1)
-            )))
+            ))
         ));
     }
 }

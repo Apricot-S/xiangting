@@ -4,9 +4,9 @@
 
 use super::qiduizi;
 use super::shisanyao;
+use crate::bingpai::{Bingpai, Bingpai3p};
 use crate::config::PlayerCount;
 use crate::error::XiangtingError;
-use crate::shoupai::{Shoupai, Shoupai3p};
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
@@ -21,12 +21,14 @@ pub fn calculate_unnecessary_tiles(
     }
 }
 
-fn calculate_unnecessary_tiles_4p(bingpai: &TileCounts) -> Result<(u8, TileFlags), XiangtingError> {
-    let shoupai = Shoupai::new(bingpai)?;
+fn calculate_unnecessary_tiles_4p(
+    tile_counts: &TileCounts,
+) -> Result<(u8, TileFlags), XiangtingError> {
+    let bingpai = Bingpai::new(tile_counts)?;
 
     let (mut replacement_number, mut unnecessary_tiles) = (u8::MAX, 0u64);
 
-    let (r1, u1) = qiduizi::calculate_unnecessary_tiles(&shoupai);
+    let (r1, u1) = qiduizi::calculate_unnecessary_tiles(&bingpai);
     match r1.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r1;
@@ -36,7 +38,7 @@ fn calculate_unnecessary_tiles_4p(bingpai: &TileCounts) -> Result<(u8, TileFlags
         Ordering::Greater => (),
     }
 
-    let (r2, u2) = shisanyao::calculate_unnecessary_tiles(&shoupai);
+    let (r2, u2) = shisanyao::calculate_unnecessary_tiles(&bingpai);
     match r2.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r2;
@@ -49,12 +51,14 @@ fn calculate_unnecessary_tiles_4p(bingpai: &TileCounts) -> Result<(u8, TileFlags
     Ok((replacement_number, unnecessary_tiles))
 }
 
-fn calculate_unnecessary_tiles_3p(bingpai: &TileCounts) -> Result<(u8, TileFlags), XiangtingError> {
-    let shoupai_3p = Shoupai3p::new(bingpai)?;
+fn calculate_unnecessary_tiles_3p(
+    tile_counts: &TileCounts,
+) -> Result<(u8, TileFlags), XiangtingError> {
+    let bingpai_3p = Bingpai3p::new(tile_counts)?;
 
     let (mut replacement_number, mut unnecessary_tiles) = (u8::MAX, 0u64);
 
-    let (r1, u1) = qiduizi::calculate_unnecessary_tiles_3p(&shoupai_3p);
+    let (r1, u1) = qiduizi::calculate_unnecessary_tiles_3p(&bingpai_3p);
     match r1.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r1;
@@ -64,9 +68,9 @@ fn calculate_unnecessary_tiles_3p(bingpai: &TileCounts) -> Result<(u8, TileFlags
         Ordering::Greater => (),
     }
 
-    let shoupai = shoupai_3p.into();
+    let bingpai = bingpai_3p.into();
 
-    let (r2, u2) = shisanyao::calculate_unnecessary_tiles(&shoupai);
+    let (r2, u2) = shisanyao::calculate_unnecessary_tiles(&bingpai);
     match r2.cmp(&replacement_number) {
         Ordering::Less => {
             replacement_number = r2;

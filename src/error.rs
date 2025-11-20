@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::shoupai::ShoupaiError;
+use crate::bingpai::BingpaiError;
 use thiserror::Error;
 
 /// Errors that can occur when calculating the deficiency number for a hand.
 #[derive(Debug, Error)]
 pub enum XiangtingError {
-    /// The hand is invalid.
-    #[error("hand is invalid: {0}")]
-    Shoupai(#[from] ShoupaiError),
+    /// The pure hand is invalid.
+    #[error("pure hand is invalid: {0}")]
+    Bingpai(#[from] BingpaiError),
 }
