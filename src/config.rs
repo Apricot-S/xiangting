@@ -10,6 +10,5 @@ pub enum PlayerCount {
     /// Three-player mahjong.
     ///
     /// - Tiles from 2m (二萬) to 8m (八萬) are not used.
-    /// - Melded sequences (明順子) are not allowed.
     Three,
 }
