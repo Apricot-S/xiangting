@@ -102,14 +102,14 @@ fn main() {
 It is also possible to calculate necessary or unnecessary tiles together with the replacement number.
 
 - Necessary tiles
-  - Tiles required to win with the minimum number of replacements
+  - Tiles needed to win with the minimum number of replacements
   - Tiles that reduce the replacement number when drawn
-  - In Japanese, referred to as *有効牌 (yūkōhai)* or *受け入れ (ukeire)*
+  - In Japanese, these are referred to as *有効牌 (yūkōhai)* or *受け入れ (ukeire)*
 
 - Unnecessary tiles
-  - Tiles not required to win with the minimum number of replacements
+  - Tiles not needed to win with the minimum number of replacements
   - Tiles that can be discarded without changing the replacement number
-  - In Japanese, referred to as *不要牌 (fuyōhai)* or *余剰牌 (yojōhai)*
+  - In Japanese, these are referred to as *不要牌 (fuyōhai)* or *余剰牌 (yojōhai)*
 
 ```rust
 use xiangting::{PlayerCount, calculate_necessary_tiles, calculate_unnecessary_tiles};
