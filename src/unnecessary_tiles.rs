@@ -10,6 +10,65 @@ use crate::config::PlayerCount;
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
+/// Calculates the replacement number (= xiangting number + 1) and unnecessary tiles for a given hand.
+///
+/// # Arguments
+///
+/// * `bingpai` - 兵牌: A reference to a hand excluding melds (a.k.a. pure hand, 純手牌).
+/// * `player_count` - A reference to the number of players.
+///
+/// # Errors
+///
+/// Returns [`Err`] if the hand is invalid.
+///
+/// # Examples
+///
+/// ```
+/// # use xiangting::{PlayerCount, calculate_unnecessary_tiles};
+/// # use xiangting::BingpaiError;
+/// # fn main() -> Result<(), BingpaiError> {
+/// // 199m146779p12s246z
+/// let hand: [u8; 34] = [
+///     1, 0, 0, 0, 0, 0, 0, 0, 2, // m
+///     1, 0, 0, 1, 0, 1, 2, 0, 1, // p
+///     1, 1, 0, 0, 0, 0, 0, 0, 0, // s
+///     0, 1, 0, 1, 0, 1, 0, // z
+/// ];
+///
+/// let (replacement_number, unnecessary_tiles) =
+///     calculate_unnecessary_tiles(&hand, &PlayerCount::Four)?;
+/// assert_eq!(replacement_number, 5u8);
+/// assert_eq!(unnecessary_tiles, 0b0101010_000000011_101101001_000000001); // 1m14679p12s246z
+/// # Ok(())
+/// # }
+/// ```
+///
+/// In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
+///
+/// ```
+/// # use xiangting::{PlayerCount, calculate_unnecessary_tiles};
+/// # use xiangting::BingpaiError;
+/// # fn main() -> Result<(), BingpaiError> {
+/// // 1111m111122233z
+/// let hand: [u8; 34] = [
+///     4, 0, 0, 0, 0, 0, 0, 0, 0, // m
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+///     0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+///     4, 3, 2, 0, 0, 0, 0, // z
+/// ];
+///
+/// let (replacement_number_4p, unnecessary_tiles_4p) =
+///     calculate_unnecessary_tiles(&hand, &PlayerCount::Four)?;
+/// assert_eq!(replacement_number_4p, 2u8);
+/// assert_eq!(unnecessary_tiles_4p, 0b0000001_000000000_000000000_000000000); // 1z
+///
+/// let (replacement_number_3p, unnecessary_tiles_3p) =
+///     calculate_unnecessary_tiles(&hand, &PlayerCount::Three)?;
+/// assert_eq!(replacement_number_3p, 3u8);
+/// assert_eq!(unnecessary_tiles_3p, 0b0000001_000000000_000000000_000000001); // 1m1z
+/// # Ok(())
+/// # }
+/// ```
 #[inline]
 pub fn calculate_unnecessary_tiles(
     bingpai: &TileCounts,
