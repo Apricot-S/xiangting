@@ -5,9 +5,9 @@
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
+use crate::bingpai::{Bingpai, Bingpai3p};
 use crate::config::PlayerCount;
 use crate::error::XiangtingError;
-use crate::shoupai::{Shoupai, Shoupai3p};
 use crate::tile::TileCounts;
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
@@ -74,25 +74,25 @@ pub fn calculate_replacement_number(
     }
 }
 
-fn calculate_replacement_number_4p(bingpai: &TileCounts) -> Result<u8, XiangtingError> {
-    let shoupai = Shoupai::new(bingpai)?;
+fn calculate_replacement_number_4p(tile_counts: &TileCounts) -> Result<u8, XiangtingError> {
+    let bingpai = Bingpai::new(tile_counts)?;
 
-    let r0 = standard::calculate_replacement_number(&shoupai);
-    let r1 = qiduizi::calculate_replacement_number(&shoupai);
-    let r2 = shisanyao::calculate_replacement_number(&shoupai);
+    let r0 = standard::calculate_replacement_number(&bingpai);
+    let r1 = qiduizi::calculate_replacement_number(&bingpai);
+    let r2 = shisanyao::calculate_replacement_number(&bingpai);
 
     Ok([r0, r1, r2].into_iter().min().unwrap())
 }
 
-fn calculate_replacement_number_3p(bingpai: &TileCounts) -> Result<u8, XiangtingError> {
-    let shoupai_3p = Shoupai3p::new(bingpai)?;
+fn calculate_replacement_number_3p(tile_counts: &TileCounts) -> Result<u8, XiangtingError> {
+    let bingpai_3p = Bingpai3p::new(tile_counts)?;
 
-    let r0 = standard::calculate_replacement_number_3p(&shoupai_3p);
+    let r0 = standard::calculate_replacement_number_3p(&bingpai_3p);
 
-    let shoupai = shoupai_3p.into();
+    let bingpai = bingpai_3p.into();
 
-    let r1 = qiduizi::calculate_replacement_number(&shoupai);
-    let r2 = shisanyao::calculate_replacement_number(&shoupai);
+    let r1 = qiduizi::calculate_replacement_number(&bingpai);
+    let r2 = shisanyao::calculate_replacement_number(&bingpai);
 
     Ok([r0, r1, r2].into_iter().min().unwrap())
 }
@@ -101,7 +101,6 @@ fn calculate_replacement_number_3p(bingpai: &TileCounts) -> Result<u8, Xiangting
 mod tests {
     use super::*;
     use crate::bingpai::BingpaiError;
-    use crate::shoupai::ShoupaiError;
     use crate::test_utils::FromTileCode;
 
     #[test]
@@ -131,9 +130,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::InvalidTileCount(0)
-            )))
+            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(0)))
         ));
     }
 
@@ -157,9 +154,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::InvalidTileCount(3)
-            )))
+            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(3)))
         ));
     }
 
@@ -169,9 +164,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::TooManyTiles(15)
-            )))
+            Err(XiangtingError::Bingpai(BingpaiError::TooManyTiles(15)))
         ));
     }
 
@@ -181,9 +174,10 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
-                BingpaiError::TooManyCopies { tile: 0, count: 5 }
-            )))
+            Err(XiangtingError::Bingpai(BingpaiError::TooManyCopies {
+                tile: 0,
+                count: 5
+            }))
         ));
     }
 
@@ -214,9 +208,9 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Three);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Shoupai(ShoupaiError::Bingpai(
+            Err(XiangtingError::Bingpai(
                 BingpaiError::InvalidTileForThreePlayer(1)
-            )))
+            ))
         ));
     }
 }
