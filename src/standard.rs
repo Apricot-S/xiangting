@@ -3,6 +3,8 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 #[cfg(not(feature = "build-file"))]
+mod common;
+#[cfg(not(feature = "build-file"))]
 mod core;
 #[cfg(not(feature = "build-file"))]
 mod hash;

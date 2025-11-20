@@ -2,36 +2,14 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+use super::common::{Entry, update_min};
 use super::hash::{hash_19m, hash_shupai, hash_zipai};
 use super::shupai_map::{SHUPAI_REPLACEMENT_NUMBER_MAP, SHUPAI_UNNECESSARY_TILES_MAP};
-use super::unpack::{UnpackedNumbers, unpack_replacement_number, unpack_unnecessary_tiles};
+use super::unpack::{unpack_replacement_number, unpack_unnecessary_tiles};
 use super::wanzi_19_map::{WANZI_19_REPLACEMENT_NUMBER_MAP, WANZI_19_UNNECESSARY_TILES_MAP};
 use super::zipai_map::{ZIPAI_REPLACEMENT_NUMBER_MAP, ZIPAI_UNNECESSARY_TILES_MAP};
 use crate::bingpai::{Bingpai, Bingpai3p};
 use crate::tile::TileFlags;
-use std::cmp::Ordering;
-
-struct Entry {
-    numbers: UnpackedNumbers,
-    tiles: [TileFlags; 10],
-}
-
-#[inline]
-fn update_min(
-    lhs_number: &mut u8,
-    lhs_tiles: &mut TileFlags,
-    rhs_number: u8,
-    rhs_tiles: TileFlags,
-) {
-    match (*lhs_number).cmp(&rhs_number) {
-        Ordering::Less => (),
-        Ordering::Equal => *lhs_tiles |= rhs_tiles,
-        Ordering::Greater => {
-            *lhs_number = rhs_number;
-            *lhs_tiles = rhs_tiles;
-        }
-    }
-}
 
 fn update_dp(lhs: &mut Entry, rhs: &Entry) {
     for i in (5..10).rev() {
