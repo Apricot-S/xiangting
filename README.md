@@ -21,7 +21,7 @@ Documentation:
 - [Theoretical Background of Nyanten (Efficient Computation of Shanten/Deficiency Numbers) #麻雀 - Qiita](https://qiita.com/Cryolite/items/75d504c7489426806b87)
 - [A Fast and Space-Efficient Algorithm for Calculating Deficient Numbers (a.k.a. Shanten Numbers).pdf](https://www.slideshare.net/slideshow/a-fast-and-space-efficient-algorithm-for-calculating-deficient-numbers-a-k-a-shanten-numbers-pdf/269706674)
 
-## Language bindings
+## Language Bindings
 
 - Python: [xiangting-py](https://github.com/Apricot-S/xiangting-py)
 
@@ -94,6 +94,50 @@ fn main() {
 
     let replacement_number_3p = calculate_replacement_number(&hand, &PlayerCount::Three);
     assert_eq!(replacement_number_3p.unwrap(), 3u8);
+}
+```
+
+### Necessary and Unnecessary Tiles
+
+It is also possible to calculate necessary or unnecessary tiles together with the replacement number.
+
+- Necessary tiles
+  - Tiles required to win with the minimum number of replacements
+  - Tiles that reduce the replacement number when drawn
+  - In Japanese, referred to as *有効牌 (yūkōhai)* or *受け入れ (ukeire)*
+
+- Unnecessary tiles
+  - Tiles not required to win with the minimum number of replacements
+  - Tiles that can be discarded without changing the replacement number
+  - In Japanese, referred to as *不要牌 (fuyōhai)* or *余剰牌 (yojōhai)*
+
+```rust
+use xiangting::{PlayerCount, calculate_necessary_tiles, calculate_unnecessary_tiles};
+
+fn main() {
+    // 199m146779p12s246z
+    let hand: [u8; 34] = [
+        1, 0, 0, 0, 0, 0, 0, 0, 2, // m
+        1, 0, 0, 1, 0, 1, 2, 0, 1, // p
+        1, 1, 0, 0, 0, 0, 0, 0, 0, // s
+        0, 1, 0, 1, 0, 1, 0, // z
+    ];
+
+    let (replacement_number1, necessary_tiles) =
+        calculate_necessary_tiles(&hand, &PlayerCount::Four).unwrap();
+    let (replacement_number2, unnecessary_tiles) =
+        calculate_unnecessary_tiles(&hand, &PlayerCount::Four).unwrap();
+
+    assert_eq!(replacement_number1, 5);
+    assert_eq!(replacement_number1, replacement_number2);
+    assert_eq!(necessary_tiles, 0b1111111_100000111_111111111_100000111); // 1239m123456789p1239s1234567z
+    assert_eq!(unnecessary_tiles, 0b0101010_000000011_101101001_000000001); // 1m14679p12s246z
+
+    let (replacement_number3, necessary_tiles_3p) =
+        calculate_necessary_tiles(&hand, &PlayerCount::Three).unwrap();
+
+    assert_eq!(replacement_number1, replacement_number3);
+    assert_eq!(necessary_tiles_3p, 0b1111111_100000111_111111111_100000001); // 19m123456789p1239s1234567z
 }
 ```
 
