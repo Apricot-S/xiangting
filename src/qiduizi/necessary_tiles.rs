@@ -140,13 +140,13 @@ mod tests {
 
     #[test]
     fn calculate_necessary_tiles_3p_with_quadruple() {
-        let tile_counts = TileCounts::from_code("1199m288p55s1111z");
+        let tile_counts = TileCounts::from_code("288p5599s111122z");
         let bingpai = Bingpai3p::new(&tile_counts).unwrap();
         let (replacement_number, necessary_tiles) = calculate_necessary_tiles_3p(&bingpai);
         assert_eq!(replacement_number, 3);
         assert_eq!(
             necessary_tiles,
-            TileFlags::from_code("12345679p12346789s234567z")
+            TileFlags::from_code("19m12345679p1234678s34567z")
         );
     }
 }
