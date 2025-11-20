@@ -227,10 +227,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 9);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("123789m123789p123789s1234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("19m19p19s1234567z"));
     }
 
     #[test]
@@ -239,10 +236,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 8);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("1789m123789p123789s1234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("9m19p19s1234567z"));
     }
 
     #[test]
@@ -251,7 +245,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 1);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("12z"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
     }
 
     #[test]
@@ -269,7 +263,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 1);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("2z"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
     }
 
     #[test]
@@ -279,7 +273,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("789m123s1z"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("89m12s1z"));
     }
 
     #[test]
@@ -289,7 +283,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("7m37s"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("89m1289s"));
     }
 
     #[test]
@@ -299,7 +293,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("247m"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("236z"));
     }
 
     #[test]
@@ -317,7 +311,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 5);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("1234567p123456z"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("4p123456z"));
     }
 
     #[test]
@@ -326,7 +320,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 4);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("1p12345z"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("12345z"));
     }
 
     #[test]
@@ -335,7 +329,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("28p123z"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("123z"));
     }
 
     #[test]
@@ -345,7 +339,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("247s"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("567z"));
     }
 
     #[test]
@@ -355,10 +349,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("23456789m123456789p123456789s1234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1m"));
     }
 
     #[test]
@@ -367,10 +358,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("2356789m23456789p123456789s1234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("14m1p"));
     }
 
     #[test]
@@ -380,10 +368,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("123456789m123456789p123456789s567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("12z"));
     }
 
     #[test]
@@ -392,7 +377,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("34m"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("7m"));
     }
 
     #[test]
@@ -401,7 +386,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("34m2z"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("147m2z"));
     }
 
     #[test]
@@ -410,10 +395,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("2356789m123456789p123456789s1234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("14m"));
     }
 
     #[test]
@@ -422,7 +404,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("34m"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1z"));
     }
 
     #[test]
@@ -431,10 +413,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("2356789m123456789p123456789s1234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1478m"));
     }
 
     #[test]
@@ -443,7 +422,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("34m"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("7m1z"));
     }
 
     #[test]
@@ -452,10 +431,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("123456789m123456789p123456789s234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1z"));
     }
 
     #[test]
@@ -464,10 +440,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("123456789m123456789p123456789s234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1z"));
     }
 
     #[test]
@@ -476,10 +449,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("123456789m123456789p123456789s34567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("12z"));
     }
 
     #[test]
@@ -488,10 +458,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("123456789m123456789p123456789s34567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("12z"));
     }
 
     #[test]
@@ -500,7 +467,7 @@ mod tests {
         let bingpai = Bingpai::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(unnecessary_tiles, TileFlags::from_code("23m"));
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1z1z"));
     }
 
     #[test]
@@ -509,10 +476,7 @@ mod tests {
         let bingpai = Bingpai3p::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles_3p(&bingpai);
         assert_eq!(replacement_number, 3);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("9m123456789p123456789s34567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1m1z"));
     }
 
     #[test]
@@ -521,10 +485,7 @@ mod tests {
         let bingpai = Bingpai3p::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles_3p(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("9m123456789p123456789s1234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1m"));
     }
 
     #[test]
@@ -533,10 +494,7 @@ mod tests {
         let bingpai = Bingpai3p::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles_3p(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("9m123456789p123456789s1234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("1m"));
     }
 
     #[test]
@@ -545,9 +503,6 @@ mod tests {
         let bingpai = Bingpai3p::new(&tile_counts).unwrap();
         let (replacement_number, unnecessary_tiles) = calculate_unnecessary_tiles_3p(&bingpai);
         assert_eq!(replacement_number, 2);
-        assert_eq!(
-            unnecessary_tiles,
-            TileFlags::from_code("123456789p123456789s1234567z")
-        );
+        assert_eq!(unnecessary_tiles, TileFlags::from_code("19m"));
     }
 }
