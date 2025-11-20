@@ -5,9 +5,8 @@
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
-use crate::bingpai::{Bingpai, Bingpai3p};
+use crate::bingpai::{Bingpai, Bingpai3p, BingpaiError};
 use crate::config::PlayerCount;
-use crate::error::XiangtingError;
 use crate::tile::TileCounts;
 
 /// Calculates the replacement number (= xiangting number + 1) for a given hand.
@@ -25,8 +24,8 @@ use crate::tile::TileCounts;
 ///
 /// ```
 /// # use xiangting::{PlayerCount, calculate_replacement_number};
-/// # use xiangting::XiangtingError;
-/// # fn main() -> Result<(), XiangtingError> {
+/// # use xiangting::BingpaiError;
+/// # fn main() -> Result<(), BingpaiError> {
 /// // 123m456p789s11222z
 /// let hand: [u8; 34] = [
 ///     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
@@ -45,8 +44,8 @@ use crate::tile::TileCounts;
 ///
 /// ```
 /// # use xiangting::{PlayerCount, calculate_replacement_number};
-/// # use xiangting::XiangtingError;
-/// # fn main() -> Result<(), XiangtingError> {
+/// # use xiangting::BingpaiError;
+/// # fn main() -> Result<(), BingpaiError> {
 /// // 1111m111122233z
 /// let hand: [u8; 34] = [
 ///     4, 0, 0, 0, 0, 0, 0, 0, 0, // m
@@ -67,14 +66,14 @@ use crate::tile::TileCounts;
 pub fn calculate_replacement_number(
     bingpai: &TileCounts,
     player_count: &PlayerCount,
-) -> Result<u8, XiangtingError> {
+) -> Result<u8, BingpaiError> {
     match player_count {
         PlayerCount::Four => calculate_replacement_number_4p(bingpai),
         PlayerCount::Three => calculate_replacement_number_3p(bingpai),
     }
 }
 
-fn calculate_replacement_number_4p(tile_counts: &TileCounts) -> Result<u8, XiangtingError> {
+fn calculate_replacement_number_4p(tile_counts: &TileCounts) -> Result<u8, BingpaiError> {
     let bingpai = Bingpai::new(tile_counts)?;
 
     let r0 = standard::calculate_replacement_number(&bingpai);
@@ -84,7 +83,7 @@ fn calculate_replacement_number_4p(tile_counts: &TileCounts) -> Result<u8, Xiang
     Ok([r0, r1, r2].into_iter().min().unwrap())
 }
 
-fn calculate_replacement_number_3p(tile_counts: &TileCounts) -> Result<u8, XiangtingError> {
+fn calculate_replacement_number_3p(tile_counts: &TileCounts) -> Result<u8, BingpaiError> {
     let bingpai_3p = Bingpai3p::new(tile_counts)?;
 
     let r0 = standard::calculate_replacement_number_3p(&bingpai_3p);
@@ -130,7 +129,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(0)))
+            Err(BingpaiError::InvalidTileCount(0))
         ));
     }
 
@@ -154,7 +153,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(3)))
+            Err(BingpaiError::InvalidTileCount(3))
         ));
     }
 
@@ -164,7 +163,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(BingpaiError::TooManyTiles(15)))
+            Err(BingpaiError::TooManyTiles(15))
         ));
     }
 
@@ -174,10 +173,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(BingpaiError::TooManyCopies {
-                tile: 0,
-                count: 5
-            }))
+            Err(BingpaiError::TooManyCopies { tile: 0, count: 5 })
         ));
     }
 
@@ -208,9 +204,7 @@ mod tests {
         let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Three);
         assert!(matches!(
             replacement_number,
-            Err(XiangtingError::Bingpai(
-                BingpaiError::InvalidTileForThreePlayer(1)
-            ))
+            Err(BingpaiError::InvalidTileForThreePlayer(1))
         ));
     }
 }

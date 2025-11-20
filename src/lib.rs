@@ -10,8 +10,8 @@
 //!
 //! ```
 //! # use xiangting::{PlayerCount, calculate_replacement_number};
-//! # use xiangting::XiangtingError;
-//! # fn main() -> Result<(), XiangtingError> {
+//! # use xiangting::BingpaiError;
+//! # fn main() -> Result<(), BingpaiError> {
 //! // 123m456p789s11222z
 //! let hand: [u8; 34] = [
 //!     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
@@ -30,8 +30,6 @@
 mod bingpai;
 #[cfg(not(feature = "build-file"))]
 mod config;
-#[cfg(not(feature = "build-file"))]
-mod error;
 #[cfg(not(feature = "build-file"))]
 mod necessary_tiles;
 #[cfg(not(feature = "build-file"))]
@@ -54,8 +52,6 @@ mod test_utils;
 pub use bingpai::BingpaiError;
 #[cfg(not(feature = "build-file"))]
 pub use config::PlayerCount;
-#[cfg(not(feature = "build-file"))]
-pub use error::XiangtingError;
 #[cfg(not(feature = "build-file"))]
 pub use necessary_tiles::calculate_necessary_tiles;
 #[cfg(not(feature = "build-file"))]
