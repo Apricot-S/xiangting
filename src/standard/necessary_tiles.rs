@@ -43,7 +43,7 @@ fn update_dp(lhs: &mut Entry, rhs: &Entry) {
         //     &mut number,
         //     &mut tiles,
         //     lhs.numbers[0] + rhs.numbers[i],
-        //     rhs.tiles[0] | rhs.tiles[i],
+        //     lhs.tiles[0] | rhs.tiles[i],
         // );
         // ```
         // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
@@ -80,7 +80,7 @@ fn update_dp(lhs: &mut Entry, rhs: &Entry) {
         //     &mut number,
         //     &mut tiles,
         //     lhs.numbers[0] + rhs.numbers[i],
-        //     rhs.tiles[0] | rhs.tiles[i],
+        //     lhs.tiles[0] | rhs.tiles[i],
         // );
         // ```
         // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
