@@ -3,6 +3,8 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 #[cfg(not(feature = "build-file"))]
+mod common;
+#[cfg(not(feature = "build-file"))]
 mod core;
 #[cfg(not(feature = "build-file"))]
 mod hash;
@@ -14,6 +16,8 @@ mod replacement_number;
 mod shupai_map;
 #[cfg(not(feature = "build-file"))]
 mod shupai_table;
+#[cfg(not(feature = "build-file"))]
+mod unnecessary_tiles;
 #[cfg(not(feature = "build-file"))]
 mod unpack;
 #[cfg(not(feature = "build-file"))]
@@ -31,6 +35,8 @@ pub(super) use necessary_tiles::{calculate_necessary_tiles, calculate_necessary_
 pub(super) use replacement_number::{
     calculate_replacement_number, calculate_replacement_number_3p,
 };
+#[cfg(not(feature = "build-file"))]
+pub(super) use unnecessary_tiles::{calculate_unnecessary_tiles, calculate_unnecessary_tiles_3p};
 
 #[cfg(feature = "build-map")]
 pub mod core;
