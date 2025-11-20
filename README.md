@@ -21,6 +21,10 @@ Documentation:
 - [Theoretical Background of Nyanten (Efficient Computation of Shanten/Deficiency Numbers) #麻雀 - Qiita](https://qiita.com/Cryolite/items/75d504c7489426806b87)
 - [A Fast and Space-Efficient Algorithm for Calculating Deficient Numbers (a.k.a. Shanten Numbers).pdf](https://www.slideshare.net/slideshow/a-fast-and-space-efficient-algorithm-for-calculating-deficient-numbers-a-k-a-shanten-numbers-pdf/269706674)
 
+## Language bindings
+
+- Python: [xiangting-py](https://github.com/Apricot-S/xiangting-py)
+
 ## Installation
 
 ```sh
