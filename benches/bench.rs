@@ -10,7 +10,10 @@ use random_hand::{
     create_rng, generate_random_full_flush_pure_hand, generate_random_half_flush_pure_hand,
     generate_random_non_simple_pure_hand, generate_random_pure_hand,
 };
-use xiangting::{PlayerCount, calculate_necessary_tiles, calculate_replacement_number};
+use xiangting::{
+    PlayerCount, calculate_necessary_tiles, calculate_replacement_number,
+    calculate_unnecessary_tiles,
+};
 
 const NUM_HAND: usize = 100_000_000;
 const SAMPLE_SIZE: usize = 10_000;
@@ -128,6 +131,22 @@ fn unnecessary_tiles_baseline(c: &mut Criterion) {
     group.finish();
 }
 
+fn unnecessary_tiles_proposed(c: &mut Criterion) {
+    let mut rng = create_rng();
+    let hands: Vec<_> = (0..NUM_HAND)
+        .map(|_| generate_random_pure_hand(&mut rng))
+        .collect();
+
+    let mut group = c.benchmark_group("xiangting");
+    group.sample_size(SAMPLE_SIZE);
+    group.nresamples(NUM_RESAMPLE);
+    group.bench_function("Unnecessary tiles Proposed", |b| {
+        let mut hand = hands.iter();
+        b.iter(|| calculate_unnecessary_tiles(hand.next().unwrap(), &PlayerCount::Four).unwrap())
+    });
+    group.finish();
+}
+
 criterion_group!(
     benches_number,
     xiangting_normal,
@@ -140,5 +159,6 @@ criterion_group!(
     necessary_tiles_baseline,
     necessary_tiles_proposed,
     unnecessary_tiles_baseline,
+    unnecessary_tiles_proposed,
 );
 criterion_main!(benches_number, benches_tiles);
