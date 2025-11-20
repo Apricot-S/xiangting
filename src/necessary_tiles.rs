@@ -122,9 +122,9 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_err_bingpai_empty() {
         let bingpai = TileCounts::from_code("");
-        let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
         assert!(matches!(
-            replacement_number,
+            ret,
             Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(0)))
         ));
     }
@@ -132,23 +132,23 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_ok_bingpai_1_tile() {
         let bingpai = TileCounts::from_code("1m");
-        let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
-        assert!(replacement_number.is_ok());
+        let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
+        assert!(ret.is_ok());
     }
 
     #[test]
     fn calculate_necessary_tiles_ok_bingpai_2_tiles() {
         let bingpai = TileCounts::from_code("2p3s");
-        let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
-        assert!(replacement_number.is_ok());
+        let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
+        assert!(ret.is_ok());
     }
 
     #[test]
     fn calculate_necessary_tiles_err_bingpai_3_tiles() {
         let bingpai = TileCounts::from_code("2p3s7z");
-        let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
         assert!(matches!(
-            replacement_number,
+            ret,
             Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(3)))
         ));
     }
@@ -156,9 +156,9 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_err_bingpai_15_tiles() {
         let bingpai = TileCounts::from_code("111222333444555m");
-        let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
         assert!(matches!(
-            replacement_number,
+            ret,
             Err(XiangtingError::Bingpai(BingpaiError::TooManyTiles(15)))
         ));
     }
@@ -166,9 +166,9 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_err_bingpai_5_same_tiles() {
         let bingpai = TileCounts::from_code("11111m");
-        let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
         assert!(matches!(
-            replacement_number,
+            ret,
             Err(XiangtingError::Bingpai(BingpaiError::TooManyCopies {
                 tile: 0,
                 count: 5
@@ -206,9 +206,9 @@ mod tests {
     #[test]
     fn calculate_necessary_tiles_3_player_err_bingpai_2m() {
         let bingpai = TileCounts::from_code("2m");
-        let replacement_number = calculate_necessary_tiles(&bingpai, &PlayerCount::Three);
+        let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Three);
         assert!(matches!(
-            replacement_number,
+            ret,
             Err(XiangtingError::Bingpai(
                 BingpaiError::InvalidTileForThreePlayer(1)
             ))
