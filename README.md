@@ -73,30 +73,6 @@ fn main() {
 }
 ```
 
-### Support for Three-Player Mahjong
-
-In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
-
-```rust
-use xiangting::{PlayerCount, calculate_replacement_number};
-
-fn main() {
-    // 1111m111122233z
-    let hand: [u8; 34] = [
-        4, 0, 0, 0, 0, 0, 0, 0, 0, // m
-        0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-        0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-        4, 3, 2, 0, 0, 0, 0, // z
-    ];
-
-    let replacement_number_4p = calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
-    assert_eq!(replacement_number_4p, 2u8);
-
-    let replacement_number_3p = calculate_replacement_number(&hand, &PlayerCount::Three).unwrap();
-    assert_eq!(replacement_number_3p, 3u8);
-}
-```
-
 ### Necessary and Unnecessary Tiles
 
 It is also possible to calculate necessary or unnecessary tiles together with the replacement number.
@@ -132,12 +108,30 @@ fn main() {
     assert_eq!(replacement_number1, replacement_number2);
     assert_eq!(necessary_tiles, 0b1111111_100000111_111111111_100000111); // 1239m123456789p1239s1234567z
     assert_eq!(unnecessary_tiles, 0b0101010_000000011_101101001_000000001); // 1m14679p12s246z
+}
+```
 
-    let (replacement_number3, necessary_tiles_3p) =
-        calculate_necessary_tiles(&hand, &PlayerCount::Three).unwrap();
+### Support for Three-Player Mahjong
 
-    assert_eq!(replacement_number1, replacement_number3);
-    assert_eq!(necessary_tiles_3p, 0b1111111_100000111_111111111_100000001); // 19m123456789p1239s1234567z
+In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
+
+```rust
+use xiangting::{PlayerCount, calculate_replacement_number};
+
+fn main() {
+    // 1111m111122233z
+    let hand: [u8; 34] = [
+        4, 0, 0, 0, 0, 0, 0, 0, 0, // m
+        0, 0, 0, 0, 0, 0, 0, 0, 0, // p
+        0, 0, 0, 0, 0, 0, 0, 0, 0, // s
+        4, 3, 2, 0, 0, 0, 0, // z
+    ];
+
+    let replacement_number_4p = calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
+    assert_eq!(replacement_number_4p, 2u8);
+
+    let replacement_number_3p = calculate_replacement_number(&hand, &PlayerCount::Three).unwrap();
+    assert_eq!(replacement_number_3p, 3u8);
 }
 ```
 
