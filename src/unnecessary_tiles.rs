@@ -4,9 +4,8 @@
 
 use super::qiduizi;
 use super::shisanyao;
-use crate::bingpai::{Bingpai, Bingpai3p};
+use crate::bingpai::{Bingpai, Bingpai3p, BingpaiError};
 use crate::config::PlayerCount;
-use crate::error::XiangtingError;
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
@@ -14,7 +13,7 @@ use std::cmp::Ordering;
 pub fn calculate_unnecessary_tiles(
     bingpai: &TileCounts,
     player_count: &PlayerCount,
-) -> Result<(u8, TileFlags), XiangtingError> {
+) -> Result<(u8, TileFlags), BingpaiError> {
     match player_count {
         PlayerCount::Four => calculate_unnecessary_tiles_4p(bingpai),
         PlayerCount::Three => calculate_unnecessary_tiles_3p(bingpai),
@@ -23,7 +22,7 @@ pub fn calculate_unnecessary_tiles(
 
 fn calculate_unnecessary_tiles_4p(
     tile_counts: &TileCounts,
-) -> Result<(u8, TileFlags), XiangtingError> {
+) -> Result<(u8, TileFlags), BingpaiError> {
     let bingpai = Bingpai::new(tile_counts)?;
 
     let (mut replacement_number, mut unnecessary_tiles) = (u8::MAX, 0u64);
@@ -53,7 +52,7 @@ fn calculate_unnecessary_tiles_4p(
 
 fn calculate_unnecessary_tiles_3p(
     tile_counts: &TileCounts,
-) -> Result<(u8, TileFlags), XiangtingError> {
+) -> Result<(u8, TileFlags), BingpaiError> {
     let bingpai_3p = Bingpai3p::new(tile_counts)?;
 
     let (mut replacement_number, mut unnecessary_tiles) = (u8::MAX, 0u64);

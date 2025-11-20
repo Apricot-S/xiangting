@@ -5,9 +5,8 @@
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
-use crate::bingpai::{Bingpai, Bingpai3p};
+use crate::bingpai::{Bingpai, Bingpai3p, BingpaiError};
 use crate::config::PlayerCount;
-use crate::error::XiangtingError;
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
@@ -15,16 +14,14 @@ use std::cmp::Ordering;
 pub fn calculate_necessary_tiles(
     bingpai: &TileCounts,
     player_count: &PlayerCount,
-) -> Result<(u8, TileFlags), XiangtingError> {
+) -> Result<(u8, TileFlags), BingpaiError> {
     match player_count {
         PlayerCount::Four => calculate_necessary_tiles_4p(bingpai),
         PlayerCount::Three => calculate_necessary_tiles_3p(bingpai),
     }
 }
 
-fn calculate_necessary_tiles_4p(
-    tile_counts: &TileCounts,
-) -> Result<(u8, TileFlags), XiangtingError> {
+fn calculate_necessary_tiles_4p(tile_counts: &TileCounts) -> Result<(u8, TileFlags), BingpaiError> {
     let bingpai = Bingpai::new(tile_counts)?;
 
     let (mut replacement_number, mut necessary_tiles) =
@@ -53,9 +50,7 @@ fn calculate_necessary_tiles_4p(
     Ok((replacement_number, necessary_tiles))
 }
 
-fn calculate_necessary_tiles_3p(
-    tile_counts: &TileCounts,
-) -> Result<(u8, TileFlags), XiangtingError> {
+fn calculate_necessary_tiles_3p(tile_counts: &TileCounts) -> Result<(u8, TileFlags), BingpaiError> {
     let bingpai_3p = Bingpai3p::new(tile_counts)?;
 
     let (mut replacement_number, mut necessary_tiles) =
@@ -123,10 +118,7 @@ mod tests {
     fn calculate_necessary_tiles_err_bingpai_empty() {
         let bingpai = TileCounts::from_code("");
         let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
-        assert!(matches!(
-            ret,
-            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(0)))
-        ));
+        assert!(matches!(ret, Err(BingpaiError::InvalidTileCount(0))));
     }
 
     #[test]
@@ -147,20 +139,14 @@ mod tests {
     fn calculate_necessary_tiles_err_bingpai_3_tiles() {
         let bingpai = TileCounts::from_code("2p3s7z");
         let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
-        assert!(matches!(
-            ret,
-            Err(XiangtingError::Bingpai(BingpaiError::InvalidTileCount(3)))
-        ));
+        assert!(matches!(ret, Err(BingpaiError::InvalidTileCount(3))));
     }
 
     #[test]
     fn calculate_necessary_tiles_err_bingpai_15_tiles() {
         let bingpai = TileCounts::from_code("111222333444555m");
         let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
-        assert!(matches!(
-            ret,
-            Err(XiangtingError::Bingpai(BingpaiError::TooManyTiles(15)))
-        ));
+        assert!(matches!(ret, Err(BingpaiError::TooManyTiles(15))));
     }
 
     #[test]
@@ -169,10 +155,7 @@ mod tests {
         let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Four);
         assert!(matches!(
             ret,
-            Err(XiangtingError::Bingpai(BingpaiError::TooManyCopies {
-                tile: 0,
-                count: 5
-            }))
+            Err(BingpaiError::TooManyCopies { tile: 0, count: 5 })
         ));
     }
 
@@ -209,9 +192,7 @@ mod tests {
         let ret = calculate_necessary_tiles(&bingpai, &PlayerCount::Three);
         assert!(matches!(
             ret,
-            Err(XiangtingError::Bingpai(
-                BingpaiError::InvalidTileForThreePlayer(1)
-            ))
+            Err(BingpaiError::InvalidTileForThreePlayer(1))
         ));
     }
 }
