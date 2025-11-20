@@ -4,6 +4,7 @@
 
 use super::qiduizi;
 use super::shisanyao;
+use super::standard;
 use crate::bingpai::{Bingpai, Bingpai3p, BingpaiError};
 use crate::config::PlayerCount;
 use crate::tile::{TileCounts, TileFlags};
@@ -25,7 +26,8 @@ fn calculate_unnecessary_tiles_4p(
 ) -> Result<(u8, TileFlags), BingpaiError> {
     let bingpai = Bingpai::new(tile_counts)?;
 
-    let (mut replacement_number, mut unnecessary_tiles) = (u8::MAX, 0u64);
+    let (mut replacement_number, mut unnecessary_tiles) =
+        standard::calculate_unnecessary_tiles(&bingpai);
 
     let (r1, u1) = qiduizi::calculate_unnecessary_tiles(&bingpai);
     match r1.cmp(&replacement_number) {
@@ -55,7 +57,8 @@ fn calculate_unnecessary_tiles_3p(
 ) -> Result<(u8, TileFlags), BingpaiError> {
     let bingpai_3p = Bingpai3p::new(tile_counts)?;
 
-    let (mut replacement_number, mut unnecessary_tiles) = (u8::MAX, 0u64);
+    let (mut replacement_number, mut unnecessary_tiles) =
+        standard::calculate_unnecessary_tiles_3p(&bingpai_3p);
 
     let (r1, u1) = qiduizi::calculate_unnecessary_tiles_3p(&bingpai_3p);
     match r1.cmp(&replacement_number) {

@@ -15,6 +15,8 @@ mod shupai_map;
 #[cfg(not(feature = "build-file"))]
 mod shupai_table;
 #[cfg(not(feature = "build-file"))]
+mod unnecessary_tiles;
+#[cfg(not(feature = "build-file"))]
 mod unpack;
 #[cfg(not(feature = "build-file"))]
 mod wanzi_19_map;
@@ -31,6 +33,8 @@ pub(super) use necessary_tiles::{calculate_necessary_tiles, calculate_necessary_
 pub(super) use replacement_number::{
     calculate_replacement_number, calculate_replacement_number_3p,
 };
+#[cfg(not(feature = "build-file"))]
+pub(super) use unnecessary_tiles::{calculate_unnecessary_tiles, calculate_unnecessary_tiles_3p};
 
 #[cfg(feature = "build-map")]
 pub mod core;
