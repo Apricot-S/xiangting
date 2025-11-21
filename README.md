@@ -1,16 +1,12 @@
 # xiangting
 
 [![Crate](https://img.shields.io/crates/v/xiangting.svg)](https://crates.io/crates/xiangting)
+[![Minimum Supported Rust Version](https://img.shields.io/crates/msrv/xiangting)](https://crates.io/crates/xiangting)
 [![API](https://img.shields.io/badge/api-main-yellow.svg)](https://apricot-s.github.io/xiangting/xiangting)
 [![API](https://docs.rs/xiangting/badge.svg)](https://docs.rs/xiangting)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Apricot-S/xiangting)
 
 A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
-
-This library is based on the algorithm in [Cryolite's Nyanten](https://github.com/Cryolite/nyanten).  
-However, it introduces the following additional features:
-
-- Supports rules that include and exclude melded tiles when determining if a hand contains four identical tiles.
-- Supports three-player mahjong.
 
 Documentation:
 
@@ -24,6 +20,10 @@ Documentation:
 - [【図解】向聴数計算アルゴリズム - 麻雀アルゴリズム](https://tomohxx.github.io/mahjong-algorithm-book/illustration/)
 - [Theoretical Background of Nyanten (Efficient Computation of Shanten/Deficiency Numbers) #麻雀 - Qiita](https://qiita.com/Cryolite/items/75d504c7489426806b87)
 - [A Fast and Space-Efficient Algorithm for Calculating Deficient Numbers (a.k.a. Shanten Numbers).pdf](https://www.slideshare.net/slideshow/a-fast-and-space-efficient-algorithm-for-calculating-deficient-numbers-a-k-a-shanten-numbers-pdf/269706674)
+
+## Language Bindings
+
+- Python: [xiangting-py](https://github.com/Apricot-S/xiangting-py)
 
 ## Installation
 
@@ -57,7 +57,7 @@ The correspondence between the index and the tile is shown in the table below.
 Calculates the replacement number, which is equal to the deficiency number (a.k.a. xiangting number, 向聴数) + 1.
 
 ```rust
-use xiangting::calculate_replacement_number;
+use xiangting::{PlayerCount, calculate_replacement_number};
 
 fn main() {
     // 123m456p789s11222z
@@ -68,54 +68,55 @@ fn main() {
         2, 3, 0, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number = calculate_replacement_number(&hand, None);
-    assert_eq!(replacement_number.unwrap(), 0u8);
+    let replacement_number = calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
+    assert_eq!(replacement_number, 0u8);
 }
 ```
 
-### Handling Melds
+### Necessary and Unnecessary Tiles
 
-In the calculation for a hand with melds (副露),
-the melded tiles can be included or excluded when counting tiles to determine if a hand contains four identical ones.
+It is also possible to calculate necessary or unnecessary tiles together with the replacement number.
 
-If melds are excluded (e.g., 天鳳 (Tenhou), 雀魂 (Mahjong Soul)), specify `None` for `fulu_mianzi_list`.
+- Necessary tiles
+  - Tiles needed to win with the minimum number of replacements
+  - Tiles that reduce the replacement number when drawn
+  - In Japanese, these are referred to as *有効牌 (yūkōhai)* or *受け入れ (ukeire)*
 
-If melds are included (e.g., World Riichi Championship, M.LEAGUE), the melds should be included in the `fulu_mianzi_list`.
+- Unnecessary tiles
+  - Tiles not needed to win with the minimum number of replacements
+  - Tiles that can be discarded without changing the replacement number
+  - In Japanese, these are referred to as *不要牌 (fuyōhai)* or *余剰牌 (yojōhai)*
 
 ```rust
-use xiangting::{ClaimedTilePosition, FuluMianzi, calculate_replacement_number};
+use xiangting::{PlayerCount, calculate_necessary_tiles, calculate_unnecessary_tiles};
 
 fn main() {
-    // 123m1z
+    // 199m146779p12s246z
     let hand: [u8; 34] = [
-        1, 1, 1, 0, 0, 0, 0, 0, 0, // m
-        0, 0, 0, 0, 0, 0, 0, 0, 0, // p
-        0, 0, 0, 0, 0, 0, 0, 0, 0, // s
-        1, 0, 0, 0, 0, 0, 0, // z
+        1, 0, 0, 0, 0, 0, 0, 0, 2, // m
+        1, 0, 0, 1, 0, 1, 2, 0, 1, // p
+        1, 1, 0, 0, 0, 0, 0, 0, 0, // s
+        0, 1, 0, 1, 0, 1, 0, // z
     ];
 
-    // 456p 7777s 111z
-    let melds = [
-        FuluMianzi::Shunzi(12, ClaimedTilePosition::Low),
-        FuluMianzi::Gangzi(24),
-        FuluMianzi::Kezi(27),
-    ];
+    let (replacement_number1, necessary_tiles) =
+        calculate_necessary_tiles(&hand, &PlayerCount::Four).unwrap();
+    let (replacement_number2, unnecessary_tiles) =
+        calculate_unnecessary_tiles(&hand, &PlayerCount::Four).unwrap();
 
-    let replacement_number_wo_melds = calculate_replacement_number(&hand, None);
-    assert_eq!(replacement_number_wo_melds.unwrap(), 1u8);
-
-    let replacement_number_w_melds = calculate_replacement_number(&hand, Some(&melds));
-    assert_eq!(replacement_number_w_melds.unwrap(), 2u8);
+    assert_eq!(replacement_number1, 5);
+    assert_eq!(replacement_number1, replacement_number2);
+    assert_eq!(necessary_tiles, 0b1111111_100000111_111111111_100000111); // 1239m123456789p1239s1234567z
+    assert_eq!(unnecessary_tiles, 0b0101010_000000011_101101001_000000001); // 1m14679p12s246z
 }
 ```
 
 ### Support for Three-Player Mahjong
 
 In three-player mahjong, the tiles from 2m (二萬) to 8m (八萬) are not used.
-In addition, melded sequences (明順子) are not allowed.
 
 ```rust
-use xiangting::{calculate_replacement_number, calculate_replacement_number_3_player};
+use xiangting::{PlayerCount, calculate_necessary_tiles, calculate_unnecessary_tiles};
 
 fn main() {
     // 1111m111122233z
@@ -126,11 +127,17 @@ fn main() {
         4, 3, 2, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number_4p = calculate_replacement_number(&hand, None);
-    assert_eq!(replacement_number_4p.unwrap(), 2u8);
+    let (rn_4p, nt_4p) = calculate_necessary_tiles(&hand, &PlayerCount::Four).unwrap();
+    let (_, ut_4p) = calculate_unnecessary_tiles(&hand, &PlayerCount::Four).unwrap();
+    assert_eq!(rn_4p, 2u8);
+    assert_eq!(nt_4p, 0b0000000_000000000_000000000_000000110); // 23m
+    assert_eq!(ut_4p, 0b0000001_000000000_000000000_000000000); // 1z
 
-    let replacement_number_3p = calculate_replacement_number_3_player(&hand, None);
-    assert_eq!(replacement_number_3p.unwrap(), 3u8);
+    let (rn_3p, nt_3p) = calculate_necessary_tiles(&hand, &PlayerCount::Three).unwrap();
+    let (_, ut_3p) = calculate_unnecessary_tiles(&hand, &PlayerCount::Three).unwrap();
+    assert_eq!(rn_3p, 3u8);
+    assert_eq!(nt_3p, 0b1111100_111111111_111111111_100000000); // 9m123456789p123456789s34567z
+    assert_eq!(ut_3p, 0b0000001_000000000_000000000_000000001); // 1m1z
 }
 ```
 

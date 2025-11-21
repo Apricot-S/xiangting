@@ -6,7 +6,10 @@ use super::shupai_table::SHUPAI_TABLE;
 use super::wanzi_19_table::WANZI_19_TABLE;
 use super::zipai_table::ZIPAI_TABLE;
 
+#[inline]
 pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
+    debug_assert_eq!(single_color_bingpai.len(), 9);
+
     let (hash, _) = single_color_bingpai
         .iter()
         .enumerate()
@@ -14,6 +17,7 @@ pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
             debug_assert!(i < 9);
             debug_assert!(c <= 4);
             debug_assert!(n + c <= 14);
+
             let updated_n = n + c;
             let updated_h = h + SHUPAI_TABLE[i][updated_n as usize][c as usize];
             (updated_h, updated_n)
@@ -21,7 +25,10 @@ pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
     hash
 }
 
+#[inline]
 pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
+    debug_assert_eq!(zipai_bingpai.len(), 7);
+
     let (hash, _) = zipai_bingpai
         .iter()
         .enumerate()
@@ -29,6 +36,7 @@ pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
             debug_assert!(i < 7);
             debug_assert!(c <= 4);
             debug_assert!(n + c <= 14);
+
             let updated_n = n + c;
             let updated_h = h + ZIPAI_TABLE[i][updated_n as usize][c as usize];
             (updated_h, updated_n)
@@ -36,7 +44,10 @@ pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
     hash
 }
 
+#[inline]
 pub fn hash_19m(wanzi_bingpai: &[u8]) -> usize {
+    debug_assert_eq!(wanzi_bingpai.len(), 9);
+
     let (hash, _) = wanzi_bingpai
         .iter()
         .step_by(8)
@@ -45,6 +56,7 @@ pub fn hash_19m(wanzi_bingpai: &[u8]) -> usize {
             debug_assert!(i < 2);
             debug_assert!(c <= 4);
             debug_assert!(n + c <= 8);
+
             let updated_n = n + c;
             let updated_h = h + WANZI_19_TABLE[i][updated_n as usize][c as usize];
             (updated_h, updated_n)

@@ -2,30 +2,21 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::constants::{MAX_NUM_SHOUPAI, MAX_TILE_COPIES, NUM_TILE_INDEX};
-use crate::tile::Tile;
+use crate::tile::{Tile, TileCounts};
 use thiserror::Error;
 
-/// 兵牌: Hand excluding melds (a.k.a. pure hand, 純手牌).
-///
-/// Each element of the array represents the count of a specific tile in the hand.
-/// The correspondence between the index and the tile is the same as [`Tile`](crate::Tile).
-///
-/// See also [`BingpaiError`](crate::BingpaiError) for more information.
-///
-/// # Examples
-///
-/// ```
-/// # use xiangting::Bingpai;
-/// // 111m456p789s11222z
-/// let hand: Bingpai = [
-///     3, 0, 0, 0, 0, 0, 0, 0, 0, // m
-///     0, 0, 0, 1, 1, 1, 0, 0, 0, // p
-///     0, 0, 0, 0, 0, 0, 1, 1, 1, // s
-///     2, 3, 0, 0, 0, 0, 0, // z
-/// ];
-/// ```
-pub type Bingpai = [u8; NUM_TILE_INDEX];
+const MAX_TILE_COPIES: u8 = 4;
+const MAX_NUM_BINGPAI: u8 = 14;
+
+pub(crate) struct Bingpai<'a> {
+    tile_counts: &'a TileCounts,
+    num_required_bingpai_mianzi: u8,
+}
+
+pub(crate) struct Bingpai3p<'a> {
+    tile_counts: &'a TileCounts,
+    num_required_bingpai_mianzi: u8,
+}
 
 /// Errors that occur when an invalid pure hand (純手牌) is provided.
 #[derive(Debug, Error)]
@@ -44,17 +35,17 @@ pub enum BingpaiError {
     /// Total tile count in the pure hand is not of the form 3n+1 or 3n+2.
     #[error("total tile count must be a multiple of 3 plus 1 or 2 but was {0}")]
     InvalidTileCount(u8),
-    /// The pure hand contains tiles that are not used in 3-player mahjong (2m-8m).
-    #[error("tile {0} cannot be used in 3-player mahjong")]
-    InvalidTileFor3Player(Tile),
+    /// The pure hand contains tiles that are not used in three-player mahjong (2m-8m).
+    #[error("tile {0} cannot be used in three-player mahjong")]
+    InvalidTileForThreePlayer(Tile),
 }
 
-pub(crate) trait BingpaiExt {
+pub(crate) trait TileCountsExt {
     fn count(&self) -> Result<u8, BingpaiError>;
-    fn count_3_player(&self) -> Result<u8, BingpaiError>;
+    fn count_3p(&self) -> Result<u8, BingpaiError>;
 }
 
-impl BingpaiExt for Bingpai {
+impl TileCountsExt for TileCounts {
     fn count(&self) -> Result<u8, BingpaiError> {
         self.iter()
             .enumerate()
@@ -67,16 +58,73 @@ impl BingpaiExt for Bingpai {
 
         let num_bingpai: u8 = self.iter().sum();
         match num_bingpai {
-            n if n > MAX_NUM_SHOUPAI => Err(BingpaiError::TooManyTiles(n)),
+            n if n > MAX_NUM_BINGPAI => Err(BingpaiError::TooManyTiles(n)),
             n if n % 3 == 0 => Err(BingpaiError::InvalidTileCount(n)),
             n => Ok(n),
         }
     }
 
-    fn count_3_player(&self) -> Result<u8, BingpaiError> {
+    fn count_3p(&self) -> Result<u8, BingpaiError> {
         if let Some(i) = self[1..8].iter().position(|&t| t > 0) {
-            return Err(BingpaiError::InvalidTileFor3Player((i + 1) as u8));
+            return Err(BingpaiError::InvalidTileForThreePlayer((i + 1) as u8));
         }
         self.count()
+    }
+}
+
+impl<'a> Bingpai<'a> {
+    pub(crate) fn new(tile_counts: &'a TileCounts) -> Result<Self, BingpaiError> {
+        let num_bingpai = tile_counts.count()?;
+        let num_required_bingpai_mianzi = num_bingpai / 3;
+
+        Ok(Self {
+            tile_counts,
+            num_required_bingpai_mianzi,
+        })
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn tile_counts(&self) -> &'a TileCounts {
+        self.tile_counts
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn num_required_bingpai_mianzi(&self) -> u8 {
+        self.num_required_bingpai_mianzi
+    }
+}
+
+impl<'a> Bingpai3p<'a> {
+    pub(crate) fn new(tile_counts: &'a TileCounts) -> Result<Self, BingpaiError> {
+        let num_bingpai = tile_counts.count_3p()?;
+        let num_required_bingpai_mianzi = num_bingpai / 3;
+
+        Ok(Self {
+            tile_counts,
+            num_required_bingpai_mianzi,
+        })
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn tile_counts(&self) -> &'a TileCounts {
+        self.tile_counts
+    }
+
+    #[inline(always)]
+    #[must_use]
+    pub(crate) fn num_required_bingpai_mianzi(&self) -> u8 {
+        self.num_required_bingpai_mianzi
+    }
+}
+
+impl<'a> From<Bingpai3p<'a>> for Bingpai<'a> {
+    fn from(value: Bingpai3p<'a>) -> Self {
+        Self {
+            tile_counts: value.tile_counts,
+            num_required_bingpai_mianzi: value.num_required_bingpai_mianzi,
+        }
     }
 }

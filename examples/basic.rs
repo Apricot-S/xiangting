@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use xiangting::calculate_replacement_number;
+use xiangting::{PlayerCount, calculate_replacement_number};
 
 fn main() {
     // 123m456p789s11222z
@@ -13,6 +13,6 @@ fn main() {
         2, 3, 0, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number = calculate_replacement_number(&hand, None);
-    assert_eq!(replacement_number.unwrap(), 0u8);
+    let replacement_number = calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
+    assert_eq!(replacement_number, 0u8);
 }

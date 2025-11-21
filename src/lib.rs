@@ -6,18 +6,12 @@
 
 //! A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
 //!
-//! This library is based on the algorithm in [Cryolite's Nyanten](https://github.com/Cryolite/nyanten).  
-//! However, it introduces the following additional features:
-//!
-//! - Supports rules that include and exclude melded tiles when determining if a hand contains four identical tiles.
-//! - Supports three-player mahjong.
-//!
 //! # Example
 //!
 //! ```
-//! # use xiangting::calculate_replacement_number;
-//! # use xiangting::XiangtingError;
-//! # fn main() -> Result<(), XiangtingError> {
+//! # use xiangting::{PlayerCount, calculate_replacement_number};
+//! # use xiangting::BingpaiError;
+//! # fn main() -> Result<(), BingpaiError> {
 //! // 123m456p789s11222z
 //! let hand: [u8; 34] = [
 //!     1, 1, 1, 0, 0, 0, 0, 0, 0, // m
@@ -26,8 +20,8 @@
 //!     2, 3, 0, 0, 0, 0, 0, // z
 //! ];
 //!
-//! let replacement_number = calculate_replacement_number(&hand, None);
-//! assert_eq!(replacement_number?, 0u8);
+//! let replacement_number = calculate_replacement_number(&hand, &PlayerCount::Four)?;
+//! assert_eq!(replacement_number, 0u8);
 //! # Ok(())
 //! # }
 //! ```
@@ -35,35 +29,37 @@
 #[cfg(not(feature = "build-file"))]
 mod bingpai;
 #[cfg(not(feature = "build-file"))]
-mod calculate;
+mod config;
 #[cfg(not(feature = "build-file"))]
-mod constants;
-#[cfg(not(feature = "build-file"))]
-mod fulu_mianzi;
+mod necessary_tiles;
 #[cfg(not(feature = "build-file"))]
 mod qiduizi;
 #[cfg(not(feature = "build-file"))]
-mod shisanyao;
+mod replacement_number;
 #[cfg(not(feature = "build-file"))]
-mod shoupai;
+mod shisanyao;
 #[cfg(not(feature = "build-file"))]
 mod standard;
 #[cfg(not(feature = "build-file"))]
 mod tile;
+#[cfg(not(feature = "build-file"))]
+mod unnecessary_tiles;
 
 #[cfg(all(test, not(feature = "build-file")))]
 mod test_utils;
 
 #[cfg(not(feature = "build-file"))]
-pub use bingpai::{Bingpai, BingpaiError};
+pub use bingpai::BingpaiError;
 #[cfg(not(feature = "build-file"))]
-pub use calculate::{calculate_replacement_number, calculate_replacement_number_3_player};
+pub use config::PlayerCount;
 #[cfg(not(feature = "build-file"))]
-pub use fulu_mianzi::{ClaimedTilePosition, FuluMianzi, FuluMianziError};
+pub use necessary_tiles::calculate_necessary_tiles;
 #[cfg(not(feature = "build-file"))]
-pub use shoupai::{ShoupaiError, XiangtingError};
+pub use replacement_number::calculate_replacement_number;
 #[cfg(not(feature = "build-file"))]
-pub use tile::Tile;
+pub use tile::{Tile, TileCounts, TileFlags, TileFlagsExt};
+#[cfg(not(feature = "build-file"))]
+pub use unnecessary_tiles::calculate_unnecessary_tiles;
 
 #[cfg(feature = "build-map")]
 #[doc(hidden)]
