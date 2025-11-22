@@ -1,7 +1,7 @@
 [package]
 name = "xiangting"
 description = "A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数)."
-version = "5.0.0"
+version = "5.0.1"
 authors = ["Apricot S."]
 edition = "2024"
 rust-version = "1.85"
