@@ -2,14 +2,12 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use mt19937::MT19937;
 use rand::seq::{IndexedRandom, SliceRandom};
 use rand::{Rng, SeedableRng};
+use rand_pcg::Pcg64Mcg;
 
-pub fn create_rng() -> MT19937 {
-    let mut seed = mt19937::Seed::default();
-    seed.0.fill(42);
-    MT19937::from_seed(seed)
+pub fn create_rng() -> Pcg64Mcg {
+    Pcg64Mcg::seed_from_u64(42)
 }
 
 #[inline]
