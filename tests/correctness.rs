@@ -19,10 +19,8 @@ mod tests {
     fn verify_correctness<const N: usize>() -> bool {
         let num_threads = env::var("NUM_THREADS")
             .ok()
-            .and_then(|s| s.parse::<usize>().ok())
-            .unwrap_or(1)
-            .try_into()
-            .unwrap();
+            .and_then(|s| s.parse::<u64>().ok())
+            .unwrap_or(1);
 
         if NUM_HANDS[N - 1] % num_threads != 0 {
             panic!(
