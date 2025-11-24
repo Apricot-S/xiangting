@@ -9,7 +9,7 @@ use crate::bingpai::{Bingpai, Bingpai3p, BingpaiError};
 use crate::config::PlayerCount;
 use crate::tile::TileCounts;
 
-/// Calculates the replacement number (= xiangting number + 1) for a given hand.
+/// Calculates the replacement number (= xiàngtīng number + 1) for a given hand.
 ///
 /// # Arguments
 ///
