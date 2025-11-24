@@ -15,22 +15,22 @@ use super::core::{NecessaryTilesMapValue, ReplacementNumberMapValue, Unnecessary
 // [7] : 1 pair, 2 melds
 // [8] : 1 pair, 3 melds
 // [9] : 1 pair, 4 melds
-pub(super) type UnpackedNumbers = [u8; 10];
+pub(super) type UnpackedNumbers = [u32; 10];
 pub(super) type UnpackedTiles = [u16; 10];
 
 #[inline]
 pub(super) fn unpack_replacement_number(pack: &ReplacementNumberMapValue) -> UnpackedNumbers {
     [
-        0u8,
-        (pack & 0b11) as u8,
-        ((pack >> 2) & 0b111) as u8,
-        ((pack >> 5) & 0b1111) as u8,
-        ((pack >> 9) & 0b1111) as u8,
-        ((pack >> 13) & 0b11) as u8,
-        ((pack >> 15) & 0b111) as u8,
-        ((pack >> 18) & 0b1111) as u8,
-        ((pack >> 22) & 0b1111) as u8,
-        ((pack >> 26) & 0b1111) as u8,
+        0u32,
+        (pack & 0b11) as u32,
+        ((pack >> 2) & 0b111) as u32,
+        ((pack >> 5) & 0b1111) as u32,
+        ((pack >> 9) & 0b1111) as u32,
+        ((pack >> 13) & 0b11) as u32,
+        ((pack >> 15) & 0b111) as u32,
+        ((pack >> 18) & 0b1111) as u32,
+        ((pack >> 22) & 0b1111) as u32,
+        ((pack >> 26) & 0b1111) as u32,
     ]
 }
 
