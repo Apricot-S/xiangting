@@ -22,15 +22,15 @@ pub(super) type UnpackedTiles = [u16; 10];
 pub(super) fn unpack_replacement_number(pack: &ReplacementNumberMapValue) -> UnpackedNumbers {
     [
         0u32,
-        (pack & 0b11) as u32,
-        ((pack >> 2) & 0b111) as u32,
-        ((pack >> 5) & 0b1111) as u32,
-        ((pack >> 9) & 0b1111) as u32,
-        ((pack >> 13) & 0b11) as u32,
-        ((pack >> 15) & 0b111) as u32,
-        ((pack >> 18) & 0b1111) as u32,
-        ((pack >> 22) & 0b1111) as u32,
-        ((pack >> 26) & 0b1111) as u32,
+        pack & 0b11,
+        (pack >> 2) & 0b111,
+        (pack >> 5) & 0b1111,
+        (pack >> 9) & 0b1111,
+        (pack >> 13) & 0b11,
+        (pack >> 15) & 0b111,
+        (pack >> 18) & 0b1111,
+        (pack >> 22) & 0b1111,
+        (pack >> 26) & 0b1111,
     ]
 }
 
