@@ -42,6 +42,24 @@ fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
     }
 }
 
+fn update_dp_final(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
+    for i in (5..10).rev() {
+        // The original expression is
+        // ```
+        // let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
+        // ```
+        // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
+        let mut r = min(lhs[i], rhs[i]);
+        for j in 5..i {
+            r = [r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
+                .into_iter()
+                .min()
+                .unwrap();
+        }
+        lhs[i] = r;
+    }
+}
+
 pub(in super::super) fn calculate_replacement_number(bingpai: &Bingpai) -> u8 {
     let hash_m = hash_shupai(&bingpai.tile_counts()[0..9]);
     let hash_p = hash_shupai(&bingpai.tile_counts()[9..18]);
@@ -60,7 +78,7 @@ pub(in super::super) fn calculate_replacement_number(bingpai: &Bingpai) -> u8 {
 
     update_dp(&mut entry0, &entry1);
     update_dp(&mut entry0, &entry2);
-    update_dp(&mut entry0, &entry3);
+    update_dp_final(&mut entry0, &entry3);
 
     entry0[5 + bingpai.num_required_bingpai_mianzi() as usize]
 }
@@ -83,7 +101,7 @@ pub(in super::super) fn calculate_replacement_number_3p(bingpai: &Bingpai3p) -> 
 
     update_dp(&mut entry0, &entry1);
     update_dp(&mut entry0, &entry2);
-    update_dp(&mut entry0, &entry3);
+    update_dp_final(&mut entry0, &entry3);
 
     entry0[5 + bingpai.num_required_bingpai_mianzi() as usize]
 }
