@@ -80,6 +80,44 @@ fn update_dp(lhs: &mut Entry, rhs: &Entry) {
     }
 }
 
+fn update_dp_final(lhs: &mut Entry, rhs: &Entry) {
+    for i in (5..10).rev() {
+        // The original expression is
+        // ```
+        // let mut number = lhs.numbers[i] + rhs.numbers[0];
+        // let mut tiles = lhs.tiles[i] | rhs.tiles[0];
+        // update_min(
+        //     &mut number,
+        //     &mut tiles,
+        //     lhs.numbers[0] + rhs.numbers[i],
+        //     lhs.tiles[0] | rhs.tiles[i],
+        // );
+        // ```
+        // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
+        let mut number = lhs.numbers[i];
+        let mut tiles = lhs.tiles[i];
+        update_min(&mut number, &mut tiles, rhs.numbers[i], rhs.tiles[i]);
+
+        for j in 5..i {
+            update_min(
+                &mut number,
+                &mut tiles,
+                lhs.numbers[j] + rhs.numbers[i - j],
+                lhs.tiles[j] | rhs.tiles[i - j],
+            );
+            update_min(
+                &mut number,
+                &mut tiles,
+                lhs.numbers[i - j] + rhs.numbers[j],
+                lhs.tiles[i - j] | rhs.tiles[j],
+            );
+        }
+
+        lhs.numbers[i] = number;
+        lhs.tiles[i] = tiles;
+    }
+}
+
 pub(in super::super) fn calculate_necessary_tiles(bingpai: &Bingpai) -> (u8, TileFlags) {
     let hash_m = hash_shupai(&bingpai.tile_counts()[0..9]);
     let hash_p = hash_shupai(&bingpai.tile_counts()[9..18]);
@@ -125,7 +163,7 @@ pub(in super::super) fn calculate_necessary_tiles(bingpai: &Bingpai) -> (u8, Til
 
     update_dp(&mut entry0, &entry1);
     update_dp(&mut entry0, &entry2);
-    update_dp(&mut entry0, &entry3);
+    update_dp_final(&mut entry0, &entry3);
 
     let n = 5 + bingpai.num_required_bingpai_mianzi() as usize;
     (entry0.numbers[n], entry0.tiles[n])
@@ -176,7 +214,7 @@ pub(in super::super) fn calculate_necessary_tiles_3p(bingpai: &Bingpai3p) -> (u8
 
     update_dp(&mut entry0, &entry1);
     update_dp(&mut entry0, &entry2);
-    update_dp(&mut entry0, &entry3);
+    update_dp_final(&mut entry0, &entry3);
 
     let n = 5 + bingpai.num_required_bingpai_mianzi() as usize;
     (entry0.numbers[n], entry0.tiles[n])
