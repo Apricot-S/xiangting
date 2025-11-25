@@ -11,7 +11,7 @@ use std::process;
 use std::time::Instant;
 use xiangting::{PlayerCount, calculate_replacement_number};
 
-fn create_rng() -> Pcg64Mcg {
+fn create_rng() -> impl Rng {
     Pcg64Mcg::seed_from_u64(42)
 }
 
