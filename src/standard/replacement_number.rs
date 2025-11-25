@@ -80,7 +80,7 @@ pub(in super::super) fn calculate_replacement_number(bingpai: &Bingpai) -> u8 {
     update_dp(&mut entry0, &entry2);
     update_dp_final(&mut entry0, &entry3);
 
-    entry0[5 + bingpai.num_required_bingpai_mianzi() as usize]
+    entry0[5 + bingpai.num_required_bingpai_mianzi() as usize] as u8
 }
 
 pub(in super::super) fn calculate_replacement_number_3p(bingpai: &Bingpai3p) -> u8 {
@@ -103,7 +103,7 @@ pub(in super::super) fn calculate_replacement_number_3p(bingpai: &Bingpai3p) -> 
     update_dp(&mut entry0, &entry2);
     update_dp_final(&mut entry0, &entry3);
 
-    entry0[5 + bingpai.num_required_bingpai_mianzi() as usize]
+    entry0[5 + bingpai.num_required_bingpai_mianzi() as usize] as u8
 }
 
 #[cfg(test)]

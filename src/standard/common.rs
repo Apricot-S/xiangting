@@ -13,9 +13,9 @@ pub(super) struct Entry {
 
 #[inline]
 pub(super) fn update_min(
-    lhs_number: &mut u8,
+    lhs_number: &mut u32,
     lhs_tiles: &mut TileFlags,
-    rhs_number: u8,
+    rhs_number: u32,
     rhs_tiles: TileFlags,
 ) {
     match (*lhs_number).cmp(&rhs_number) {

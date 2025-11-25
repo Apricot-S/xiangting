@@ -183,7 +183,7 @@ pub(in super::super) fn calculate_unnecessary_tiles(bingpai: &Bingpai) -> (u8, T
     update_dp_final(&mut entry0, &entry3);
 
     let n = 5 + bingpai.num_required_bingpai_mianzi() as usize;
-    (entry0.numbers[n], entry0.tiles[n])
+    (entry0.numbers[n] as u8, entry0.tiles[n])
 }
 
 pub(in super::super) fn calculate_unnecessary_tiles_3p(bingpai: &Bingpai3p) -> (u8, TileFlags) {
@@ -234,7 +234,7 @@ pub(in super::super) fn calculate_unnecessary_tiles_3p(bingpai: &Bingpai3p) -> (
     update_dp_final(&mut entry0, &entry3);
 
     let n = 5 + bingpai.num_required_bingpai_mianzi() as usize;
-    (entry0.numbers[n], entry0.tiles[n])
+    (entry0.numbers[n] as u8, entry0.tiles[n])
 }
 
 #[cfg(test)]
