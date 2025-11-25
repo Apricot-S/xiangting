@@ -4,7 +4,7 @@
 
 #![warn(missing_docs)]
 
-//! A library for calculating the deficiency number (a.k.a. xiangting number, 向聴数).
+//! A library for calculating the deficiency number (a.k.a. xiàngtīng number, 向聴数).
 //!
 //! # Example
 //!

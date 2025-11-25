@@ -10,7 +10,7 @@ use crate::config::PlayerCount;
 use crate::tile::{TileCounts, TileFlags};
 use std::cmp::Ordering;
 
-/// Calculates the replacement number (= xiangting number + 1) and necessary tiles for a given hand.
+/// Calculates the replacement number (= xiàngtīng number + 1) and necessary tiles for a given hand.
 ///
 /// # Arguments
 ///
