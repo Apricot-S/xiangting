@@ -9,7 +9,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/Apricot-S/xiangting"
 keywords = ["mahjong", "riichi", "shanten", "xiangting"]
-categories = ["algorithms"]
+categories = ["algorithms", "no-std"]
 
 [lib]
 name = "xiangting"
