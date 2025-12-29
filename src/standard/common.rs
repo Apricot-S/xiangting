@@ -4,7 +4,7 @@
 
 use super::unpack::UnpackedNumbers;
 use crate::tile::TileFlags;
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 
 pub(super) struct Entry {
     pub(super) numbers: UnpackedNumbers,

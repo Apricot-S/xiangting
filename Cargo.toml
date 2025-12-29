@@ -16,7 +16,7 @@ name = "xiangting"
 path = "src/lib.rs"
 
 [dependencies]
-thiserror = "2.0.17"
+thiserror = { version = "2.0.17", default-features = false }
 
 [dev-dependencies]
 criterion = "0.7.0"
