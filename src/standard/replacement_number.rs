@@ -8,7 +8,7 @@ use super::unpack::{UnpackedNumbers, unpack_replacement_number};
 use super::wanzi_19_map::WANZI_19_REPLACEMENT_NUMBER_MAP;
 use super::zipai_map::ZIPAI_REPLACEMENT_NUMBER_MAP;
 use crate::bingpai::{Bingpai, Bingpai3p};
-use std::cmp::min;
+use core::cmp::min;
 
 fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
     for i in (5..10).rev() {

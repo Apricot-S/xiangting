@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+#![no_std]
 #![warn(missing_docs)]
 
 //! A library for calculating the deficiency number (a.k.a. xiàngtīng number, 向聴数).
