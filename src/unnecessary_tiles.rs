@@ -8,7 +8,7 @@ use super::standard;
 use crate::bingpai::{Bingpai, Bingpai3p, BingpaiError};
 use crate::config::PlayerCount;
 use crate::tile::{TileCounts, TileFlags};
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 
 /// Calculates the replacement number (= xiàngtīng number + 1) and unnecessary tiles for a given hand.
 ///
