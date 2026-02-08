@@ -20,12 +20,12 @@ thiserror = { version = "2.0.17", default-features = false }
 
 [dev-dependencies]
 criterion = "0.7.0"
-cxx = "1.0.186"
+cxx = "1.0.194"
 rand = "0.10.0"
 rand_pcg = "0.10.0"
 
 [build-dependencies]
-cxx-build = { version = "1.0.186", optional = true }
+cxx-build = { version = "1.0.194", optional = true }
 
 [features]
 build-file = []
