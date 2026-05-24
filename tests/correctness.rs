@@ -4,13 +4,11 @@
 
 #[cfg(feature = "correctness")]
 mod hand_generator;
-#[cfg(feature = "correctness")]
-mod nyanten;
 
 #[cfg(feature = "correctness")]
 mod tests {
     use crate::hand_generator::{NUM_HANDS, build_table, decode};
-    use crate::nyanten::calculateReplacementNumber;
+    use shanten_dp::{calc_shanten, make_tile_limits};
     use std::fs::File;
     use std::io::Write;
     use std::{env, thread};
@@ -41,17 +39,23 @@ mod tests {
             let end = begin + chunk_size;
 
             let handle = thread::spawn(move || {
+                let tile_limits = make_tile_limits(false);
+
                 for hash in begin..end {
                     let hand = decode(hash, &table);
-                    let result_nyanten =
-                        unsafe { calculateReplacementNumber(hand.as_ptr(), hand.as_ptr().add(34)) };
+                    let hand_i8 = hand.map(|count| count as i8);
+                    let result_shanten_dp =
+                        calc_shanten(&hand_i8, &tile_limits, (N - 1) / 3, false)
+                            .unwrap()
+                            .unwrap()
+                            + 1;
                     let result_xiangting =
                         calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
 
-                    if result_nyanten != result_xiangting {
+                    if result_shanten_dp as u8 != result_xiangting {
                         return Some(format!(
-                            "Hand: {:?}, Nyanten: {}, xiangting: {}\n",
-                            hand, result_nyanten, result_xiangting,
+                            "Hand: {:?}, shanten-dp: {}, xiangting: {}\n",
+                            hand, result_shanten_dp, result_xiangting,
                         ));
                     }
                 }
