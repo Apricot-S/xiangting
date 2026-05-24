@@ -33,14 +33,16 @@ mod tests {
         let mut handles = Vec::new();
 
         let table = build_table::<N>();
+        let tile_limits = make_tile_limits(false);
 
         for i in 0..num_threads {
             let begin = i * chunk_size;
             let end = begin + chunk_size;
 
-            let handle = thread::spawn(move || {
-                let tile_limits = make_tile_limits(false);
+            let table = table;
+            let tile_limits = tile_limits;
 
+            let handle = thread::spawn(move || {
                 for hash in begin..end {
                     let hand = decode(hash, &table);
                     let hand_i8 = hand.map(|count| count as i8);
