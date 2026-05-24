@@ -20,24 +20,19 @@ mod tests {
             .and_then(|s| s.parse::<u64>().ok())
             .unwrap_or(1);
 
-        if NUM_HANDS_3P[N - 1] % num_threads != 0 {
-            panic!(
-                "NUM_HANDS_3P[{}] ({}) is not evenly divisible by NUM_THREADS ({}).",
-                N - 1,
-                NUM_HANDS_3P[N - 1],
-                num_threads,
-            );
-        }
+        assert!(num_threads > 0, "NUM_THREADS must be greater than 0.");
 
         let chunk_size = NUM_HANDS_3P[N - 1] / num_threads;
+        let remainder = NUM_HANDS_3P[N - 1] % num_threads;
         let mut handles = Vec::new();
 
         let table = build_table_3p::<N>();
         let tile_limits = make_tile_limits(true);
 
         for i in 0..num_threads {
-            let begin = i * chunk_size;
-            let end = begin + chunk_size;
+            let extra = u64::from(i < remainder);
+            let begin = i * chunk_size + i.min(remainder);
+            let end = begin + chunk_size + extra;
 
             let table = table;
             let tile_limits = tile_limits;
