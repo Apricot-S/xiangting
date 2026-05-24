@@ -21,8 +21,3 @@ sudo chown vscode:vscode /workspaces
 
 sudo chown -R vscode:vscode scripts
 chmod +x scripts/*.sh
-
-# Clone `nyanten`.
-pushd /workspaces
-git clone --depth=1 https://github.com/Cryolite/nyanten.git
-popd
