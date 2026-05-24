@@ -24,6 +24,7 @@ criterion = "0.7.0"
 cxx = "1.0.194"
 rand = "0.10.0"
 rand_pcg = "0.10.0"
+shanten-dp = "0.1.0"
 
 [build-dependencies]
 cxx-build = { version = "1.0.194", optional = true }
