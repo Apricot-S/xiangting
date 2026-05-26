@@ -13,7 +13,7 @@ if [[ -t 1 ]] && type -t tput >/dev/null; then
 fi
 
 sudo apt-get update
-sudo apt-get install -y build-essential gnuplot
+sudo apt-get install -y gnuplot
 sudo apt-get clean
 sudo rm -rf /var/lib/apt/lists/*
 
@@ -21,8 +21,3 @@ sudo chown vscode:vscode /workspaces
 
 sudo chown -R vscode:vscode scripts
 chmod +x scripts/*.sh
-
-# Clone `nyanten`.
-pushd /workspaces
-git clone --depth=1 https://github.com/Cryolite/nyanten.git
-popd
