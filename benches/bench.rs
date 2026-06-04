@@ -10,155 +10,200 @@ use random_hand::{
     create_rng, generate_random_full_flush_pure_hand, generate_random_half_flush_pure_hand,
     generate_random_non_simple_pure_hand, generate_random_pure_hand,
 };
+use shanten_dp::{Mode, calc_shanten, calc_shanten2, make_tile_limits};
+use std::env;
 use xiangting::{
     PlayerCount, calculate_necessary_tiles, calculate_replacement_number,
     calculate_unnecessary_tiles,
 };
 
-const NUM_HAND: usize = 100_000_000;
+const DEFAULT_NUM_HAND_POOL: usize = 1_000_000;
 const SAMPLE_SIZE: usize = 10_000;
 const NUM_RESAMPLE: usize = 100_000;
 
-fn xiangting_normal(c: &mut Criterion) {
-    let mut rng = create_rng();
-    let hands: Vec<_> = (0..NUM_HAND)
-        .map(|_| generate_random_pure_hand(&mut rng))
-        .collect();
+fn num_hand_pool() -> usize {
+    env::var("BENCH_HAND_POOL_SIZE")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .filter(|&n| n > 0)
+        .unwrap_or(DEFAULT_NUM_HAND_POOL)
+}
 
-    let mut group = c.benchmark_group("xiangting");
+fn generate_hands(generate_hand: fn(&mut rand_pcg::Pcg64Mcg) -> [u8; 34]) -> Vec<[u8; 34]> {
+    let mut rng = create_rng();
+    (0..num_hand_pool())
+        .map(|_| generate_hand(&mut rng))
+        .collect()
+}
+
+fn next_hand<'a>(hands: &'a [[u8; 34]], index: &mut usize) -> &'a [u8; 34] {
+    let hand = &hands[*index % hands.len()];
+    *index += 1;
+    hand
+}
+
+fn num_melds(hand: &[u8; 34]) -> usize {
+    (hand.iter().sum::<u8>() as usize) / 3
+}
+
+fn shanten_number(c: &mut Criterion) {
+    let hands = generate_hands(generate_random_pure_hand);
+    let tile_limits = make_tile_limits(false);
+
+    let mut group = c.benchmark_group("normal/shanten_number");
     group.sample_size(SAMPLE_SIZE);
     group.nresamples(NUM_RESAMPLE);
-    group.bench_function("Normal", |b| {
-        let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), &PlayerCount::Four).unwrap())
+    group.bench_function("xiangting", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&hands, &mut index);
+            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+        })
+    });
+    group.bench_function("shanten-dp", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&hands, &mut index);
+            calc_shanten(
+                hand,
+                &tile_limits,
+                num_melds(hand),
+                Mode::all(),
+                false,
+                false,
+            )
+            .unwrap()
+            .unwrap()
+        })
     });
     group.finish();
 }
 
-fn xiangting_half_flush(c: &mut Criterion) {
-    let mut rng = create_rng();
-    let hands: Vec<_> = (0..NUM_HAND)
-        .map(|_| generate_random_half_flush_pure_hand(&mut rng))
-        .collect();
+fn variant_shanten_number(c: &mut Criterion) {
+    let normal_hands = generate_hands(generate_random_pure_hand);
+    let half_flush_hands = generate_hands(generate_random_half_flush_pure_hand);
+    let full_flush_hands = generate_hands(generate_random_full_flush_pure_hand);
+    let non_simple_hands = generate_hands(generate_random_non_simple_pure_hand);
 
-    let mut group = c.benchmark_group("xiangting");
+    let mut group = c.benchmark_group("variant/shanten_number");
     group.sample_size(SAMPLE_SIZE);
     group.nresamples(NUM_RESAMPLE);
-    group.bench_function("Half Flush", |b| {
-        let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), &PlayerCount::Four).unwrap())
+    group.bench_function("normal", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&normal_hands, &mut index);
+            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+        })
+    });
+    group.bench_function("half_flush", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&half_flush_hands, &mut index);
+            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+        })
+    });
+    group.bench_function("full_flush", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&full_flush_hands, &mut index);
+            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+        })
+    });
+    group.bench_function("non_simple", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&non_simple_hands, &mut index);
+            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+        })
     });
     group.finish();
 }
 
-fn xiangting_full_flush(c: &mut Criterion) {
-    let mut rng = create_rng();
-    let hands: Vec<_> = (0..NUM_HAND)
-        .map(|_| generate_random_full_flush_pure_hand(&mut rng))
-        .collect();
+fn necessary_tiles(c: &mut Criterion) {
+    let hands = generate_hands(generate_random_pure_hand);
+    let tile_limits = make_tile_limits(false);
 
-    let mut group = c.benchmark_group("xiangting");
+    let mut group = c.benchmark_group("normal/necessary_tiles");
     group.sample_size(SAMPLE_SIZE);
     group.nresamples(NUM_RESAMPLE);
-    group.bench_function("Full Flush", |b| {
-        let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), &PlayerCount::Four).unwrap())
+    group.bench_function("xiangting", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&hands, &mut index);
+            calculate_necessary_tiles(hand, &PlayerCount::Four).unwrap()
+        })
+    });
+    group.bench_function("shanten-dp", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&hands, &mut index);
+            calc_shanten2(
+                hand,
+                &tile_limits,
+                num_melds(hand),
+                Mode::all(),
+                false,
+                false,
+            )
+            .unwrap()
+            .unwrap()
+        })
+    });
+    group.bench_function("baseline", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&hands, &mut index);
+            baseline::calculate_necessary_tiles(hand)
+        })
     });
     group.finish();
 }
 
-fn xiangting_non_simple(c: &mut Criterion) {
-    let mut rng = create_rng();
-    let hands: Vec<_> = (0..NUM_HAND)
-        .map(|_| generate_random_non_simple_pure_hand(&mut rng))
-        .collect();
+fn unnecessary_tiles(c: &mut Criterion) {
+    let hands = generate_hands(generate_random_pure_hand);
+    let tile_limits = make_tile_limits(false);
 
-    let mut group = c.benchmark_group("xiangting");
+    let mut group = c.benchmark_group("normal/unnecessary_tiles");
     group.sample_size(SAMPLE_SIZE);
     group.nresamples(NUM_RESAMPLE);
-    group.bench_function("Non-Simple", |b| {
-        let mut hand = hands.iter();
-        b.iter(|| calculate_replacement_number(hand.next().unwrap(), &PlayerCount::Four).unwrap())
+    group.bench_function("xiangting", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&hands, &mut index);
+            calculate_unnecessary_tiles(hand, &PlayerCount::Four).unwrap()
+        })
     });
-    group.finish();
-}
-
-fn necessary_tiles_baseline(c: &mut Criterion) {
-    let mut rng = create_rng();
-    let hands: Vec<_> = (0..NUM_HAND)
-        .map(|_| generate_random_pure_hand(&mut rng))
-        .collect();
-
-    let mut group = c.benchmark_group("xiangting");
-    group.sample_size(SAMPLE_SIZE);
-    group.nresamples(NUM_RESAMPLE);
-    group.bench_function("Necessary tiles Baseline", |b| {
-        let mut hand = hands.iter();
-        b.iter(|| baseline::calculate_necessary_tiles(hand.next().unwrap()))
+    group.bench_function("shanten-dp", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&hands, &mut index);
+            calc_shanten2(
+                hand,
+                &tile_limits,
+                num_melds(hand),
+                Mode::all(),
+                false,
+                false,
+            )
+            .unwrap()
+            .unwrap()
+        })
     });
-    group.finish();
-}
-
-fn necessary_tiles_proposed(c: &mut Criterion) {
-    let mut rng = create_rng();
-    let hands: Vec<_> = (0..NUM_HAND)
-        .map(|_| generate_random_pure_hand(&mut rng))
-        .collect();
-
-    let mut group = c.benchmark_group("xiangting");
-    group.sample_size(SAMPLE_SIZE);
-    group.nresamples(NUM_RESAMPLE);
-    group.bench_function("Necessary tiles Proposed", |b| {
-        let mut hand = hands.iter();
-        b.iter(|| calculate_necessary_tiles(hand.next().unwrap(), &PlayerCount::Four).unwrap())
-    });
-    group.finish();
-}
-
-fn unnecessary_tiles_baseline(c: &mut Criterion) {
-    let mut rng = create_rng();
-    let hands: Vec<_> = (0..NUM_HAND)
-        .map(|_| generate_random_pure_hand(&mut rng))
-        .collect();
-
-    let mut group = c.benchmark_group("xiangting");
-    group.sample_size(SAMPLE_SIZE);
-    group.nresamples(NUM_RESAMPLE);
-    group.bench_function("Unnecessary tiles Baseline", |b| {
-        let mut hand = hands.iter();
-        b.iter(|| baseline::calculate_unnecessary_tiles(hand.next().unwrap()))
-    });
-    group.finish();
-}
-
-fn unnecessary_tiles_proposed(c: &mut Criterion) {
-    let mut rng = create_rng();
-    let hands: Vec<_> = (0..NUM_HAND)
-        .map(|_| generate_random_pure_hand(&mut rng))
-        .collect();
-
-    let mut group = c.benchmark_group("xiangting");
-    group.sample_size(SAMPLE_SIZE);
-    group.nresamples(NUM_RESAMPLE);
-    group.bench_function("Unnecessary tiles Proposed", |b| {
-        let mut hand = hands.iter();
-        b.iter(|| calculate_unnecessary_tiles(hand.next().unwrap(), &PlayerCount::Four).unwrap())
+    group.bench_function("baseline", |b| {
+        let mut index = 0;
+        b.iter(|| {
+            let hand = next_hand(&hands, &mut index);
+            baseline::calculate_unnecessary_tiles(hand)
+        })
     });
     group.finish();
 }
 
 criterion_group!(
-    benches_number,
-    xiangting_normal,
-    xiangting_half_flush,
-    xiangting_full_flush,
-    xiangting_non_simple,
+    benches,
+    shanten_number,
+    variant_shanten_number,
+    necessary_tiles,
+    unnecessary_tiles,
 );
-criterion_group!(
-    benches_tiles,
-    necessary_tiles_baseline,
-    necessary_tiles_proposed,
-    unnecessary_tiles_baseline,
-    unnecessary_tiles_proposed,
-);
-criterion_main!(benches_number, benches_tiles);
+criterion_main!(benches);

@@ -8,7 +8,7 @@ mod hand_generator;
 #[cfg(feature = "correctness")]
 mod tests {
     use crate::hand_generator::{NUM_HANDS, build_table, decode};
-    use shanten_dp::{calc_shanten, make_tile_limits};
+    use shanten_dp::{Mode, calc_shanten, make_tile_limits};
     use std::fs::File;
     use std::io::Write;
     use std::{env, thread};
@@ -40,9 +40,8 @@ mod tests {
             let handle = thread::spawn(move || {
                 for hash in begin..end {
                     let hand = decode(hash, &table);
-                    let hand_i8 = hand.map(|count| count as i8);
                     let result_shanten_dp =
-                        calc_shanten(&hand_i8, &tile_limits, (N - 1) / 3, false)
+                        calc_shanten(&hand, &tile_limits, (N - 1) / 3, Mode::all(), false, false)
                             .unwrap()
                             .unwrap()
                             + 1;

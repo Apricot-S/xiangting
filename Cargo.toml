@@ -1,7 +1,7 @@
 [package]
 name = "xiangting"
 description = "A library for calculating the deficiency number (a.k.a. xiàngtīng number, 向聴数)."
-version = "5.0.5"
+version = "5.0.6"
 authors = ["Apricot S."]
 edition = "2024"
 rust-version = "1.85"
@@ -23,7 +23,7 @@ thiserror = { version = "2.0.17", default-features = false }
 criterion = "0.7.0"
 rand = "0.10.0"
 rand_pcg = "0.10.0"
-shanten-dp = "0.1.1"
+shanten-dp = "0.3.0"
 
 [features]
 build-file = []
