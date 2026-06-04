@@ -6,7 +6,7 @@ use rand::seq::{IndexedRandom, SliceRandom};
 use rand::{Rng, SeedableRng};
 use rand_pcg::Pcg64Mcg;
 
-pub fn create_rng() -> impl Rng {
+pub fn create_rng() -> Pcg64Mcg {
     Pcg64Mcg::seed_from_u64(42)
 }
 
@@ -40,7 +40,7 @@ pub fn generate_random_half_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
 
     let suits: [u8; 36] = std::array::from_fn(|i| (i / 4 + color_start) as u8);
     let honors: [u8; 28] = std::array::from_fn(|i| (i / 4 + 27) as u8);
-    let mut combined = suits.into_iter().chain(honors.into_iter());
+    let mut combined = suits.into_iter().chain(honors);
     let mut wall: [u8; 64] = std::array::from_fn(|_| combined.next().unwrap());
     wall.shuffle(rng);
 
