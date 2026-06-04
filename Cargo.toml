@@ -23,7 +23,7 @@ thiserror = { version = "2.0.17", default-features = false }
 criterion = "0.7.0"
 rand = "0.10.0"
 rand_pcg = "0.10.0"
-shanten-dp = "0.1.1"
+shanten-dp = "0.3.0"
 
 [features]
 build-file = []
