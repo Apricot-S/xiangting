@@ -38,7 +38,7 @@ fn parse_tile_indices(hand: &str) -> impl Iterator<Item = usize> + '_ {
                 Some(base + d - 1)
             }
         })
-        .filter_map(|x| x)
+        .flatten()
 }
 
 pub trait FromTileCode: Sized {
