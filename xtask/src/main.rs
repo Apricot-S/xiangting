@@ -1,11 +1,11 @@
-// SPDX-FileCopyrightText: 2024 Apricot S.
+// SPDX-FileCopyrightText: 2026 Apricot S.
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-#[cfg(feature = "build-map")]
-#[path = "build_map/main.rs"]
-mod build_map;
 mod build_table;
+
+#[cfg(feature = "build-map")]
+mod build_map;
 
 use std::env;
 use std::process;
