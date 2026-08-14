@@ -4,14 +4,12 @@
 
 mod replacement_number;
 
-use self::replacement_number::{
-    get_19m_replacement_number, get_shupai_replacement_number, get_zipai_replacement_number,
-};
 use std::env;
 use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
+
 use xiangting::standard::core::{
     NecessaryTilesMapValue, ReplacementNumberMapValue, UnnecessaryTilesMapValue,
 };
@@ -19,6 +17,10 @@ use xiangting::standard::hash::{hash_19m, hash_shupai, hash_zipai};
 use xiangting::standard::shupai_table::SHUPAI_SIZE;
 use xiangting::standard::wanzi_19_table::WANZI_19_SIZE;
 use xiangting::standard::zipai_table::ZIPAI_SIZE;
+
+use self::replacement_number::{
+    get_19m_replacement_number, get_shupai_replacement_number, get_zipai_replacement_number,
+};
 
 struct MapValue {
     replacement_number: ReplacementNumberMapValue,

@@ -7,12 +7,14 @@ mod hand_generator_3p;
 
 #[cfg(feature = "correctness")]
 mod tests {
-    use crate::hand_generator_3p::{NUM_HANDS_3P, build_table_3p, decode_3p};
-    use shanten_dp::{Mode, calc_shanten, make_tile_limits};
     use std::fs::File;
     use std::io::Write;
     use std::{env, thread};
+
+    use shanten_dp::{Mode, calc_shanten, make_tile_limits};
     use xiangting::{PlayerCount, calculate_replacement_number};
+
+    use crate::hand_generator_3p::{NUM_HANDS_3P, build_table_3p, decode_3p};
 
     fn verify_correctness_3p<const N: usize>() -> bool {
         let num_threads = env::var("NUM_THREADS")

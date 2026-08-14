@@ -5,13 +5,14 @@
 mod baseline;
 mod random_hand;
 
+use std::env;
+
 use criterion::{Criterion, criterion_group, criterion_main};
 use random_hand::{
     create_rng, generate_random_full_flush_pure_hand, generate_random_half_flush_pure_hand,
     generate_random_non_simple_pure_hand, generate_random_pure_hand,
 };
 use shanten_dp::{Mode, calc_shanten, calc_shanten2, make_tile_limits};
-use std::env;
 use xiangting::{
     PlayerCount, calculate_necessary_tiles, calculate_replacement_number,
     calculate_unnecessary_tiles,

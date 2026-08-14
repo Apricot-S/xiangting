@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+use core::cmp::min;
+
 use super::hash::{hash_19m, hash_shupai, hash_zipai};
 use super::shupai_map::SHUPAI_REPLACEMENT_NUMBER_MAP;
 use super::unpack::{UnpackedNumbers, unpack_replacement_number};
 use super::wanzi_19_map::WANZI_19_REPLACEMENT_NUMBER_MAP;
 use super::zipai_map::ZIPAI_REPLACEMENT_NUMBER_MAP;
 use crate::bingpai::{Bingpai, PlayerRule};
-use core::cmp::min;
 
 fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
     for i in (5..10).rev() {
