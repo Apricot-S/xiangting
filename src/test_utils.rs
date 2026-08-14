@@ -12,19 +12,19 @@ fn parse_tile_indices(hand: &str) -> impl Iterator<Item = usize> + '_ {
         .map(move |c| match c {
             'm' => {
                 current_color = Some(0);
-                return None;
+                None
             }
             'p' => {
                 current_color = Some(9);
-                return None;
+                None
             }
             's' => {
                 current_color = Some(18);
-                return None;
+                None
             }
             'z' => {
                 current_color = Some(27);
-                return None;
+                None
             }
             _ => {
                 let d = c.to_digit(10).expect("invalid digit") as usize;
@@ -35,7 +35,7 @@ fn parse_tile_indices(hand: &str) -> impl Iterator<Item = usize> + '_ {
                 if base == 27 && d > 7 {
                     panic!("honor tile must be 1-7, got {}", d);
                 }
-                return Some(base + d - 1);
+                Some(base + d - 1)
             }
         })
         .filter_map(|x| x)
