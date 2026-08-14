@@ -61,12 +61,12 @@ fn update_dp_final(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
 }
 
 pub(in super::super) fn calculate_replacement_number<R: PlayerRule>(bingpai: &Bingpai<R>) -> u8 {
-    let mut entry0 = if R::IS_THREE_PLAYER {
+    let packed_rn_m = if R::IS_THREE_PLAYER {
         let hash_m = hash_19m(&bingpai.tile_counts()[0..9]);
-        unpack_replacement_number(&WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m])
+        &WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m]
     } else {
         let hash_m = hash_shupai(&bingpai.tile_counts()[0..9]);
-        unpack_replacement_number(&SHUPAI_REPLACEMENT_NUMBER_MAP[hash_m])
+        &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_m]
     };
 
     let hash_p = hash_shupai(&bingpai.tile_counts()[9..18]);
@@ -77,6 +77,7 @@ pub(in super::super) fn calculate_replacement_number<R: PlayerRule>(bingpai: &Bi
     let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
     let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
 
+    let mut entry0 = unpack_replacement_number(packed_rn_m);
     let entry1 = unpack_replacement_number(packed_rn_p);
     let entry2 = unpack_replacement_number(packed_rn_s);
     let entry3 = unpack_replacement_number(packed_rn_z);

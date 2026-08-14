@@ -140,15 +140,19 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
 ) -> (u8, TileFlags) {
     let (replacement_number_m, unnecessary_tiles_m) = if R::IS_THREE_PLAYER {
         let hash_m = hash_19m(&bingpai.tile_counts()[0..9]);
+        let packed_rn_m = &WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m];
+        let packed_ut_m = &WANZI_19_UNNECESSARY_TILES_MAP[hash_m];
         (
-            unpack_replacement_number(&WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m]),
-            unpack_unnecessary_tiles(&WANZI_19_UNNECESSARY_TILES_MAP[hash_m]),
+            unpack_replacement_number(packed_rn_m),
+            unpack_unnecessary_tiles(packed_ut_m),
         )
     } else {
         let hash_m = hash_shupai(&bingpai.tile_counts()[0..9]);
+        let packed_rn_m = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_m];
+        let packed_ut_m = &SHUPAI_UNNECESSARY_TILES_MAP[hash_m];
         (
-            unpack_replacement_number(&SHUPAI_REPLACEMENT_NUMBER_MAP[hash_m]),
-            unpack_unnecessary_tiles(&SHUPAI_UNNECESSARY_TILES_MAP[hash_m]),
+            unpack_replacement_number(packed_rn_m),
+            unpack_unnecessary_tiles(packed_ut_m),
         )
     };
 
