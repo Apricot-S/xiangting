@@ -7,38 +7,35 @@ use crate::tile::{TileCounts, TileFlags};
 fn parse_tile_indices(hand: &str) -> impl Iterator<Item = usize> + '_ {
     let mut current_color: Option<usize> = None;
 
-    hand.chars()
-        .rev()
-        .map(move |c| match c {
-            'm' => {
-                current_color = Some(0);
-                return None;
+    hand.chars().rev().filter_map(move |c| match c {
+        'm' => {
+            current_color = Some(0);
+            None
+        }
+        'p' => {
+            current_color = Some(9);
+            None
+        }
+        's' => {
+            current_color = Some(18);
+            None
+        }
+        'z' => {
+            current_color = Some(27);
+            None
+        }
+        _ => {
+            let d = c.to_digit(10).expect("invalid digit") as usize;
+            let base = current_color.expect("digit without type");
+            if !(1..=9).contains(&d) {
+                panic!("tile number must be 1-9, got {}", d);
             }
-            'p' => {
-                current_color = Some(9);
-                return None;
+            if base == 27 && d > 7 {
+                panic!("honor tile must be 1-7, got {}", d);
             }
-            's' => {
-                current_color = Some(18);
-                return None;
-            }
-            'z' => {
-                current_color = Some(27);
-                return None;
-            }
-            _ => {
-                let d = c.to_digit(10).expect("invalid digit") as usize;
-                let base = current_color.expect("digit without type");
-                if !(1..=9).contains(&d) {
-                    panic!("tile number must be 1-9, got {}", d);
-                }
-                if base == 27 && d > 7 {
-                    panic!("honor tile must be 1-7, got {}", d);
-                }
-                return Some(base + d - 1);
-            }
-        })
-        .filter_map(|x| x)
+            Some(base + d - 1)
+        }
+    })
 }
 
 pub trait FromTileCode: Sized {
