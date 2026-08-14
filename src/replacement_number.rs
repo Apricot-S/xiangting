@@ -5,7 +5,7 @@
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
-use crate::bingpai::{Bingpai, Bingpai3p, BingpaiError};
+use crate::bingpai::{Bingpai, BingpaiError, FourPlayer, PlayerRule, ThreePlayer};
 use crate::config::PlayerCount;
 use crate::tile::TileCounts;
 
@@ -68,28 +68,15 @@ pub fn calculate_replacement_number(
     player_count: PlayerCount,
 ) -> Result<u8, BingpaiError> {
     match player_count {
-        PlayerCount::Four => calculate_replacement_number_4p(bingpai),
-        PlayerCount::Three => calculate_replacement_number_3p(bingpai),
+        PlayerCount::Four => calculate_for::<FourPlayer>(bingpai),
+        PlayerCount::Three => calculate_for::<ThreePlayer>(bingpai),
     }
 }
 
-fn calculate_replacement_number_4p(tile_counts: &TileCounts) -> Result<u8, BingpaiError> {
-    let bingpai = Bingpai::new(tile_counts)?;
+fn calculate_for<R: PlayerRule>(tile_counts: &TileCounts) -> Result<u8, BingpaiError> {
+    let bingpai = Bingpai::<R>::new(tile_counts)?;
 
     let r0 = standard::calculate_replacement_number(&bingpai);
-    let r1 = qiduizi::calculate_replacement_number(&bingpai);
-    let r2 = shisanyao::calculate_replacement_number(&bingpai);
-
-    Ok([r0, r1, r2].into_iter().min().unwrap())
-}
-
-fn calculate_replacement_number_3p(tile_counts: &TileCounts) -> Result<u8, BingpaiError> {
-    let bingpai_3p = Bingpai3p::new(tile_counts)?;
-
-    let r0 = standard::calculate_replacement_number_3p(&bingpai_3p);
-
-    let bingpai = bingpai_3p.into();
-
     let r1 = qiduizi::calculate_replacement_number(&bingpai);
     let r2 = shisanyao::calculate_replacement_number(&bingpai);
 

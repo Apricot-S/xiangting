@@ -30,13 +30,11 @@ mod zipai_map;
 mod zipai_table;
 
 #[cfg(not(feature = "build-file"))]
-pub(super) use necessary_tiles::{calculate_necessary_tiles, calculate_necessary_tiles_3p};
+pub(super) use necessary_tiles::calculate_necessary_tiles;
 #[cfg(not(feature = "build-file"))]
-pub(super) use replacement_number::{
-    calculate_replacement_number, calculate_replacement_number_3p,
-};
+pub(super) use replacement_number::calculate_replacement_number;
 #[cfg(not(feature = "build-file"))]
-pub(super) use unnecessary_tiles::{calculate_unnecessary_tiles, calculate_unnecessary_tiles_3p};
+pub(super) use unnecessary_tiles::calculate_unnecessary_tiles;
 
 #[cfg(feature = "build-map")]
 pub mod core;
