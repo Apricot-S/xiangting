@@ -4,7 +4,9 @@
 	"name": "xiangting",
 	"runArgs": ["--name=xiangting-dev"],
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/rust:2-1-trixie",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
 
 	// Use 'mounts' to make the cargo cache persistent in a Docker Volume.
 	"mounts": [
@@ -21,8 +23,8 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "bash .devcontainer/post-create.sh"
+	// Scripts are bind-mounted from the host and are tracked without executable bits.
+	"postCreateCommand": "chmod +x scripts/*.sh"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
