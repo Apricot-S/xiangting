@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use std::env;
 use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
@@ -114,19 +113,17 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
     Ok(())
 }
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 4 {
+pub fn run(args: &[String]) {
+    if args.len() != 3 {
         eprintln!(
-            "Usage: {} <PATH TO SHUPAI TABLE> <PATH TO ZIPAI TABLE> <PATH TO WANZI 19 TABLE>",
-            args[0]
+            "Usage: cargo xtask build-table <PATH TO SHUPAI TABLE> <PATH TO ZIPAI TABLE> <PATH TO WANZI 19 TABLE>"
         );
         process::exit(1);
     }
 
-    let shupai_table_path = Path::new(&args[1]);
-    let zipai_table_path = Path::new(&args[2]);
-    let wanzi_19_table_path = Path::new(&args[3]);
+    let shupai_table_path = Path::new(&args[0]);
+    let zipai_table_path = Path::new(&args[1]);
+    let wanzi_19_table_path = Path::new(&args[2]);
 
     {
         let mut shupai_table = INIT_SHUPAI_TABLE;

@@ -12,6 +12,11 @@ repository = "https://github.com/Apricot-S/xiangting"
 keywords = ["mahjong", "riichi", "shanten", "xiangting"]
 categories = ["algorithms", "no-std"]
 
+[workspace]
+resolver = "3"
+members = [".", "xtask"]
+default-members = ["."]
+
 [lib]
 name = "xiangting"
 path = "src/lib.rs"
@@ -29,16 +34,6 @@ shanten-dp = "0.3.2"
 build-file = []
 build-map = ["build-file"]
 correctness = []
-
-[[bin]]
-name = "build-table"
-path = "src/bin/build_table.rs"
-required-features = ["build-file"]
-
-[[bin]]
-name = "build-map"
-path = "src/bin/build_map/main.rs"
-required-features = ["build-map"]
 
 [[bench]]
 name = "bench"
