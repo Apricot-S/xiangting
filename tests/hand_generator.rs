@@ -9,6 +9,7 @@
 //! https://gist.github.com/tomohxx/fc0b72e3fe68744a6ac56a64a41ab8d7
 
 use std::cmp::min;
+
 use xiangting::TileCounts;
 
 const MAX_NUM_SAME_TILE: usize = 4;

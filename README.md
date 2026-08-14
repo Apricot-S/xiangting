@@ -68,7 +68,7 @@ fn main() {
         2, 3, 0, 0, 0, 0, 0, // z
     ];
 
-    let replacement_number = calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
+    let replacement_number = calculate_replacement_number(&hand, PlayerCount::Four).unwrap();
     assert_eq!(replacement_number, 0u8);
 }
 ```
@@ -100,9 +100,9 @@ fn main() {
     ];
 
     let (replacement_number1, necessary_tiles) =
-        calculate_necessary_tiles(&hand, &PlayerCount::Four).unwrap();
+        calculate_necessary_tiles(&hand, PlayerCount::Four).unwrap();
     let (replacement_number2, unnecessary_tiles) =
-        calculate_unnecessary_tiles(&hand, &PlayerCount::Four).unwrap();
+        calculate_unnecessary_tiles(&hand, PlayerCount::Four).unwrap();
 
     assert_eq!(replacement_number1, 5);
     assert_eq!(replacement_number1, replacement_number2);
@@ -127,14 +127,14 @@ fn main() {
         4, 3, 2, 0, 0, 0, 0, // z
     ];
 
-    let (rn_4p, nt_4p) = calculate_necessary_tiles(&hand, &PlayerCount::Four).unwrap();
-    let (_, ut_4p) = calculate_unnecessary_tiles(&hand, &PlayerCount::Four).unwrap();
+    let (rn_4p, nt_4p) = calculate_necessary_tiles(&hand, PlayerCount::Four).unwrap();
+    let (_, ut_4p) = calculate_unnecessary_tiles(&hand, PlayerCount::Four).unwrap();
     assert_eq!(rn_4p, 2u8);
     assert_eq!(nt_4p, 0b0000000_000000000_000000000_000000110); // 23m
     assert_eq!(ut_4p, 0b0000001_000000000_000000000_000000000); // 1z
 
-    let (rn_3p, nt_3p) = calculate_necessary_tiles(&hand, &PlayerCount::Three).unwrap();
-    let (_, ut_3p) = calculate_unnecessary_tiles(&hand, &PlayerCount::Three).unwrap();
+    let (rn_3p, nt_3p) = calculate_necessary_tiles(&hand, PlayerCount::Three).unwrap();
+    let (_, ut_3p) = calculate_unnecessary_tiles(&hand, PlayerCount::Three).unwrap();
     assert_eq!(rn_3p, 3u8);
     assert_eq!(nt_3p, 0b1111100_111111111_111111111_100000000); // 9m123456789p123456789s34567z
     assert_eq!(ut_3p, 0b0000001_000000000_000000000_000000001); // 1m1z

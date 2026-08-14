@@ -4,14 +4,11 @@
 
 mod replacement_number;
 
-use self::replacement_number::{
-    get_19m_replacement_number, get_shupai_replacement_number, get_zipai_replacement_number,
-};
-use std::env;
 use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use std::process;
+
 use xiangting::standard::core::{
     NecessaryTilesMapValue, ReplacementNumberMapValue, UnnecessaryTilesMapValue,
 };
@@ -19,6 +16,10 @@ use xiangting::standard::hash::{hash_19m, hash_shupai, hash_zipai};
 use xiangting::standard::shupai_table::SHUPAI_SIZE;
 use xiangting::standard::wanzi_19_table::WANZI_19_SIZE;
 use xiangting::standard::zipai_table::ZIPAI_SIZE;
+
+use self::replacement_number::{
+    get_19m_replacement_number, get_shupai_replacement_number, get_zipai_replacement_number,
+};
 
 struct MapValue {
     replacement_number: ReplacementNumberMapValue,
@@ -297,21 +298,19 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn main() {
+pub fn run(args: &[String]) {
     let start = std::time::Instant::now();
 
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 4 {
+    if args.len() != 3 {
         eprintln!(
-            "Usage: {} <PATH TO SHUPAI MAP> <PATH TO ZIPAI MAP> <PATH TO WANZI 19 MAP>",
-            args[0]
+            "Usage: cargo xtask build-map <PATH TO SHUPAI MAP> <PATH TO ZIPAI MAP> <PATH TO WANZI 19 MAP>"
         );
         process::exit(1);
     }
 
-    let shupai_map_path = Path::new(&args[1]);
-    let zipai_map_path = Path::new(&args[2]);
-    let wanzi_19_map_path = Path::new(&args[3]);
+    let shupai_map_path = Path::new(&args[0]);
+    let zipai_map_path = Path::new(&args[1]);
+    let wanzi_19_map_path = Path::new(&args[2]);
 
     {
         let mut shupai_map = Map::new();

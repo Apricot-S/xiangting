@@ -7,12 +7,14 @@ mod hand_generator;
 
 #[cfg(feature = "correctness")]
 mod tests {
-    use crate::hand_generator::{NUM_HANDS, build_table, decode};
-    use shanten_dp::{Mode, calc_shanten, make_tile_limits};
     use std::fs::File;
     use std::io::Write;
     use std::{env, thread};
+
+    use shanten_dp::{Mode, calc_shanten, make_tile_limits};
     use xiangting::{PlayerCount, calculate_replacement_number};
+
+    use crate::hand_generator::{NUM_HANDS, build_table, decode};
 
     fn verify_correctness<const N: usize>() -> bool {
         let num_threads = env::var("NUM_THREADS")
@@ -46,7 +48,7 @@ mod tests {
                             .unwrap()
                             + 1;
                     let result_xiangting =
-                        calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
+                        calculate_replacement_number(&hand, PlayerCount::Four).unwrap();
 
                     if result_shanten_dp as u8 != result_xiangting {
                         return Some(format!(
