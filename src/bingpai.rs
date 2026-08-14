@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use crate::tile::{Tile, TileCounts};
 use core::marker::PhantomData;
+
 use thiserror::Error;
+
+use crate::tile::{Tile, TileCounts};
 
 const MAX_TILE_COPIES: u8 = 4;
 const MAX_NUM_BINGPAI: u8 = 14;

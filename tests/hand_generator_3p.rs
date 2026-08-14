@@ -10,6 +10,7 @@
 //! https://gist.github.com/Apricot-S/f59903a44909206ad9e79390665f7253
 
 use std::cmp::min;
+
 use xiangting::TileCounts;
 
 const MAX_NUM_SAME_TILE: usize = 4;

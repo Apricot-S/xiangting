@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use rand::seq::{IndexedRandom, SliceRandom};
-use rand::{Rng, SeedableRng};
-use rand_pcg::Pcg64Mcg;
 use std::env;
 use std::hint::black_box;
 use std::process;
 use std::time::Instant;
+
+use rand::seq::{IndexedRandom, SliceRandom};
+use rand::{Rng, SeedableRng};
+use rand_pcg::Pcg64Mcg;
 use xiangting::{PlayerCount, calculate_replacement_number};
 
 fn create_rng() -> impl Rng {

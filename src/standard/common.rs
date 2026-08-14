@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+use core::cmp::Ordering;
+
 use super::unpack::UnpackedNumbers;
 use crate::tile::TileFlags;
-use core::cmp::Ordering;
 
 pub(super) struct Entry {
     pub(super) numbers: UnpackedNumbers,

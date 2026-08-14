@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+use core::cmp::Ordering;
+
 use super::qiduizi;
 use super::shisanyao;
 use super::standard;
 use crate::bingpai::{Bingpai, BingpaiError, FourPlayer, PlayerRule, ThreePlayer};
 use crate::config::PlayerCount;
 use crate::tile::{TileCounts, TileFlags};
-use core::cmp::Ordering;
 
 /// Calculates the replacement number (= xiàngtīng number + 1) and necessary tiles for a given hand.
 ///
