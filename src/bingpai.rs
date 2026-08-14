@@ -33,7 +33,7 @@ impl PlayerRule for ThreePlayer {
 
     #[inline(always)]
     fn validate(tile_counts: &TileCounts) -> Result<(), BingpaiError> {
-        if let Some(i) = tile_counts[1..8].iter().position(|&count| count != 0) {
+        if let Some(i) = tile_counts[1..=7].iter().position(|&count| count != 0) {
             return Err(BingpaiError::InvalidTileForThreePlayer((i + 1) as Tile));
         }
 
