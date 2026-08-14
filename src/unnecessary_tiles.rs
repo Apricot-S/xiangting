@@ -15,7 +15,7 @@ use core::cmp::Ordering;
 /// # Arguments
 ///
 /// * `bingpai` - 兵牌: A reference to a hand excluding melds (a.k.a. pure hand, 純手牌).
-/// * `player_count` - A reference to the number of players.
+/// * `player_count` - The number of players.
 ///
 /// # Errors
 ///
@@ -36,7 +36,7 @@ use core::cmp::Ordering;
 /// ];
 ///
 /// let (replacement_number, unnecessary_tiles) =
-///     calculate_unnecessary_tiles(&hand, &PlayerCount::Four)?;
+///     calculate_unnecessary_tiles(&hand, PlayerCount::Four)?;
 /// assert_eq!(replacement_number, 5u8);
 /// assert_eq!(unnecessary_tiles, 0b0101010_000000011_101101001_000000001); // 1m14679p12s246z
 /// # Ok(())
@@ -58,12 +58,12 @@ use core::cmp::Ordering;
 /// ];
 ///
 /// let (replacement_number_4p, unnecessary_tiles_4p) =
-///     calculate_unnecessary_tiles(&hand, &PlayerCount::Four)?;
+///     calculate_unnecessary_tiles(&hand, PlayerCount::Four)?;
 /// assert_eq!(replacement_number_4p, 2u8);
 /// assert_eq!(unnecessary_tiles_4p, 0b0000001_000000000_000000000_000000000); // 1z
 ///
 /// let (replacement_number_3p, unnecessary_tiles_3p) =
-///     calculate_unnecessary_tiles(&hand, &PlayerCount::Three)?;
+///     calculate_unnecessary_tiles(&hand, PlayerCount::Three)?;
 /// assert_eq!(replacement_number_3p, 3u8);
 /// assert_eq!(unnecessary_tiles_3p, 0b0000001_000000000_000000000_000000001); // 1m1z
 /// # Ok(())
@@ -72,7 +72,7 @@ use core::cmp::Ordering;
 #[inline]
 pub fn calculate_unnecessary_tiles(
     bingpai: &TileCounts,
-    player_count: &PlayerCount,
+    player_count: PlayerCount,
 ) -> Result<(u8, TileFlags), BingpaiError> {
     match player_count {
         PlayerCount::Four => calculate_unnecessary_tiles_4p(bingpai),
@@ -153,7 +153,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_ok_standard_tenpai() {
         let bingpai = TileCounts::from_code("123m456p789s1122z");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Four);
         let (replacement_number, unnecessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
@@ -162,7 +162,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_ok_qiduizi_tenpai() {
         let bingpai = TileCounts::from_code("1188m288p55s1177z");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Four);
         let (replacement_number, unnecessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
@@ -171,7 +171,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_ok_shisanyao_tenpai() {
         let bingpai = TileCounts::from_code("19m19p19s1234567z");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Four);
         let (replacement_number, unnecessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
@@ -180,42 +180,42 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_err_bingpai_empty() {
         let bingpai = TileCounts::from_code("");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Four);
         assert!(matches!(ret, Err(BingpaiError::InvalidTileCount(0))));
     }
 
     #[test]
     fn calculate_unnecessary_tiles_ok_bingpai_1_tile() {
         let bingpai = TileCounts::from_code("1m");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Four);
         assert!(ret.is_ok());
     }
 
     #[test]
     fn calculate_unnecessary_tiles_ok_bingpai_2_tiles() {
         let bingpai = TileCounts::from_code("2p3s");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Four);
         assert!(ret.is_ok());
     }
 
     #[test]
     fn calculate_unnecessary_tiles_err_bingpai_3_tiles() {
         let bingpai = TileCounts::from_code("2p3s7z");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Four);
         assert!(matches!(ret, Err(BingpaiError::InvalidTileCount(3))));
     }
 
     #[test]
     fn calculate_unnecessary_tiles_err_bingpai_15_tiles() {
         let bingpai = TileCounts::from_code("111222333444555m");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Four);
         assert!(matches!(ret, Err(BingpaiError::TooManyTiles(15))));
     }
 
     #[test]
     fn calculate_unnecessary_tiles_err_bingpai_5_same_tiles() {
         let bingpai = TileCounts::from_code("11111m");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Four);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Four);
         assert!(matches!(
             ret,
             Err(BingpaiError::TooManyCopies { tile: 0, count: 5 })
@@ -225,7 +225,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_3_player_ok_standard_tenpai() {
         let bingpai = TileCounts::from_code("111m456p789s1122z");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Three);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Three);
         let (replacement_number, unnecessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
@@ -234,7 +234,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_3_player_ok_qiduizi_tenpai() {
         let bingpai = TileCounts::from_code("1199m288p55s1177z");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Three);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Three);
         let (replacement_number, unnecessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
@@ -243,7 +243,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_3_player_ok_shisanyao_tenpai() {
         let bingpai = TileCounts::from_code("19m19p19s1234567z");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Three);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Three);
         let (replacement_number, unnecessary_tiles) = ret.unwrap();
         assert_eq!(replacement_number, 1);
         assert_eq!(unnecessary_tiles, TileFlags::from_code(""));
@@ -252,7 +252,7 @@ mod tests {
     #[test]
     fn calculate_unnecessary_tiles_3_player_err_bingpai_2m() {
         let bingpai = TileCounts::from_code("2m");
-        let ret = calculate_unnecessary_tiles(&bingpai, &PlayerCount::Three);
+        let ret = calculate_unnecessary_tiles(&bingpai, PlayerCount::Three);
         assert!(matches!(
             ret,
             Err(BingpaiError::InvalidTileForThreePlayer(1))

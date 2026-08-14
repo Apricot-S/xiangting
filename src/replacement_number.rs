@@ -14,7 +14,7 @@ use crate::tile::TileCounts;
 /// # Arguments
 ///
 /// * `bingpai` - 兵牌: A reference to a hand excluding melds (a.k.a. pure hand, 純手牌).
-/// * `player_count` - A reference to the number of players.
+/// * `player_count` - The number of players.
 ///
 /// # Errors
 ///
@@ -34,7 +34,7 @@ use crate::tile::TileCounts;
 ///     2, 3, 0, 0, 0, 0, 0, // z
 /// ];
 ///
-/// let replacement_number = calculate_replacement_number(&hand, &PlayerCount::Four)?;
+/// let replacement_number = calculate_replacement_number(&hand, PlayerCount::Four)?;
 /// assert_eq!(replacement_number, 0u8);
 /// # Ok(())
 /// # }
@@ -54,10 +54,10 @@ use crate::tile::TileCounts;
 ///     4, 3, 2, 0, 0, 0, 0, // z
 /// ];
 ///
-/// let replacement_number_4p = calculate_replacement_number(&hand, &PlayerCount::Four)?;
+/// let replacement_number_4p = calculate_replacement_number(&hand, PlayerCount::Four)?;
 /// assert_eq!(replacement_number_4p, 2u8);
 ///
-/// let replacement_number_3p = calculate_replacement_number(&hand, &PlayerCount::Three)?;
+/// let replacement_number_3p = calculate_replacement_number(&hand, PlayerCount::Three)?;
 /// assert_eq!(replacement_number_3p, 3u8);
 /// # Ok(())
 /// # }
@@ -65,7 +65,7 @@ use crate::tile::TileCounts;
 #[inline]
 pub fn calculate_replacement_number(
     bingpai: &TileCounts,
-    player_count: &PlayerCount,
+    player_count: PlayerCount,
 ) -> Result<u8, BingpaiError> {
     match player_count {
         PlayerCount::Four => calculate_replacement_number_4p(bingpai),
@@ -105,28 +105,28 @@ mod tests {
     #[test]
     fn calculate_replacement_number_ok_standard_tenpai() {
         let bingpai = TileCounts::from_code("123m456p789s1122z");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_ok_qiduizi_tenpai() {
         let bingpai = TileCounts::from_code("1188m288p55s1177z");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_ok_shisanyao_tenpai() {
         let bingpai = TileCounts::from_code("19m19p19s1234567z");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_err_bingpai_empty() {
         let bingpai = TileCounts::from_code("");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(BingpaiError::InvalidTileCount(0))
@@ -136,21 +136,21 @@ mod tests {
     #[test]
     fn calculate_replacement_number_ok_bingpai_1_tile() {
         let bingpai = TileCounts::from_code("1m");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four);
         assert!(replacement_number.is_ok());
     }
 
     #[test]
     fn calculate_replacement_number_ok_bingpai_2_tiles() {
         let bingpai = TileCounts::from_code("2p3s");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four);
         assert!(replacement_number.is_ok());
     }
 
     #[test]
     fn calculate_replacement_number_err_bingpai_3_tiles() {
         let bingpai = TileCounts::from_code("2p3s7z");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(BingpaiError::InvalidTileCount(3))
@@ -160,7 +160,7 @@ mod tests {
     #[test]
     fn calculate_replacement_number_err_bingpai_15_tiles() {
         let bingpai = TileCounts::from_code("111222333444555m");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(BingpaiError::TooManyTiles(15))
@@ -170,7 +170,7 @@ mod tests {
     #[test]
     fn calculate_replacement_number_err_bingpai_5_same_tiles() {
         let bingpai = TileCounts::from_code("11111m");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Four);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four);
         assert!(matches!(
             replacement_number,
             Err(BingpaiError::TooManyCopies { tile: 0, count: 5 })
@@ -180,28 +180,28 @@ mod tests {
     #[test]
     fn calculate_replacement_number_3_player_ok_standard_tenpai() {
         let bingpai = TileCounts::from_code("111m456p789s1122z");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Three);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Three);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_ok_qiduizi_tenpai() {
         let bingpai = TileCounts::from_code("1199m288p55s1177z");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Three);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Three);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_ok_shisanyao_tenpai() {
         let bingpai = TileCounts::from_code("19m19p19s1234567z");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Three);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Three);
         assert_eq!(replacement_number.unwrap(), 1);
     }
 
     #[test]
     fn calculate_replacement_number_3_player_err_bingpai_2m() {
         let bingpai = TileCounts::from_code("2m");
-        let replacement_number = calculate_replacement_number(&bingpai, &PlayerCount::Three);
+        let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Three);
         assert!(matches!(
             replacement_number,
             Err(BingpaiError::InvalidTileForThreePlayer(1))

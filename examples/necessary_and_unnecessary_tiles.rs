@@ -14,9 +14,9 @@ fn main() {
     ];
 
     let (replacement_number1, necessary_tiles) =
-        calculate_necessary_tiles(&hand, &PlayerCount::Four).unwrap();
+        calculate_necessary_tiles(&hand, PlayerCount::Four).unwrap();
     let (replacement_number2, unnecessary_tiles) =
-        calculate_unnecessary_tiles(&hand, &PlayerCount::Four).unwrap();
+        calculate_unnecessary_tiles(&hand, PlayerCount::Four).unwrap();
 
     assert_eq!(replacement_number1, 5);
     assert_eq!(replacement_number1, replacement_number2);

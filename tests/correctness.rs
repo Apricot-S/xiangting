@@ -46,7 +46,7 @@ mod tests {
                             .unwrap()
                             + 1;
                     let result_xiangting =
-                        calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
+                        calculate_replacement_number(&hand, PlayerCount::Four).unwrap();
 
                     if result_shanten_dp as u8 != result_xiangting {
                         return Some(format!(

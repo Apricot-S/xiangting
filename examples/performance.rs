@@ -69,7 +69,7 @@ fn main() {
     let start = Instant::now();
 
     for hand in hands {
-        let replacement_number = calculate_replacement_number(&hand, &PlayerCount::Four).unwrap();
+        let replacement_number = calculate_replacement_number(&hand, PlayerCount::Four).unwrap();
         black_box(replacement_number);
     }
 
