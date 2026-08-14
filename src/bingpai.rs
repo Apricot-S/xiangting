@@ -69,34 +69,29 @@ pub enum BingpaiError {
     InvalidTileForThreePlayer(Tile),
 }
 
-pub(crate) trait TileCountsExt {
-    fn count(&self) -> Result<u8, BingpaiError>;
-}
+fn validate_tile_counts(tile_counts: &TileCounts) -> Result<u8, BingpaiError> {
+    tile_counts
+        .iter()
+        .enumerate()
+        .find(|(_, c)| **c > MAX_TILE_COPIES)
+        .map(|(i, &c)| BingpaiError::TooManyCopies {
+            tile: i as Tile,
+            count: c,
+        })
+        .map_or(Ok(()), Err)?;
 
-impl TileCountsExt for TileCounts {
-    fn count(&self) -> Result<u8, BingpaiError> {
-        self.iter()
-            .enumerate()
-            .find(|(_, c)| **c > MAX_TILE_COPIES)
-            .map(|(i, &c)| BingpaiError::TooManyCopies {
-                tile: i as Tile,
-                count: c,
-            })
-            .map_or(Ok(()), Err)?;
-
-        let num_bingpai: u8 = self.iter().sum();
-        match num_bingpai {
-            n if n > MAX_NUM_BINGPAI => Err(BingpaiError::TooManyTiles(n)),
-            n if n % 3 == 0 => Err(BingpaiError::InvalidTileCount(n)),
-            n => Ok(n),
-        }
+    let num_bingpai: u8 = tile_counts.iter().sum();
+    match num_bingpai {
+        n if n > MAX_NUM_BINGPAI => Err(BingpaiError::TooManyTiles(n)),
+        n if n % 3 == 0 => Err(BingpaiError::InvalidTileCount(n)),
+        n => Ok(n),
     }
 }
 
 impl<'a, R: PlayerRule> Bingpai<'a, R> {
     pub(crate) fn new(tile_counts: &'a TileCounts) -> Result<Self, BingpaiError> {
         R::validate(tile_counts)?;
-        let num_bingpai = tile_counts.count()?;
+        let num_bingpai = validate_tile_counts(tile_counts)?;
         let num_required_bingpai_mianzi = num_bingpai / 3;
 
         Ok(Self {
