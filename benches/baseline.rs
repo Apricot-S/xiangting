@@ -5,7 +5,7 @@
 use xiangting::{PlayerCount, TileCounts, calculate_replacement_number};
 
 pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
-    let mut bingpai = bingpai.clone();
+    let mut bingpai = *bingpai;
 
     let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four).unwrap();
     if replacement_number == 0 {
@@ -50,7 +50,7 @@ pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
 }
 
 pub fn calculate_unnecessary_tiles(bingpai: &TileCounts) -> u64 {
-    let mut bingpai = bingpai.clone();
+    let mut bingpai = *bingpai;
 
     let replacement_number = calculate_replacement_number(&bingpai, PlayerCount::Four).unwrap();
     if replacement_number == 0 {
