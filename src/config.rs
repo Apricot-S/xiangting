@@ -3,7 +3,7 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 /// The number of players.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PlayerCount {
     /// Four-player mahjong (the standard rules).
     Four,

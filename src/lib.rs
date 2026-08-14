@@ -21,7 +21,7 @@
 //!     2, 3, 0, 0, 0, 0, 0, // z
 //! ];
 //!
-//! let replacement_number = calculate_replacement_number(&hand, &PlayerCount::Four)?;
+//! let replacement_number = calculate_replacement_number(&hand, PlayerCount::Four)?;
 //! assert_eq!(replacement_number, 0u8);
 //! # Ok(())
 //! # }

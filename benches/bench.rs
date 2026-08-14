@@ -57,7 +57,7 @@ fn shanten_number(c: &mut Criterion) {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&hands, &mut index);
-            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+            calculate_replacement_number(hand, PlayerCount::Four).unwrap()
         })
     });
     group.bench_function("shanten-dp", |b| {
@@ -92,28 +92,28 @@ fn variant_shanten_number(c: &mut Criterion) {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&normal_hands, &mut index);
-            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+            calculate_replacement_number(hand, PlayerCount::Four).unwrap()
         })
     });
     group.bench_function("half_flush", |b| {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&half_flush_hands, &mut index);
-            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+            calculate_replacement_number(hand, PlayerCount::Four).unwrap()
         })
     });
     group.bench_function("full_flush", |b| {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&full_flush_hands, &mut index);
-            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+            calculate_replacement_number(hand, PlayerCount::Four).unwrap()
         })
     });
     group.bench_function("non_simple", |b| {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&non_simple_hands, &mut index);
-            calculate_replacement_number(hand, &PlayerCount::Four).unwrap()
+            calculate_replacement_number(hand, PlayerCount::Four).unwrap()
         })
     });
     group.finish();
@@ -130,7 +130,7 @@ fn necessary_tiles(c: &mut Criterion) {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&hands, &mut index);
-            calculate_necessary_tiles(hand, &PlayerCount::Four).unwrap()
+            calculate_necessary_tiles(hand, PlayerCount::Four).unwrap()
         })
     });
     group.bench_function("shanten-dp", |b| {
@@ -170,7 +170,7 @@ fn unnecessary_tiles(c: &mut Criterion) {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&hands, &mut index);
-            calculate_unnecessary_tiles(hand, &PlayerCount::Four).unwrap()
+            calculate_unnecessary_tiles(hand, PlayerCount::Four).unwrap()
         })
     });
     group.bench_function("shanten-dp", |b| {
