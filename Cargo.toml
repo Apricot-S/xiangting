@@ -27,8 +27,7 @@ rand_pcg = "0.10.0"
 shanten-dp = "0.3.2"
 
 [features]
-build-file = []
-build-map = ["build-file"]
+build-map = []
 correctness = []
 
 [[bench]]
