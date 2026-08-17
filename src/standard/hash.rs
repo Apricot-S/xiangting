@@ -106,7 +106,7 @@ mod tests {
             return;
         }
 
-        assert!(hand[i] == 0);
+        assert_eq!(hand[i], 0);
 
         for c in 0..=4 {
             if n + c > 14 {
