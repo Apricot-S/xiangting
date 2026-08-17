@@ -18,7 +18,7 @@ pub(in super::super) fn calculate_replacement_number<R: PlayerRule>(bingpai: &Bi
             (num_kinds + 1, has_jiangpai || count >= 2)
         });
 
-    14 - num_kinds - (has_jiangpai as u8)
+    14 - num_kinds - u8::from(has_jiangpai)
 }
 
 #[cfg(test)]

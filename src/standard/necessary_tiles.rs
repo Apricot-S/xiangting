@@ -160,19 +160,19 @@ pub(in super::super) fn calculate_necessary_tiles<R: PlayerRule>(
     let (mut entry0, entry1, entry2, entry3) = (
         Entry {
             numbers: replacement_number_m,
-            tiles: necessary_tiles_m.map(|t| t as TileFlags),
+            tiles: necessary_tiles_m.map(TileFlags::from),
         },
         Entry {
             numbers: replacement_number_p,
-            tiles: necessary_tiles_p.map(|t| (t as TileFlags) << 9),
+            tiles: necessary_tiles_p.map(|t| TileFlags::from(t) << 9),
         },
         Entry {
             numbers: replacement_number_s,
-            tiles: necessary_tiles_s.map(|t| (t as TileFlags) << 18),
+            tiles: necessary_tiles_s.map(|t| TileFlags::from(t) << 18),
         },
         Entry {
             numbers: replacement_number_z,
-            tiles: necessary_tiles_z.map(|t| (t as TileFlags) << 27),
+            tiles: necessary_tiles_z.map(|t| TileFlags::from(t) << 27),
         },
     );
 
