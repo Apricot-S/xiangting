@@ -83,7 +83,7 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
 
     for i in 0..N {
         writeln!(w, "    [")?;
-        writeln!(w, "        // i = {}", i)?;
+        writeln!(w, "        // i = {i}")?;
         for n in 0..=14 {
             write!(w, "        [")?;
             for c in 0..=4 {
@@ -99,9 +99,9 @@ fn dump_table<const N: usize>(table: &TableImpl<N>, table_path: &Path) -> io::Re
                     }
                 }
                 let separator = if c < 4 { ", " } else { "" };
-                write!(w, "{}{}", entry, separator)?;
+                write!(w, "{entry}{separator}")?;
             }
-            writeln!(w, "], // n = {}", n)?;
+            writeln!(w, "], // n = {n}")?;
         }
         writeln!(w, "    ],")?;
     }
