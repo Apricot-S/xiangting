@@ -17,10 +17,6 @@ resolver = "3"
 members = [".", "xtask"]
 default-members = ["."]
 
-[lib]
-name = "xiangting"
-path = "src/lib.rs"
-
 [dependencies]
 thiserror = { version = "2.0.17", default-features = false }
 
