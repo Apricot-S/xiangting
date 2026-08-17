@@ -212,6 +212,7 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
 
     writeln!(w)?;
     writeln!(w, "#[rustfmt::skip]")?;
+    writeln!(w, "#[allow(clippy::unreadable_literal)]")?;
 
     match N {
         9 => write!(
@@ -237,6 +238,7 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
 
     writeln!(w)?;
     writeln!(w, "#[rustfmt::skip]")?;
+    writeln!(w, "#[allow(clippy::unreadable_literal)]")?;
 
     match N {
         9 => write!(
@@ -266,6 +268,7 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
 
     writeln!(w)?;
     writeln!(w, "#[rustfmt::skip]")?;
+    writeln!(w, "#[allow(clippy::unreadable_literal)]")?;
 
     match N {
         9 => write!(
