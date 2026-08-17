@@ -46,7 +46,7 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
         .filter(|(_, count)| **count > 0)
         .fold(discards, |d, (i, _)| d | (1 << i));
 
-    let replacement_number = 14 - num_kinds - (if num_jiangpai > 0 { 1 } else { 0 });
+    let replacement_number = 14 - num_kinds - u8::from(num_jiangpai > 0);
 
     let unnecessary_tiles = if num_jiangpai >= 2 {
         discards | discard_candidates
