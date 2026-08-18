@@ -6,8 +6,8 @@
 //!
 //! Reference:
 //!
-//! https://gist.github.com/tomohxx/fc0b72e3fe68744a6ac56a64a41ab8d7
-//! https://gist.github.com/Apricot-S/f59903a44909206ad9e79390665f7253
+//! <https://gist.github.com/tomohxx/fc0b72e3fe68744a6ac56a64a41ab8d7>
+//! <https://gist.github.com/Apricot-S/f59903a44909206ad9e79390665f7253>
 
 use std::cmp::min;
 
