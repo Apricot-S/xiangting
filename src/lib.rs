@@ -27,6 +27,9 @@
 //! # }
 //! ```
 
+#[cfg(test)]
+extern crate alloc;
+
 #[cfg(not(feature = "build-map"))]
 mod bingpai;
 #[cfg(not(feature = "build-map"))]
