@@ -177,19 +177,19 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
     let (mut entry0, entry1, entry2, entry3) = (
         Entry {
             numbers: replacement_number_m,
-            tiles: unnecessary_tiles_m.map(|t| t as TileFlags),
+            tiles: unnecessary_tiles_m.map(TileFlags::from),
         },
         Entry {
             numbers: replacement_number_p,
-            tiles: unnecessary_tiles_p.map(|t| (t as TileFlags) << 9),
+            tiles: unnecessary_tiles_p.map(|t| TileFlags::from(t) << 9),
         },
         Entry {
             numbers: replacement_number_s,
-            tiles: unnecessary_tiles_s.map(|t| (t as TileFlags) << 18),
+            tiles: unnecessary_tiles_s.map(|t| TileFlags::from(t) << 18),
         },
         Entry {
             numbers: replacement_number_z,
-            tiles: unnecessary_tiles_z.map(|t| (t as TileFlags) << 27),
+            tiles: unnecessary_tiles_z.map(|t| TileFlags::from(t) << 27),
         },
     );
 
