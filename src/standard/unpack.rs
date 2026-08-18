@@ -35,6 +35,7 @@ pub(super) fn unpack_replacement_number(pack: ReplacementNumberMapValue) -> Unpa
 }
 
 #[inline]
+#[allow(clippy::cast_possible_truncation)]
 pub(super) fn unpack_necessary_tiles(pack: &NecessaryTilesMapValue) -> UnpackedTiles {
     [
         0u16,
@@ -51,6 +52,7 @@ pub(super) fn unpack_necessary_tiles(pack: &NecessaryTilesMapValue) -> UnpackedT
 }
 
 #[inline]
+#[allow(clippy::cast_possible_truncation)]
 pub(super) fn unpack_unnecessary_tiles(pack: &UnnecessaryTilesMapValue) -> UnpackedTiles {
     [
         (pack[0] & 0x01FF) as u16,
