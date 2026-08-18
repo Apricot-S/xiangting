@@ -7,6 +7,7 @@ use super::wanzi_19_table::WANZI_19_TABLE;
 use super::zipai_table::ZIPAI_TABLE;
 
 #[inline]
+#[must_use]
 pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
     debug_assert_eq!(single_color_bingpai.len(), 9);
 
@@ -26,6 +27,7 @@ pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
 }
 
 #[inline]
+#[must_use]
 pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
     debug_assert_eq!(zipai_bingpai.len(), 7);
 
@@ -45,6 +47,7 @@ pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
 }
 
 #[inline]
+#[must_use]
 pub fn hash_19m(wanzi_bingpai: &[u8]) -> usize {
     debug_assert_eq!(wanzi_bingpai.len(), 9);
 
