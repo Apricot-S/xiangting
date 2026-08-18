@@ -62,9 +62,10 @@ mod tests {
         }
 
         let results: Vec<_> = handles.into_iter().map(thread::JoinHandle::join).collect();
-        if results.iter().any(Result::is_err) {
-            panic!("Test failed due to a thread panic.");
-        }
+        assert!(
+            !results.iter().any(Result::is_err),
+            "Test failed due to a thread panic."
+        );
 
         let mismatches: Vec<_> = results
             .into_iter()
