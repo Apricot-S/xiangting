@@ -39,6 +39,7 @@ pub const NUM_HANDS: [u64; 15] = [
 // n = 0, 1, ..., N (N = 1, ..., 14)
 type Table<const N: usize> = [[u64; N]; NUM_TILE_INDEX + 1];
 
+#[must_use]
 pub fn build_table<const N: usize>() -> Table<N> {
     debug_assert!((1..=15).contains(&N));
 
@@ -58,6 +59,7 @@ pub fn build_table<const N: usize>() -> Table<N> {
     table
 }
 
+#[must_use]
 pub fn decode<const N: usize>(hash: u64, table: &Table<N>) -> TileCounts {
     let mut hand: TileCounts = [0; NUM_TILE_INDEX];
     let mut h = 0;
