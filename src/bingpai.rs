@@ -36,7 +36,8 @@ impl PlayerRule for ThreePlayer {
     #[inline]
     fn validate(tile_counts: &TileCounts) -> Result<(), BingpaiError> {
         if let Some(i) = tile_counts[1..=7].iter().position(|&count| count != 0) {
-            return Err(BingpaiError::InvalidTileForThreePlayer((i + 1) as Tile));
+            let tile = Tile::try_from(i + 1).expect("three-player tile index must fit in u8");
+            return Err(BingpaiError::InvalidTileForThreePlayer(tile));
         }
 
         Ok(())
@@ -77,7 +78,7 @@ fn validate_tile_counts(tile_counts: &TileCounts) -> Result<u8, BingpaiError> {
         .enumerate()
         .find(|(_, c)| **c > MAX_TILE_COPIES)
         .map(|(i, &c)| BingpaiError::TooManyCopies {
-            tile: i as Tile,
+            tile: Tile::try_from(i).expect("tile index must fit in u8"),
             count: c,
         })
         .map_or(Ok(()), Err)?;

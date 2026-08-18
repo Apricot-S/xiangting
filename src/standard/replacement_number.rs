@@ -87,7 +87,8 @@ pub(in super::super) fn calculate_replacement_number<R: PlayerRule>(bingpai: &Bi
     update_dp(&mut entry0, &entry2);
     update_dp_final(&mut entry0, &entry3);
 
-    entry0[5 + bingpai.num_required_bingpai_mianzi() as usize] as u8
+    u8::try_from(entry0[5 + bingpai.num_required_bingpai_mianzi() as usize])
+        .expect("replacement number must fit in u8")
 }
 
 #[cfg(test)]
