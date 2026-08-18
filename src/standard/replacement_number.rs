@@ -78,10 +78,10 @@ pub(in super::super) fn calculate_replacement_number<R: PlayerRule>(bingpai: &Bi
     let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
     let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
 
-    let mut entry0 = unpack_replacement_number(packed_rn_m);
-    let entry1 = unpack_replacement_number(packed_rn_p);
-    let entry2 = unpack_replacement_number(packed_rn_s);
-    let entry3 = unpack_replacement_number(packed_rn_z);
+    let mut entry0 = unpack_replacement_number(*packed_rn_m);
+    let entry1 = unpack_replacement_number(*packed_rn_p);
+    let entry2 = unpack_replacement_number(*packed_rn_s);
+    let entry3 = unpack_replacement_number(*packed_rn_z);
 
     update_dp(&mut entry0, &entry1);
     update_dp(&mut entry0, &entry2);
