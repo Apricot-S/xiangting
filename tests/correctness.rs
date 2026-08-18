@@ -85,60 +85,60 @@ mod tests {
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_01() {
-        assert!(verify_correctness::<2>(), "There were mismatches.")
+        assert!(verify_correctness::<2>(), "There were mismatches.");
     }
 
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_02() {
-        assert!(verify_correctness::<3>(), "There were mismatches.")
+        assert!(verify_correctness::<3>(), "There were mismatches.");
     }
 
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_04() {
-        assert!(verify_correctness::<5>(), "There were mismatches.")
+        assert!(verify_correctness::<5>(), "There were mismatches.");
     }
 
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_05() {
-        assert!(verify_correctness::<6>(), "There were mismatches.")
+        assert!(verify_correctness::<6>(), "There were mismatches.");
     }
 
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_07() {
-        assert!(verify_correctness::<8>(), "There were mismatches.")
+        assert!(verify_correctness::<8>(), "There were mismatches.");
     }
 
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_08() {
-        assert!(verify_correctness::<9>(), "There were mismatches.")
+        assert!(verify_correctness::<9>(), "There were mismatches.");
     }
 
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_10() {
-        assert!(verify_correctness::<11>(), "There were mismatches.")
+        assert!(verify_correctness::<11>(), "There were mismatches.");
     }
 
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_11() {
-        assert!(verify_correctness::<12>(), "There were mismatches.")
+        assert!(verify_correctness::<12>(), "There were mismatches.");
     }
 
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_13() {
-        assert!(verify_correctness::<14>(), "There were mismatches.")
+        assert!(verify_correctness::<14>(), "There were mismatches.");
     }
 
     #[test]
     #[ignore = "exhaustive correctness check"]
     fn verify_correctness_14() {
-        assert!(verify_correctness::<15>(), "There were mismatches.")
+        assert!(verify_correctness::<15>(), "There were mismatches.");
     }
 }
