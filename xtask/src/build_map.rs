@@ -21,20 +21,11 @@ use self::replacement_number::{
     get_19m_replacement_number, get_shupai_replacement_number, get_zipai_replacement_number,
 };
 
+#[derive(Default)]
 struct MapValue {
     replacement_number: ReplacementNumberMapValue,
     necessary_tiles: NecessaryTilesMapValue,
     unnecessary_tiles: UnnecessaryTilesMapValue,
-}
-
-impl Default for MapValue {
-    fn default() -> Self {
-        MapValue {
-            replacement_number: 0u32,
-            necessary_tiles: [0u32; 3],
-            unnecessary_tiles: [0u32; 3],
-        }
-    }
 }
 
 type Map = Vec<MapValue>;
