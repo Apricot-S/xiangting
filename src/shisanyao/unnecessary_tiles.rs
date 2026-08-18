@@ -6,6 +6,10 @@ use super::common::YAOJIUPAI_INDICES;
 use crate::bingpai::{Bingpai, PlayerRule};
 use crate::tile::TileFlags;
 
+const ZHONGZHANGPAI_INDICES: [usize; 21] = [
+    1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25,
+];
+
 pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
     bingpai: &Bingpai<R>,
 ) -> (u8, TileFlags) {
@@ -37,9 +41,6 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
             },
         );
 
-    const ZHONGZHANGPAI_INDICES: [usize; 21] = [
-        1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25,
-    ];
     let discards = ZHONGZHANGPAI_INDICES
         .iter()
         .map(|&i| (i, &bingpai.tile_counts()[i]))
