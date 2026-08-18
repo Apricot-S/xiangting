@@ -36,9 +36,6 @@ mod tests {
             let begin = i * chunk_size + i.min(remainder);
             let end = begin + chunk_size + extra;
 
-            let table = table;
-            let tile_limits = tile_limits;
-
             let handle = thread::spawn(move || {
                 for hash in begin..end {
                     let hand = decode(hash, &table);
