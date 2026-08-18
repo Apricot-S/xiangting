@@ -47,7 +47,10 @@ mod tests {
                     let result_xiangting =
                         calculate_replacement_number(&hand, PlayerCount::Four).unwrap();
 
-                    if result_shanten_dp as u8 != result_xiangting {
+                    if result_shanten_dp
+                        != i8::try_from(result_xiangting)
+                            .expect("replacement number must fit in i8")
+                    {
                         return Some(format!(
                             "Hand: {hand:?}, shanten-dp: {result_shanten_dp}, xiangting: {result_xiangting}\n"
                         ));
