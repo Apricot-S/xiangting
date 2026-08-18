@@ -61,14 +61,14 @@ mod tests {
             handles.push(handle);
         }
 
-        let results: Vec<_> = handles.into_iter().map(|handle| handle.join()).collect();
-        if results.iter().any(|result| result.is_err()) {
+        let results: Vec<_> = handles.into_iter().map(thread::JoinHandle::join).collect();
+        if results.iter().any(Result::is_err) {
             panic!("Test failed due to a thread panic.");
         }
 
         let mismatches: Vec<_> = results
             .into_iter()
-            .filter_map(|result| result.ok())
+            .filter_map(Result::ok)
             .flatten()
             .collect();
 
