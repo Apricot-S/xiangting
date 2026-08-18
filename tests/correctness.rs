@@ -49,8 +49,7 @@ mod tests {
 
                     if result_shanten_dp as u8 != result_xiangting {
                         return Some(format!(
-                            "Hand: {:?}, shanten-dp: {}, xiangting: {}\n",
-                            hand, result_shanten_dp, result_xiangting,
+                            "Hand: {hand:?}, shanten-dp: {result_shanten_dp}, xiangting: {result_xiangting}\n"
                         ));
                     }
                 }
