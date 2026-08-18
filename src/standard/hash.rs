@@ -121,7 +121,7 @@ mod tests {
     #[test]
     fn test_hash_shupai() {
         let mut hand = [0u8; 9];
-        let mut check = [0u8; SHUPAI_SIZE];
+        let mut check = alloc::vec![0u8; SHUPAI_SIZE];
         build_hand(0, &mut hand, 0, &mut check);
         assert!(check.iter().all(|&c| c == 1), "A logic error.");
     }
@@ -129,7 +129,7 @@ mod tests {
     #[test]
     fn test_hash_zipai() {
         let mut hand = [0u8; 7];
-        let mut check = [0u8; ZIPAI_SIZE];
+        let mut check = alloc::vec![0u8; ZIPAI_SIZE];
         build_hand(0, &mut hand, 0, &mut check);
         assert!(check.iter().all(|&c| c == 1), "A logic error.");
     }
