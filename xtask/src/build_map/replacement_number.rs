@@ -242,7 +242,7 @@ pub(super) fn get_zipai_replacement_number(
         .zip(M_TABLE.iter().zip(N_TABLE.iter()))
         .take(3)
     {
-        debug_assert!(d.num_sequence == 0);
+        debug_assert_eq!(d.num_sequence, 0);
 
         if current_num_meld + m > num_meld {
             continue;
@@ -338,7 +338,7 @@ pub(super) fn get_19m_replacement_number(
         .zip(M_TABLE.iter().zip(N_TABLE.iter()))
         .take(3)
     {
-        debug_assert!(d.num_sequence == 0);
+        debug_assert_eq!(d.num_sequence, 0);
 
         if current_num_meld + m > num_meld {
             continue;
