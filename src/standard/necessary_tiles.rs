@@ -126,7 +126,7 @@ pub(in super::super) fn calculate_necessary_tiles<R: PlayerRule>(
         let packed_rn_m = &WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m];
         let packed_nt_m = &WANZI_19_NECESSARY_TILES_MAP[hash_m];
         (
-            unpack_replacement_number(packed_rn_m),
+            unpack_replacement_number(*packed_rn_m),
             unpack_necessary_tiles(packed_nt_m),
         )
     } else {
@@ -134,7 +134,7 @@ pub(in super::super) fn calculate_necessary_tiles<R: PlayerRule>(
         let packed_rn_m = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_m];
         let packed_nt_m = &SHUPAI_NECESSARY_TILES_MAP[hash_m];
         (
-            unpack_replacement_number(packed_rn_m),
+            unpack_replacement_number(*packed_rn_m),
             unpack_necessary_tiles(packed_nt_m),
         )
     };
@@ -150,9 +150,9 @@ pub(in super::super) fn calculate_necessary_tiles<R: PlayerRule>(
     let packed_nt_s = &SHUPAI_NECESSARY_TILES_MAP[hash_s];
     let packed_nt_z = &ZIPAI_NECESSARY_TILES_MAP[hash_z];
 
-    let replacement_number_p = unpack_replacement_number(packed_rn_p);
-    let replacement_number_s = unpack_replacement_number(packed_rn_s);
-    let replacement_number_z = unpack_replacement_number(packed_rn_z);
+    let replacement_number_p = unpack_replacement_number(*packed_rn_p);
+    let replacement_number_s = unpack_replacement_number(*packed_rn_s);
+    let replacement_number_z = unpack_replacement_number(*packed_rn_z);
     let necessary_tiles_p = unpack_necessary_tiles(packed_nt_p);
     let necessary_tiles_s = unpack_necessary_tiles(packed_nt_s);
     let necessary_tiles_z = unpack_necessary_tiles(packed_nt_z);

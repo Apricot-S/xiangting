@@ -19,7 +19,7 @@ pub(super) type UnpackedNumbers = [u32; 10];
 pub(super) type UnpackedTiles = [u16; 10];
 
 #[inline]
-pub(super) fn unpack_replacement_number(pack: &ReplacementNumberMapValue) -> UnpackedNumbers {
+pub(super) fn unpack_replacement_number(pack: ReplacementNumberMapValue) -> UnpackedNumbers {
     [
         0u32,
         pack & 0b11,
@@ -83,7 +83,7 @@ mod tests {
             | (9 << 26);
         let unpacked: UnpackedNumbers = [0, 0, 1, 4, 7, 1, 1, 3, 6, 9];
 
-        assert_eq!(unpack_replacement_number(&pack), unpacked);
+        assert_eq!(unpack_replacement_number(pack), unpacked);
     }
 
     #[test]
