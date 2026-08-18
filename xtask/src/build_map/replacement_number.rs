@@ -7,9 +7,9 @@
 //!
 //! Reference:
 //!
-//! https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
-//! https://tomohxx.github.io/mahjong-algorithm-book/dfs/
-//! https://qiita.com/Cryolite/items/75d504c7489426806b87
+//! <https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java>
+//! <https://tomohxx.github.io/mahjong-algorithm-book/dfs/>
+//! <https://qiita.com/Cryolite/items/75d504c7489426806b87>
 
 #![allow(clippy::too_many_arguments)]
 
