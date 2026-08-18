@@ -89,49 +89,52 @@ fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
                 }
                 _ => unreachable!(),
             };
+            let replacement_number = u32::from(replacement_number);
+            let necessary_tiles = u32::from(necessary_tiles);
+            let unnecessary_tiles = u32::from(unnecessary_tiles);
 
             match (num_pair, num_meld) {
                 (0, 0) => (),
-                (0, 1) => pack.replacement_number |= replacement_number as u32,
-                (0, 2) => pack.replacement_number |= (replacement_number as u32) << 2,
-                (0, 3) => pack.replacement_number |= (replacement_number as u32) << 5,
-                (0, 4) => pack.replacement_number |= (replacement_number as u32) << 9,
-                (1, 0) => pack.replacement_number |= (replacement_number as u32) << 13,
-                (1, 1) => pack.replacement_number |= (replacement_number as u32) << 15,
-                (1, 2) => pack.replacement_number |= (replacement_number as u32) << 18,
-                (1, 3) => pack.replacement_number |= (replacement_number as u32) << 22,
-                (1, 4) => pack.replacement_number |= (replacement_number as u32) << 26,
+                (0, 1) => pack.replacement_number |= replacement_number,
+                (0, 2) => pack.replacement_number |= replacement_number << 2,
+                (0, 3) => pack.replacement_number |= replacement_number << 5,
+                (0, 4) => pack.replacement_number |= replacement_number << 9,
+                (1, 0) => pack.replacement_number |= replacement_number << 13,
+                (1, 1) => pack.replacement_number |= replacement_number << 15,
+                (1, 2) => pack.replacement_number |= replacement_number << 18,
+                (1, 3) => pack.replacement_number |= replacement_number << 22,
+                (1, 4) => pack.replacement_number |= replacement_number << 26,
                 _ => unreachable!(),
             }
 
             match (num_pair, num_meld) {
                 (0, 0) => (),
-                (0, 1) => pack.necessary_tiles[0] |= necessary_tiles as u32,
-                (0, 2) => pack.necessary_tiles[0] |= (necessary_tiles as u32) << 9,
-                (0, 3) => pack.necessary_tiles[0] |= (necessary_tiles as u32) << (9 * 2),
-                (0, 4) => pack.necessary_tiles[1] |= necessary_tiles as u32,
-                (1, 0) => pack.necessary_tiles[1] |= (necessary_tiles as u32) << 9,
-                (1, 1) => pack.necessary_tiles[1] |= (necessary_tiles as u32) << (9 * 2),
-                (1, 2) => pack.necessary_tiles[2] |= necessary_tiles as u32,
-                (1, 3) => pack.necessary_tiles[2] |= (necessary_tiles as u32) << 9,
-                (1, 4) => pack.necessary_tiles[2] |= (necessary_tiles as u32) << (9 * 2),
+                (0, 1) => pack.necessary_tiles[0] |= necessary_tiles,
+                (0, 2) => pack.necessary_tiles[0] |= necessary_tiles << 9,
+                (0, 3) => pack.necessary_tiles[0] |= necessary_tiles << (9 * 2),
+                (0, 4) => pack.necessary_tiles[1] |= necessary_tiles,
+                (1, 0) => pack.necessary_tiles[1] |= necessary_tiles << 9,
+                (1, 1) => pack.necessary_tiles[1] |= necessary_tiles << (9 * 2),
+                (1, 2) => pack.necessary_tiles[2] |= necessary_tiles,
+                (1, 3) => pack.necessary_tiles[2] |= necessary_tiles << 9,
+                (1, 4) => pack.necessary_tiles[2] |= necessary_tiles << (9 * 2),
                 _ => unreachable!(),
             }
 
             match (num_pair, num_meld) {
-                (0, 0) => pack.unnecessary_tiles[0] |= unnecessary_tiles as u32,
-                (0, 1) => pack.unnecessary_tiles[0] |= (unnecessary_tiles as u32) << 9,
-                (0, 2) => pack.unnecessary_tiles[0] |= (unnecessary_tiles as u32) << (9 * 2),
+                (0, 0) => pack.unnecessary_tiles[0] |= unnecessary_tiles,
+                (0, 1) => pack.unnecessary_tiles[0] |= unnecessary_tiles << 9,
+                (0, 2) => pack.unnecessary_tiles[0] |= unnecessary_tiles << (9 * 2),
                 (0, 3) => {
-                    pack.unnecessary_tiles[0] |= (unnecessary_tiles as u32 & 0x01F0) << (9 * 3 - 4);
-                    pack.unnecessary_tiles[1] |= unnecessary_tiles as u32 & 0x0F;
+                    pack.unnecessary_tiles[0] |= (unnecessary_tiles & 0x01F0) << (9 * 3 - 4);
+                    pack.unnecessary_tiles[1] |= unnecessary_tiles & 0x0F;
                 }
-                (0, 4) => pack.unnecessary_tiles[1] |= (unnecessary_tiles as u32) << 4,
-                (1, 0) => pack.unnecessary_tiles[1] |= (unnecessary_tiles as u32) << (4 + 9),
-                (1, 1) => pack.unnecessary_tiles[1] |= (unnecessary_tiles as u32) << (4 + 9 * 2),
-                (1, 2) => pack.unnecessary_tiles[2] |= unnecessary_tiles as u32,
-                (1, 3) => pack.unnecessary_tiles[2] |= (unnecessary_tiles as u32) << 9,
-                (1, 4) => pack.unnecessary_tiles[2] |= (unnecessary_tiles as u32) << (9 * 2),
+                (0, 4) => pack.unnecessary_tiles[1] |= unnecessary_tiles << 4,
+                (1, 0) => pack.unnecessary_tiles[1] |= unnecessary_tiles << (4 + 9),
+                (1, 1) => pack.unnecessary_tiles[1] |= unnecessary_tiles << (4 + 9 * 2),
+                (1, 2) => pack.unnecessary_tiles[2] |= unnecessary_tiles,
+                (1, 3) => pack.unnecessary_tiles[2] |= unnecessary_tiles << 9,
+                (1, 4) => pack.unnecessary_tiles[2] |= unnecessary_tiles << (9 * 2),
                 _ => unreachable!(),
             }
         }
