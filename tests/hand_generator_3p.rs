@@ -55,7 +55,7 @@ pub fn build_table_3p<const N: usize>() -> Table<N> {
         }
     }
 
-    debug_assert!(table[0][0] == NUM_HANDS_3P[N - 1]);
+    debug_assert_eq!(table[0][0], NUM_HANDS_3P[N - 1]);
 
     table
 }
