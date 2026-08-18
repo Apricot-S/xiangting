@@ -83,61 +83,61 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_01() {
         assert!(verify_correctness_3p::<2>(), "There were mismatches.")
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_02() {
         assert!(verify_correctness_3p::<3>(), "There were mismatches.")
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_04() {
         assert!(verify_correctness_3p::<5>(), "There were mismatches.")
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_05() {
         assert!(verify_correctness_3p::<6>(), "There were mismatches.")
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_07() {
         assert!(verify_correctness_3p::<8>(), "There were mismatches.")
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_08() {
         assert!(verify_correctness_3p::<9>(), "There were mismatches.")
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_10() {
         assert!(verify_correctness_3p::<11>(), "There were mismatches.")
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_11() {
         assert!(verify_correctness_3p::<12>(), "There were mismatches.")
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_13() {
         assert!(verify_correctness_3p::<14>(), "There were mismatches.")
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_14() {
         assert!(verify_correctness_3p::<15>(), "There were mismatches.")
     }
