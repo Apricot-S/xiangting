@@ -87,7 +87,9 @@ pub(in super::super) fn calculate_replacement_number<R: PlayerRule>(bingpai: &Bi
     update_dp(&mut entry0, &entry2);
     update_dp_final(&mut entry0, &entry3);
 
-    entry0[5 + bingpai.num_required_bingpai_mianzi() as usize] as u8
+    #[allow(clippy::cast_possible_truncation)]
+    let replacement_number = entry0[5 + bingpai.num_required_bingpai_mianzi() as usize] as u8;
+    replacement_number
 }
 
 #[cfg(test)]

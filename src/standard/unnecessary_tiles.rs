@@ -198,7 +198,9 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
     update_dp_final(&mut entry0, &entry3);
 
     let n = 5 + bingpai.num_required_bingpai_mianzi() as usize;
-    (entry0.numbers[n] as u8, entry0.tiles[n])
+    #[allow(clippy::cast_possible_truncation)]
+    let replacement_number = entry0.numbers[n] as u8;
+    (replacement_number, entry0.tiles[n])
 }
 
 #[cfg(test)]
