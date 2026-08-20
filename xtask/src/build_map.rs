@@ -21,6 +21,8 @@ use self::replacement_number::{
     get_19m_replacement_number, get_shupai_replacement_number, get_zipai_replacement_number,
 };
 
+const MAX_REPLACEMENT_NUMBER: u8 = 14;
+
 #[derive(Default)]
 struct MapValue {
     replacement_number: ReplacementNumberMapValue,
@@ -32,7 +34,6 @@ type Map = Vec<MapValue>;
 
 fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
     debug_assert!([9, 7, 2].contains(&N));
-    const MAX_REPLACEMENT_NUMBER: u8 = 14;
 
     let mut pack = MapValue::default();
 
