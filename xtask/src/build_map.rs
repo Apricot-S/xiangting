@@ -335,5 +335,5 @@ pub fn run(args: &[String]) {
     }
 
     let elapsed_time = start.elapsed();
-    println!("elapsed time: {:?}", elapsed_time);
+    println!("elapsed time: {elapsed_time:?}");
 }
