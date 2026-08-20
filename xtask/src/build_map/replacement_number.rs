@@ -196,6 +196,7 @@ pub(super) fn get_shupai_replacement_number(
     (upper_bound, necessary_tiles, unnecessary_tiles)
 }
 
+#[allow(clippy::trivially_copy_pass_by_ref)]
 pub(super) fn get_zipai_replacement_number(
     hand: &[u8; 7],
     num_meld: u8,
