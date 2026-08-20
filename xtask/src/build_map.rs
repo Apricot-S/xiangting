@@ -159,7 +159,7 @@ fn create_entry<const N: usize>(hand: &[u8; N], map: &mut Map) {
     map[h] = pack_values(hand);
 }
 
-fn build_map<const N: usize>(hand: &mut [u8; N], i: usize, n: usize, map: &mut Map) {
+fn build_map<const N: usize>(hand: &mut [u8; N], i: usize, n: u8, map: &mut Map) {
     debug_assert!([9, 7, 2].contains(&N));
     debug_assert!(i <= N);
     debug_assert!(n <= 14);
@@ -174,7 +174,7 @@ fn build_map<const N: usize>(hand: &mut [u8; N], i: usize, n: usize, map: &mut M
             break;
         }
 
-        hand[i] = c as u8;
+        hand[i] = c;
         build_map(hand, i + 1, n + c, map);
         hand[i] = 0;
     }
