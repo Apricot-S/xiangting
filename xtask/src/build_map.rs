@@ -32,6 +32,7 @@ struct MapValue {
 
 type Map = Vec<MapValue>;
 
+#[allow(clippy::too_many_lines)]
 fn pack_values<const N: usize>(hand: &[u8; N]) -> MapValue {
     debug_assert!([9, 7, 2].contains(&N));
 
