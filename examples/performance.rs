@@ -65,7 +65,7 @@ fn main() {
         .map(|_| generate_random_pure_hand(&mut rng))
         .collect();
 
-    println!("Running {} hands...", num_hands);
+    println!("Running {num_hands} hands...");
 
     let start = Instant::now();
 
@@ -78,5 +78,5 @@ fn main() {
     let total_ns = duration.as_nanos();
     let avg_ns = total_ns / (num_hands as u128);
 
-    println!("Average time: {} ns / hand", avg_ns);
+    println!("Average time: {avg_ns} ns / hand");
 }
