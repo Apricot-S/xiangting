@@ -43,8 +43,17 @@ jobs:
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
 
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets --all-features
+      - name: Clippy (default)
+        run: cargo clippy --workspace --all-targets
+
+      - name: Clippy (build-map library)
+        run: cargo clippy -p xiangting --lib --features build-map
+
+      - name: Clippy (build-map xtask)
+        run: cargo clippy -p xtask --all-targets --features build-map
+
+      - name: Clippy (correctness tests)
+        run: cargo clippy -p xiangting --tests --features correctness
 
   build:
     runs-on: ubuntu-latest
