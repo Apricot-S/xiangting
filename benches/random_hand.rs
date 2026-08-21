@@ -6,6 +6,7 @@ use rand::seq::{IndexedRandom, SliceRandom};
 use rand::{Rng, SeedableRng};
 use rand_pcg::Pcg64Mcg;
 
+#[must_use]
 pub fn create_rng() -> Pcg64Mcg {
     Pcg64Mcg::seed_from_u64(42)
 }
