@@ -76,7 +76,7 @@ fn main() {
 
     let duration = start.elapsed();
     let total_ns = duration.as_nanos();
-    let avg_ns = total_ns / (num_hands as u128);
+    let avg_ns = total_ns / u128::try_from(num_hands).expect("num_hands is positive");
 
     println!("Average time: {avg_ns} ns / hand");
 }
