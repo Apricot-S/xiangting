@@ -11,6 +11,10 @@ pub fn create_rng() -> Pcg64Mcg {
     Pcg64Mcg::seed_from_u64(42)
 }
 
+fn tile_from_index(index: usize) -> u8 {
+    u8::try_from(index).expect("tile index must fit in u8")
+}
+
 #[inline]
 fn choose_hand_length(rng: &mut impl Rng) -> usize {
     const CHOICES: [usize; 10] = [1, 2, 4, 5, 7, 8, 10, 11, 13, 14];
@@ -28,7 +32,7 @@ fn fill_hand(wall: &[u8], hand_length: usize) -> [u8; 34] {
 }
 
 pub fn generate_random_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
-    let mut wall: [u8; 136] = std::array::from_fn(|i| (i / 4) as u8);
+    let mut wall: [u8; 136] = std::array::from_fn(|i| tile_from_index(i / 4));
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);
@@ -41,9 +45,9 @@ pub fn generate_random_half_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
 
     let mut wall: [u8; 64] = std::array::from_fn(|i| {
         if i < 36 {
-            (i / 4 + color_start) as u8
+            tile_from_index(i / 4 + color_start)
         } else {
-            ((i - 36) / 4 + 27) as u8
+            tile_from_index((i - 36) / 4 + 27)
         }
     });
     wall.shuffle(rng);
@@ -56,7 +60,7 @@ pub fn generate_random_half_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
 pub fn generate_random_full_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
     let color_start = rng.random_range(0..3) * 9;
 
-    let mut wall: [u8; 36] = std::array::from_fn(|i| (i / 4 + color_start) as u8);
+    let mut wall: [u8; 36] = std::array::from_fn(|i| tile_from_index(i / 4 + color_start));
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);
