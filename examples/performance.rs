@@ -16,6 +16,10 @@ fn create_rng() -> impl Rng {
     Pcg64Mcg::seed_from_u64(42)
 }
 
+fn tile_from_index(index: usize) -> u8 {
+    u8::try_from(index).expect("tile index must fit in u8")
+}
+
 #[inline]
 fn choose_hand_length(rng: &mut impl Rng) -> usize {
     const CHOICES: [usize; 10] = [1, 2, 4, 5, 7, 8, 10, 11, 13, 14];
@@ -33,7 +37,7 @@ fn fill_hand(wall: &[u8], hand_length: usize) -> [u8; 34] {
 }
 
 fn generate_random_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
-    let mut wall: [u8; 136] = std::array::from_fn(|i| (i / 4) as u8);
+    let mut wall: [u8; 136] = std::array::from_fn(|i| tile_from_index(i / 4));
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);
@@ -65,7 +69,7 @@ fn main() {
         .map(|_| generate_random_pure_hand(&mut rng))
         .collect();
 
-    println!("Running {} hands...", num_hands);
+    println!("Running {num_hands} hands...");
 
     let start = Instant::now();
 
@@ -76,7 +80,7 @@ fn main() {
 
     let duration = start.elapsed();
     let total_ns = duration.as_nanos();
-    let avg_ns = total_ns / (num_hands as u128);
+    let avg_ns = total_ns / u128::try_from(num_hands).expect("num_hands is positive");
 
-    println!("Average time: {} ns / hand", avg_ns);
+    println!("Average time: {avg_ns} ns / hand");
 }

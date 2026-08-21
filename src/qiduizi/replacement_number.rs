@@ -14,7 +14,7 @@ pub(in super::super) fn calculate_replacement_number<R: PlayerRule>(bingpai: &Bi
         .iter()
         .filter(|&&count| count > 0)
         .fold((0, 0), |(num_kinds, num_duizi), &count| {
-            (num_kinds + 1, num_duizi + (count >= 2) as u8)
+            (num_kinds + 1, num_duizi + u8::from(count >= 2))
         });
 
     7 - num_duizi + 7u8.saturating_sub(num_kinds)

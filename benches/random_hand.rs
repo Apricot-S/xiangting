@@ -3,11 +3,16 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 use rand::seq::{IndexedRandom, SliceRandom};
-use rand::{Rng, SeedableRng};
+use rand::{Rng, RngExt, SeedableRng};
 use rand_pcg::Pcg64Mcg;
 
+#[must_use]
 pub fn create_rng() -> Pcg64Mcg {
     Pcg64Mcg::seed_from_u64(42)
+}
+
+fn tile_from_index(index: usize) -> u8 {
+    u8::try_from(index).expect("tile index must fit in u8")
 }
 
 #[inline]
@@ -27,7 +32,7 @@ fn fill_hand(wall: &[u8], hand_length: usize) -> [u8; 34] {
 }
 
 pub fn generate_random_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
-    let mut wall: [u8; 136] = std::array::from_fn(|i| (i / 4) as u8);
+    let mut wall: [u8; 136] = std::array::from_fn(|i| tile_from_index(i / 4));
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);
@@ -36,12 +41,15 @@ pub fn generate_random_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
 }
 
 pub fn generate_random_half_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
-    let color_start = [0, 9, 18].choose(rng).unwrap();
+    let color_start = rng.random_range(0..3) * 9;
 
-    let suits: [u8; 36] = std::array::from_fn(|i| (i / 4 + color_start) as u8);
-    let honors: [u8; 28] = std::array::from_fn(|i| (i / 4 + 27) as u8);
-    let mut combined = suits.into_iter().chain(honors);
-    let mut wall: [u8; 64] = std::array::from_fn(|_| combined.next().unwrap());
+    let mut wall: [u8; 64] = std::array::from_fn(|i| {
+        if i < 36 {
+            tile_from_index(i / 4 + color_start)
+        } else {
+            tile_from_index((i - 36) / 4 + 27)
+        }
+    });
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);
@@ -50,9 +58,9 @@ pub fn generate_random_half_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
 }
 
 pub fn generate_random_full_flush_pure_hand(rng: &mut impl Rng) -> [u8; 34] {
-    let color_start = [0, 9, 18].choose(rng).unwrap();
+    let color_start = rng.random_range(0..3) * 9;
 
-    let mut wall: [u8; 36] = std::array::from_fn(|i| (i / 4 + color_start) as u8);
+    let mut wall: [u8; 36] = std::array::from_fn(|i| tile_from_index(i / 4 + color_start));
     wall.shuffle(rng);
 
     let hand_length = choose_hand_length(rng);

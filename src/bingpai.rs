@@ -24,7 +24,7 @@ pub(crate) enum ThreePlayer {}
 impl PlayerRule for FourPlayer {
     const IS_THREE_PLAYER: bool = false;
 
-    #[inline(always)]
+    #[inline]
     fn validate(_tile_counts: &TileCounts) -> Result<(), BingpaiError> {
         Ok(())
     }
@@ -33,10 +33,11 @@ impl PlayerRule for FourPlayer {
 impl PlayerRule for ThreePlayer {
     const IS_THREE_PLAYER: bool = true;
 
-    #[inline(always)]
+    #[inline]
     fn validate(tile_counts: &TileCounts) -> Result<(), BingpaiError> {
         if let Some(i) = tile_counts[1..=7].iter().position(|&count| count != 0) {
-            return Err(BingpaiError::InvalidTileForThreePlayer((i + 1) as Tile));
+            let tile = Tile::try_from(i + 1).expect("three-player tile index must fit in u8");
+            return Err(BingpaiError::InvalidTileForThreePlayer(tile));
         }
 
         Ok(())
@@ -77,7 +78,7 @@ fn validate_tile_counts(tile_counts: &TileCounts) -> Result<u8, BingpaiError> {
         .enumerate()
         .find(|(_, c)| **c > MAX_TILE_COPIES)
         .map(|(i, &c)| BingpaiError::TooManyCopies {
-            tile: i as Tile,
+            tile: Tile::try_from(i).expect("tile index must fit in u8"),
             count: c,
         })
         .map_or(Ok(()), Err)?;
@@ -103,13 +104,13 @@ impl<'a, R: PlayerRule> Bingpai<'a, R> {
         })
     }
 
-    #[inline(always)]
+    #[inline]
     #[must_use]
     pub(crate) fn tile_counts(&self) -> &'a TileCounts {
         self.tile_counts
     }
 
-    #[inline(always)]
+    #[inline]
     #[must_use]
     pub(crate) fn num_required_bingpai_mianzi(&self) -> u8 {
         self.num_required_bingpai_mianzi

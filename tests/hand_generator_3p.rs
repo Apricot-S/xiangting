@@ -6,8 +6,8 @@
 //!
 //! Reference:
 //!
-//! https://gist.github.com/tomohxx/fc0b72e3fe68744a6ac56a64a41ab8d7
-//! https://gist.github.com/Apricot-S/f59903a44909206ad9e79390665f7253
+//! <https://gist.github.com/tomohxx/fc0b72e3fe68744a6ac56a64a41ab8d7>
+//! <https://gist.github.com/Apricot-S/f59903a44909206ad9e79390665f7253>
 
 use std::cmp::min;
 
@@ -40,6 +40,7 @@ pub const NUM_HANDS_3P: [u64; 15] = [
 // n = 0, 1, ..., N (N = 1, ..., 14)
 type Table<const N: usize> = [[u64; N]; NUM_TILE_INDEX_3P + 1];
 
+#[must_use]
 pub fn build_table_3p<const N: usize>() -> Table<N> {
     debug_assert!((1..=15).contains(&N));
 
@@ -54,11 +55,12 @@ pub fn build_table_3p<const N: usize>() -> Table<N> {
         }
     }
 
-    debug_assert!(table[0][0] == NUM_HANDS_3P[N - 1]);
+    debug_assert_eq!(table[0][0], NUM_HANDS_3P[N - 1]);
 
     table
 }
 
+#[must_use]
 pub fn decode_3p<const N: usize>(hash: u64, table: &Table<N>) -> TileCounts {
     let mut hand_3p = [0u8; NUM_TILE_INDEX_3P];
     let mut h = 0;

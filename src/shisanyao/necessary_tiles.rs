@@ -31,7 +31,7 @@ pub(in super::super) fn calculate_necessary_tiles<R: PlayerRule>(
             },
         );
 
-    let replacement_number = 14 - num_kinds - (has_jiangpai as u8);
+    let replacement_number = 14 - num_kinds - u8::from(has_jiangpai);
 
     let necessary_tiles = if has_jiangpai {
         waits

@@ -27,39 +27,42 @@
 //! # }
 //! ```
 
-#[cfg(not(feature = "build-file"))]
+#[cfg(test)]
+extern crate alloc;
+
+#[cfg(not(feature = "build-map"))]
 mod bingpai;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 mod config;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 mod necessary_tiles;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 mod qiduizi;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 mod replacement_number;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 mod shisanyao;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 mod standard;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 mod tile;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 mod unnecessary_tiles;
 
-#[cfg(all(test, not(feature = "build-file")))]
+#[cfg(all(test, not(feature = "build-map")))]
 mod test_utils;
 
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 pub use bingpai::BingpaiError;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 pub use config::PlayerCount;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 pub use necessary_tiles::calculate_necessary_tiles;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 pub use replacement_number::calculate_replacement_number;
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 pub use tile::{Tile, TileCounts, TileFlags, TileFlagsExt};
-#[cfg(not(feature = "build-file"))]
+#[cfg(not(feature = "build-map"))]
 pub use unnecessary_tiles::calculate_unnecessary_tiles;
 
 #[cfg(feature = "build-map")]

@@ -36,9 +36,6 @@ mod tests {
             let begin = i * chunk_size + i.min(remainder);
             let end = begin + chunk_size + extra;
 
-            let table = table;
-            let tile_limits = tile_limits;
-
             let handle = thread::spawn(move || {
                 for hash in begin..end {
                     let hand = decode_3p(hash, &table);
@@ -50,10 +47,12 @@ mod tests {
                     let result_xiangting =
                         calculate_replacement_number(&hand, PlayerCount::Three).unwrap();
 
-                    if result_shanten_dp as u8 != result_xiangting {
+                    if result_shanten_dp
+                        != i8::try_from(result_xiangting)
+                            .expect("replacement number must fit in i8")
+                    {
                         return Some(format!(
-                            "Hand: {:?}, shanten-dp: {}, xiangting: {}\n",
-                            hand, result_shanten_dp, result_xiangting,
+                            "Hand: {hand:?}, shanten-dp: {result_shanten_dp}, xiangting: {result_xiangting}\n"
                         ));
                     }
                 }
@@ -64,14 +63,15 @@ mod tests {
             handles.push(handle);
         }
 
-        let results: Vec<_> = handles.into_iter().map(|handle| handle.join()).collect();
-        if results.iter().any(|result| result.is_err()) {
-            panic!("Test failed due to a thread panic.");
-        }
+        let results: Vec<_> = handles.into_iter().map(thread::JoinHandle::join).collect();
+        assert!(
+            !results.iter().any(Result::is_err),
+            "Test failed due to a thread panic."
+        );
 
         let mismatches: Vec<_> = results
             .into_iter()
-            .filter_map(|result| result.ok())
+            .filter_map(Result::ok)
             .flatten()
             .collect();
 
@@ -86,62 +86,62 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_01() {
-        assert!(verify_correctness_3p::<2>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<2>(), "There were mismatches.");
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_02() {
-        assert!(verify_correctness_3p::<3>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<3>(), "There were mismatches.");
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_04() {
-        assert!(verify_correctness_3p::<5>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<5>(), "There were mismatches.");
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_05() {
-        assert!(verify_correctness_3p::<6>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<6>(), "There were mismatches.");
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_07() {
-        assert!(verify_correctness_3p::<8>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<8>(), "There were mismatches.");
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_08() {
-        assert!(verify_correctness_3p::<9>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<9>(), "There were mismatches.");
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_10() {
-        assert!(verify_correctness_3p::<11>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<11>(), "There were mismatches.");
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_11() {
-        assert!(verify_correctness_3p::<12>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<12>(), "There were mismatches.");
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_13() {
-        assert!(verify_correctness_3p::<14>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<14>(), "There were mismatches.");
     }
 
     #[test]
-    #[ignore]
+    #[ignore = "exhaustive correctness check"]
     fn verify_correctness_3p_14() {
-        assert!(verify_correctness_3p::<15>(), "There were mismatches.")
+        assert!(verify_correctness_3p::<15>(), "There were mismatches.");
     }
 }

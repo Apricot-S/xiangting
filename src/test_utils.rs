@@ -27,12 +27,8 @@ fn parse_tile_indices(hand: &str) -> impl Iterator<Item = usize> + '_ {
         _ => {
             let d = c.to_digit(10).expect("invalid digit") as usize;
             let base = current_color.expect("digit without type");
-            if !(1..=9).contains(&d) {
-                panic!("tile number must be 1-9, got {}", d);
-            }
-            if base == 27 && d > 7 {
-                panic!("honor tile must be 1-7, got {}", d);
-            }
+            assert!((1..=9).contains(&d), "tile number must be 1-9, got {d}");
+            assert!(base != 27 || d <= 7, "honor tile must be 1-7, got {d}");
             Some(base + d - 1)
         }
     })
@@ -118,20 +114,20 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
+    #[should_panic(expected = "digit without type")]
     fn test_from_code_tile_counts_no_type() {
         TileCounts::from_code("123456");
     }
 
     #[test]
-    #[should_panic]
+    #[should_panic(expected = "tile number must be 1-9, got 0")]
     fn test_from_code_tile_counts_offset_out_of_range_number() {
         // 0m does not exist
         TileCounts::from_code("0m");
     }
 
     #[test]
-    #[should_panic]
+    #[should_panic(expected = "honor tile must be 1-7, got 8")]
     fn test_from_code_tile_counts_offset_out_of_range_z() {
         // 8z does not exist
         TileCounts::from_code("8z");

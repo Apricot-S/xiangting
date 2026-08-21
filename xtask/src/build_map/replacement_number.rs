@@ -7,64 +7,63 @@
 //!
 //! Reference:
 //!
-//! https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java
-//! https://tomohxx.github.io/mahjong-algorithm-book/dfs/
-//! https://qiita.com/Cryolite/items/75d504c7489426806b87
+//! <https://github.com/gimite/MjaiClients/blob/master/src/org/ymatsux/mjai/client/ShantensuUtil.java>
+//! <https://tomohxx.github.io/mahjong-algorithm-book/dfs/>
+//! <https://qiita.com/Cryolite/items/75d504c7489426806b87>
 
 #![allow(clippy::too_many_arguments)]
 
 use std::cmp::Ordering;
 
-/// An element that represents the number of blocks (meld, pair) made up of
-/// certain tiles in a winning hand.
+/// The numbers of sequences, triplets, and pairs made up of certain tiles in a winning hand.
 struct DecompositionElement {
-    num_sequence: u8,
-    num_triplet: u8,
-    num_pair: u8,
+    sequences: u8,
+    triplets: u8,
+    pairs: u8,
 }
 
 /// Table of decomposition elements.
 ///
 /// (3, 0, 0) and (4, 0, 0) are not necessary for calculating the partial replacement number.
-/// Combinations with `num_sequence` greater than 2 can be covered by other elements.
+/// Combinations with `sequences` greater than 2 can be covered by other elements.
 ///
 /// Example:
 /// * (123 123 123) contains the same number of tiles as (111) (222) (333).
 /// * (123 123 123 123) contains the same number of tiles as (123 111) (222) (333).
 #[rustfmt::skip]
 const D_TABLE: [DecompositionElement; 8] = [
-    DecompositionElement { num_sequence: 0, num_triplet: 0, num_pair: 0 },
-    DecompositionElement { num_sequence: 0, num_triplet: 0, num_pair: 1 },
-    DecompositionElement { num_sequence: 0, num_triplet: 1, num_pair: 0 },
-    DecompositionElement { num_sequence: 1, num_triplet: 0, num_pair: 0 },
-    DecompositionElement { num_sequence: 1, num_triplet: 0, num_pair: 1 },
-    DecompositionElement { num_sequence: 1, num_triplet: 1, num_pair: 0 },
-    DecompositionElement { num_sequence: 2, num_triplet: 0, num_pair: 0 },
-    DecompositionElement { num_sequence: 2, num_triplet: 0, num_pair: 1 },
+    DecompositionElement { sequences: 0, triplets: 0, pairs: 0 },
+    DecompositionElement { sequences: 0, triplets: 0, pairs: 1 },
+    DecompositionElement { sequences: 0, triplets: 1, pairs: 0 },
+    DecompositionElement { sequences: 1, triplets: 0, pairs: 0 },
+    DecompositionElement { sequences: 1, triplets: 0, pairs: 1 },
+    DecompositionElement { sequences: 1, triplets: 1, pairs: 0 },
+    DecompositionElement { sequences: 2, triplets: 0, pairs: 0 },
+    DecompositionElement { sequences: 2, triplets: 0, pairs: 1 },
 ];
 
 /// Table of number of melds included in decomposition elements.
 const M_TABLE: [u8; 8] = [
-    D_TABLE[0].num_sequence + D_TABLE[0].num_triplet,
-    D_TABLE[1].num_sequence + D_TABLE[1].num_triplet,
-    D_TABLE[2].num_sequence + D_TABLE[2].num_triplet,
-    D_TABLE[3].num_sequence + D_TABLE[3].num_triplet,
-    D_TABLE[4].num_sequence + D_TABLE[4].num_triplet,
-    D_TABLE[5].num_sequence + D_TABLE[5].num_triplet,
-    D_TABLE[6].num_sequence + D_TABLE[6].num_triplet,
-    D_TABLE[7].num_sequence + D_TABLE[7].num_triplet,
+    D_TABLE[0].sequences + D_TABLE[0].triplets,
+    D_TABLE[1].sequences + D_TABLE[1].triplets,
+    D_TABLE[2].sequences + D_TABLE[2].triplets,
+    D_TABLE[3].sequences + D_TABLE[3].triplets,
+    D_TABLE[4].sequences + D_TABLE[4].triplets,
+    D_TABLE[5].sequences + D_TABLE[5].triplets,
+    D_TABLE[6].sequences + D_TABLE[6].triplets,
+    D_TABLE[7].sequences + D_TABLE[7].triplets,
 ];
 
 /// Table of number of tiles included in decomposition elements.
 const N_TABLE: [u8; 8] = [
-    D_TABLE[0].num_sequence + 3 * D_TABLE[0].num_triplet + 2 * D_TABLE[0].num_pair,
-    D_TABLE[1].num_sequence + 3 * D_TABLE[1].num_triplet + 2 * D_TABLE[1].num_pair,
-    D_TABLE[2].num_sequence + 3 * D_TABLE[2].num_triplet + 2 * D_TABLE[2].num_pair,
-    D_TABLE[3].num_sequence + 3 * D_TABLE[3].num_triplet + 2 * D_TABLE[3].num_pair,
-    D_TABLE[4].num_sequence + 3 * D_TABLE[4].num_triplet + 2 * D_TABLE[4].num_pair,
-    D_TABLE[5].num_sequence + 3 * D_TABLE[5].num_triplet + 2 * D_TABLE[5].num_pair,
-    D_TABLE[6].num_sequence + 3 * D_TABLE[6].num_triplet + 2 * D_TABLE[6].num_pair,
-    D_TABLE[7].num_sequence + 3 * D_TABLE[7].num_triplet + 2 * D_TABLE[7].num_pair,
+    D_TABLE[0].sequences + 3 * D_TABLE[0].triplets + 2 * D_TABLE[0].pairs,
+    D_TABLE[1].sequences + 3 * D_TABLE[1].triplets + 2 * D_TABLE[1].pairs,
+    D_TABLE[2].sequences + 3 * D_TABLE[2].triplets + 2 * D_TABLE[2].pairs,
+    D_TABLE[3].sequences + 3 * D_TABLE[3].triplets + 2 * D_TABLE[3].pairs,
+    D_TABLE[4].sequences + 3 * D_TABLE[4].triplets + 2 * D_TABLE[4].pairs,
+    D_TABLE[5].sequences + 3 * D_TABLE[5].triplets + 2 * D_TABLE[5].pairs,
+    D_TABLE[6].sequences + 3 * D_TABLE[6].triplets + 2 * D_TABLE[6].pairs,
+    D_TABLE[7].sequences + 3 * D_TABLE[7].triplets + 2 * D_TABLE[7].pairs,
 ];
 
 fn get_hand_distance<const N: usize>(target_hand: &[u8; N], hand: &[u8; N]) -> u8 {
@@ -139,10 +138,10 @@ pub(super) fn get_shupai_replacement_number(
         if current_num_meld + m > num_meld {
             continue;
         }
-        if current_num_pair + d.num_pair > num_pair {
+        if current_num_pair + d.pairs > num_pair {
             continue;
         }
-        if current_rank >= 7 && d.num_sequence > 0 {
+        if current_rank >= 7 && d.sequences > 0 {
             // No sequence may start with 8, 9.
             continue;
         }
@@ -153,8 +152,8 @@ pub(super) fn get_shupai_replacement_number(
 
         target_hand[current_rank] += n;
         if current_rank < 7 {
-            target_hand[current_rank + 1] += d.num_sequence;
-            target_hand[current_rank + 2] += d.num_sequence;
+            target_hand[current_rank + 1] += d.sequences;
+            target_hand[current_rank + 2] += d.sequences;
         }
 
         let lower_bound = get_hand_distance(target_hand, hand);
@@ -165,7 +164,7 @@ pub(super) fn get_shupai_replacement_number(
                 num_pair,
                 current_rank + 1,
                 current_num_meld + m,
-                current_num_pair + d.num_pair,
+                current_num_pair + d.pairs,
                 target_hand,
                 upper_bound,
                 necessary_tiles,
@@ -187,8 +186,8 @@ pub(super) fn get_shupai_replacement_number(
         }
 
         if current_rank < 7 {
-            target_hand[current_rank + 2] -= d.num_sequence;
-            target_hand[current_rank + 1] -= d.num_sequence;
+            target_hand[current_rank + 2] -= d.sequences;
+            target_hand[current_rank + 1] -= d.sequences;
         }
         target_hand[current_rank] -= n;
     }
@@ -196,6 +195,7 @@ pub(super) fn get_shupai_replacement_number(
     (upper_bound, necessary_tiles, unnecessary_tiles)
 }
 
+#[allow(clippy::trivially_copy_pass_by_ref)]
 pub(super) fn get_zipai_replacement_number(
     hand: &[u8; 7],
     num_meld: u8,
@@ -242,12 +242,12 @@ pub(super) fn get_zipai_replacement_number(
         .zip(M_TABLE.iter().zip(N_TABLE.iter()))
         .take(3)
     {
-        debug_assert!(d.num_sequence == 0);
+        debug_assert_eq!(d.sequences, 0);
 
         if current_num_meld + m > num_meld {
             continue;
         }
-        if current_num_pair + d.num_pair > num_pair {
+        if current_num_pair + d.pairs > num_pair {
             continue;
         }
         if target_hand[current_rank] + n > 4 {
@@ -265,7 +265,7 @@ pub(super) fn get_zipai_replacement_number(
                 num_pair,
                 current_rank + 1,
                 current_num_meld + m,
-                current_num_pair + d.num_pair,
+                current_num_pair + d.pairs,
                 target_hand,
                 upper_bound,
                 necessary_tiles,
@@ -338,12 +338,12 @@ pub(super) fn get_19m_replacement_number(
         .zip(M_TABLE.iter().zip(N_TABLE.iter()))
         .take(3)
     {
-        debug_assert!(d.num_sequence == 0);
+        debug_assert_eq!(d.sequences, 0);
 
         if current_num_meld + m > num_meld {
             continue;
         }
-        if current_num_pair + d.num_pair > num_pair {
+        if current_num_pair + d.pairs > num_pair {
             continue;
         }
         if target_hand[current_rank] + n > 4 {
@@ -361,7 +361,7 @@ pub(super) fn get_19m_replacement_number(
                 num_pair,
                 current_rank + 8,
                 current_num_meld + m,
-                current_num_pair + d.num_pair,
+                current_num_pair + d.pairs,
                 target_hand,
                 upper_bound,
                 necessary_tiles,

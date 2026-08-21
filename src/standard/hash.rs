@@ -7,6 +7,7 @@ use super::wanzi_19_table::WANZI_19_TABLE;
 use super::zipai_table::ZIPAI_TABLE;
 
 #[inline]
+#[must_use]
 pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
     debug_assert_eq!(single_color_bingpai.len(), 9);
 
@@ -26,6 +27,7 @@ pub fn hash_shupai(single_color_bingpai: &[u8]) -> usize {
 }
 
 #[inline]
+#[must_use]
 pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
     debug_assert_eq!(zipai_bingpai.len(), 7);
 
@@ -45,6 +47,7 @@ pub fn hash_zipai(zipai_bingpai: &[u8]) -> usize {
 }
 
 #[inline]
+#[must_use]
 pub fn hash_19m(wanzi_bingpai: &[u8]) -> usize {
     debug_assert_eq!(wanzi_bingpai.len(), 9);
 
@@ -106,7 +109,7 @@ mod tests {
             return;
         }
 
-        assert!(hand[i] == 0);
+        assert_eq!(hand[i], 0);
 
         for c in 0..=4 {
             if n + c > 14 {
@@ -121,7 +124,7 @@ mod tests {
     #[test]
     fn test_hash_shupai() {
         let mut hand = [0u8; 9];
-        let mut check = [0u8; SHUPAI_SIZE];
+        let mut check = alloc::vec![0u8; SHUPAI_SIZE];
         build_hand(0, &mut hand, 0, &mut check);
         assert!(check.iter().all(|&c| c == 1), "A logic error.");
     }
@@ -129,7 +132,7 @@ mod tests {
     #[test]
     fn test_hash_zipai() {
         let mut hand = [0u8; 7];
-        let mut check = [0u8; ZIPAI_SIZE];
+        let mut check = alloc::vec![0u8; ZIPAI_SIZE];
         build_hand(0, &mut hand, 0, &mut check);
         assert!(check.iter().all(|&c| c == 1), "A logic error.");
     }

@@ -143,7 +143,7 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
         let packed_rn_m = &WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m];
         let packed_ut_m = &WANZI_19_UNNECESSARY_TILES_MAP[hash_m];
         (
-            unpack_replacement_number(packed_rn_m),
+            unpack_replacement_number(*packed_rn_m),
             unpack_unnecessary_tiles(packed_ut_m),
         )
     } else {
@@ -151,7 +151,7 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
         let packed_rn_m = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_m];
         let packed_ut_m = &SHUPAI_UNNECESSARY_TILES_MAP[hash_m];
         (
-            unpack_replacement_number(packed_rn_m),
+            unpack_replacement_number(*packed_rn_m),
             unpack_unnecessary_tiles(packed_ut_m),
         )
     };
@@ -167,9 +167,9 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
     let packed_ut_s = &SHUPAI_UNNECESSARY_TILES_MAP[hash_s];
     let packed_ut_z = &ZIPAI_UNNECESSARY_TILES_MAP[hash_z];
 
-    let replacement_number_p = unpack_replacement_number(packed_rn_p);
-    let replacement_number_s = unpack_replacement_number(packed_rn_s);
-    let replacement_number_z = unpack_replacement_number(packed_rn_z);
+    let replacement_number_p = unpack_replacement_number(*packed_rn_p);
+    let replacement_number_s = unpack_replacement_number(*packed_rn_s);
+    let replacement_number_z = unpack_replacement_number(*packed_rn_z);
     let unnecessary_tiles_p = unpack_unnecessary_tiles(packed_ut_p);
     let unnecessary_tiles_s = unpack_unnecessary_tiles(packed_ut_s);
     let unnecessary_tiles_z = unpack_unnecessary_tiles(packed_ut_z);
@@ -177,19 +177,19 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
     let (mut entry0, entry1, entry2, entry3) = (
         Entry {
             numbers: replacement_number_m,
-            tiles: unnecessary_tiles_m.map(|t| t as TileFlags),
+            tiles: unnecessary_tiles_m.map(TileFlags::from),
         },
         Entry {
             numbers: replacement_number_p,
-            tiles: unnecessary_tiles_p.map(|t| (t as TileFlags) << 9),
+            tiles: unnecessary_tiles_p.map(|t| TileFlags::from(t) << 9),
         },
         Entry {
             numbers: replacement_number_s,
-            tiles: unnecessary_tiles_s.map(|t| (t as TileFlags) << 18),
+            tiles: unnecessary_tiles_s.map(|t| TileFlags::from(t) << 18),
         },
         Entry {
             numbers: replacement_number_z,
-            tiles: unnecessary_tiles_z.map(|t| (t as TileFlags) << 27),
+            tiles: unnecessary_tiles_z.map(|t| TileFlags::from(t) << 27),
         },
     );
 
@@ -198,7 +198,9 @@ pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
     update_dp_final(&mut entry0, &entry3);
 
     let n = 5 + bingpai.num_required_bingpai_mianzi() as usize;
-    (entry0.numbers[n] as u8, entry0.tiles[n])
+    #[allow(clippy::cast_possible_truncation)]
+    let replacement_number = entry0.numbers[n] as u8;
+    (replacement_number, entry0.tiles[n])
 }
 
 #[cfg(test)]

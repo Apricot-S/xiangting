@@ -59,7 +59,7 @@ fn shanten_number(c: &mut Criterion) {
         b.iter(|| {
             let hand = next_hand(&hands, &mut index);
             calculate_replacement_number(hand, PlayerCount::Four).unwrap()
-        })
+        });
     });
     group.bench_function("shanten-dp", |b| {
         let mut index = 0;
@@ -75,7 +75,7 @@ fn shanten_number(c: &mut Criterion) {
             )
             .unwrap()
             .unwrap()
-        })
+        });
     });
     group.finish();
 }
@@ -94,28 +94,28 @@ fn variant_shanten_number(c: &mut Criterion) {
         b.iter(|| {
             let hand = next_hand(&normal_hands, &mut index);
             calculate_replacement_number(hand, PlayerCount::Four).unwrap()
-        })
+        });
     });
     group.bench_function("half_flush", |b| {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&half_flush_hands, &mut index);
             calculate_replacement_number(hand, PlayerCount::Four).unwrap()
-        })
+        });
     });
     group.bench_function("full_flush", |b| {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&full_flush_hands, &mut index);
             calculate_replacement_number(hand, PlayerCount::Four).unwrap()
-        })
+        });
     });
     group.bench_function("non_simple", |b| {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&non_simple_hands, &mut index);
             calculate_replacement_number(hand, PlayerCount::Four).unwrap()
-        })
+        });
     });
     group.finish();
 }
@@ -132,7 +132,7 @@ fn necessary_tiles(c: &mut Criterion) {
         b.iter(|| {
             let hand = next_hand(&hands, &mut index);
             calculate_necessary_tiles(hand, PlayerCount::Four).unwrap()
-        })
+        });
     });
     group.bench_function("shanten-dp", |b| {
         let mut index = 0;
@@ -148,14 +148,14 @@ fn necessary_tiles(c: &mut Criterion) {
             )
             .unwrap()
             .unwrap()
-        })
+        });
     });
     group.bench_function("baseline", |b| {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&hands, &mut index);
             baseline::calculate_necessary_tiles(hand)
-        })
+        });
     });
     group.finish();
 }
@@ -172,7 +172,7 @@ fn unnecessary_tiles(c: &mut Criterion) {
         b.iter(|| {
             let hand = next_hand(&hands, &mut index);
             calculate_unnecessary_tiles(hand, PlayerCount::Four).unwrap()
-        })
+        });
     });
     group.bench_function("shanten-dp", |b| {
         let mut index = 0;
@@ -188,14 +188,14 @@ fn unnecessary_tiles(c: &mut Criterion) {
             )
             .unwrap()
             .unwrap()
-        })
+        });
     });
     group.bench_function("baseline", |b| {
         let mut index = 0;
         b.iter(|| {
             let hand = next_hand(&hands, &mut index);
             baseline::calculate_unnecessary_tiles(hand)
-        })
+        });
     });
     group.finish();
 }

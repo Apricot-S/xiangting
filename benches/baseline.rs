@@ -4,6 +4,10 @@
 
 use xiangting::{PlayerCount, TileCounts, calculate_replacement_number};
 
+/// # Panics
+///
+/// Panics if `bingpai` is not a valid four-player hand.
+#[must_use]
 pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
     let mut bingpai = *bingpai;
 
@@ -49,6 +53,10 @@ pub fn calculate_necessary_tiles(bingpai: &TileCounts) -> u64 {
     necessary_tiles
 }
 
+/// # Panics
+///
+/// Panics if `bingpai` is not a valid four-player hand.
+#[must_use]
 pub fn calculate_unnecessary_tiles(bingpai: &TileCounts) -> u64 {
     let mut bingpai = *bingpai;
 
