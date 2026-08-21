@@ -17,6 +17,17 @@ resolver = "3"
 members = [".", "xtask"]
 default-members = ["."]
 
+[workspace.lints.rust]
+warnings = "deny"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+unreadable_literal = "allow"
+
+[lints]
+workspace = true
+
 [dependencies]
 thiserror = { version = "2.0.17", default-features = false }
 
