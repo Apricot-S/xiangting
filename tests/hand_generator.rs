@@ -84,123 +84,118 @@ pub fn decode<const N: usize>(hash: u64, table: &Table<N>) -> TileCounts {
     hand
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[inline]
+fn to_count34(hand: &[usize]) -> TileCounts {
+    hand.iter().fold([0u8; NUM_TILE_INDEX], |mut counts, &t| {
+        counts[t] += 1;
+        counts
+    })
+}
 
-    #[inline]
-    fn to_count34(hand: &[usize]) -> TileCounts {
-        hand.iter().fold([0u8; NUM_TILE_INDEX], |mut counts, &t| {
-            counts[t] += 1;
-            counts
-        })
-    }
+fn generate_hands<const N: usize>(expected_first: TileCounts, expected_last: TileCounts) {
+    let table = build_table::<N>();
 
-    fn generate_hands<const N: usize>(expected_first: TileCounts, expected_last: TileCounts) {
-        let table = build_table::<N>();
+    let first_hand = decode(NUM_HANDS[N - 1] - 1, &table);
+    let last_hand = decode(0, &table);
 
-        let first_hand = decode(NUM_HANDS[N - 1] - 1, &table);
-        let last_hand = decode(0, &table);
+    assert_eq!(first_hand, expected_first);
+    assert_eq!(last_hand, expected_last);
+}
 
-        assert_eq!(first_hand, expected_first);
-        assert_eq!(last_hand, expected_last);
-    }
+#[test]
+fn generate_hands_01() {
+    let expected_first = to_count34(&[0]);
+    let expected_last = to_count34(&[33]);
+    generate_hands::<2>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_01() {
-        let expected_first = to_count34(&[0]);
-        let expected_last = to_count34(&[33]);
-        generate_hands::<2>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_02() {
+    let expected_first = to_count34(&[0, 0]);
+    let expected_last = to_count34(&[33, 33]);
+    generate_hands::<3>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_02() {
-        let expected_first = to_count34(&[0, 0]);
-        let expected_last = to_count34(&[33, 33]);
-        generate_hands::<3>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_03() {
+    let expected_first = to_count34(&[0, 0, 0]);
+    let expected_last = to_count34(&[33, 33, 33]);
+    generate_hands::<4>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_03() {
-        let expected_first = to_count34(&[0, 0, 0]);
-        let expected_last = to_count34(&[33, 33, 33]);
-        generate_hands::<4>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_04() {
+    let expected_first = to_count34(&[0, 0, 0, 0]);
+    let expected_last = to_count34(&[33, 33, 33, 33]);
+    generate_hands::<5>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_04() {
-        let expected_first = to_count34(&[0, 0, 0, 0]);
-        let expected_last = to_count34(&[33, 33, 33, 33]);
-        generate_hands::<5>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_05() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1]);
+    let expected_last = to_count34(&[32, 33, 33, 33, 33]);
+    generate_hands::<6>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_05() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1]);
-        let expected_last = to_count34(&[32, 33, 33, 33, 33]);
-        generate_hands::<6>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_06() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1, 1]);
+    let expected_last = to_count34(&[32, 32, 33, 33, 33, 33]);
+    generate_hands::<7>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_06() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1, 1]);
-        let expected_last = to_count34(&[32, 32, 33, 33, 33, 33]);
-        generate_hands::<7>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_07() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1]);
+    let expected_last = to_count34(&[32, 32, 32, 33, 33, 33, 33]);
+    generate_hands::<8>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_07() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1]);
-        let expected_last = to_count34(&[32, 32, 32, 33, 33, 33, 33]);
-        generate_hands::<8>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_08() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1]);
+    let expected_last = to_count34(&[32, 32, 32, 32, 33, 33, 33, 33]);
+    generate_hands::<9>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_08() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1]);
-        let expected_last = to_count34(&[32, 32, 32, 32, 33, 33, 33, 33]);
-        generate_hands::<9>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_09() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2]);
+    let expected_last = to_count34(&[31, 32, 32, 32, 32, 33, 33, 33, 33]);
+    generate_hands::<10>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_09() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2]);
-        let expected_last = to_count34(&[31, 32, 32, 32, 32, 33, 33, 33, 33]);
-        generate_hands::<10>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_10() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2]);
+    let expected_last = to_count34(&[31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
+    generate_hands::<11>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_10() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2]);
-        let expected_last = to_count34(&[31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
-        generate_hands::<11>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_11() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2]);
+    let expected_last = to_count34(&[31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
+    generate_hands::<12>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_11() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2]);
-        let expected_last = to_count34(&[31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
-        generate_hands::<12>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_12() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]);
+    let expected_last = to_count34(&[31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
+    generate_hands::<13>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_12() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]);
-        let expected_last = to_count34(&[31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
-        generate_hands::<13>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_13() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3]);
+    let expected_last = to_count34(&[30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
+    generate_hands::<14>(expected_first, expected_last);
+}
 
-    #[test]
-    fn generate_hands_13() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3]);
-        let expected_last = to_count34(&[30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
-        generate_hands::<14>(expected_first, expected_last);
-    }
-
-    #[test]
-    fn generate_hands_14() {
-        let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3]);
-        let expected_last = to_count34(&[30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
-        generate_hands::<15>(expected_first, expected_last);
-    }
+#[test]
+fn generate_hands_14() {
+    let expected_first = to_count34(&[0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3]);
+    let expected_last = to_count34(&[30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33]);
+    generate_hands::<15>(expected_first, expected_last);
 }
