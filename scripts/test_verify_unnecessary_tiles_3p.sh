@@ -15,4 +15,5 @@ if (( $1 % 3 == 0 )); then
     exit 1
 fi
 
-cargo test verify_correctness_$1 --release --features correctness -- --ignored
+cargo test --release --features correctness --test correctness_3p \
+    "verify_unnecessary_tiles_3p_$1" -- --ignored --exact
