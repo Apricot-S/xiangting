@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use core::cmp::min;
-
 use super::hash::{hash_19m, hash_shupai, hash_zipai};
 use super::shupai_map::SHUPAI_REPLACEMENT_NUMBER_MAP;
 use super::unpack::{UnpackedNumbers, unpack_replacement_number};
@@ -18,12 +16,9 @@ fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
         // let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
         // ```
         // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
-        let mut r = min(lhs[i], rhs[i]);
+        let mut r = lhs[i].min(rhs[i]);
         for j in 5..i {
-            r = [r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
-                .into_iter()
-                .min()
-                .unwrap();
+            r = r.min(lhs[j] + rhs[i - j]).min(lhs[i - j] + rhs[j]);
         }
         lhs[i] = r;
     }
@@ -35,9 +30,9 @@ fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
         // let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
         // ```
         // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
-        let mut r = min(lhs[i], rhs[i]);
+        let mut r = lhs[i].min(rhs[i]);
         for j in 1..i {
-            r = min(r, lhs[j] + rhs[i - j]);
+            r = r.min(lhs[j] + rhs[i - j]);
         }
         lhs[i] = r;
     }
@@ -50,12 +45,9 @@ fn update_dp_final(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
         // let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
         // ```
         // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
-        let mut r = min(lhs[i], rhs[i]);
+        let mut r = lhs[i].min(rhs[i]);
         for j in 5..i {
-            r = [r, lhs[j] + rhs[i - j], lhs[i - j] + rhs[j]]
-                .into_iter()
-                .min()
-                .unwrap();
+            r = r.min(lhs[j] + rhs[i - j]).min(lhs[i - j] + rhs[j]);
         }
         lhs[i] = r;
     }
