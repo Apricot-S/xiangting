@@ -80,7 +80,7 @@ fn calculate_for<R: PlayerRule>(tile_counts: &TileCounts) -> Result<u8, BingpaiE
     let r1 = qiduizi::calculate_replacement_number(&bingpai);
     let r2 = shisanyao::calculate_replacement_number(&bingpai);
 
-    Ok([r0, r1, r2].into_iter().min().unwrap())
+    Ok(r0.min(r1).min(r2))
 }
 
 #[cfg(test)]
