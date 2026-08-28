@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
+use std::fmt;
 use std::fs::File;
 use std::io::Write;
 use std::{env, thread};
@@ -16,6 +17,23 @@ use xiangting::{
 pub struct VerificationResult {
     replacement_number: i8,
     tiles: Option<TileFlags>,
+}
+
+impl fmt::Display for VerificationResult {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let replacement_number = self.replacement_number;
+        write!(
+            f,
+            "VerificationResult {{ replacement_number: {replacement_number}, tiles: "
+        )?;
+
+        match self.tiles {
+            Some(tiles) => write!(f, "0b{tiles:034b}")?,
+            None => f.write_str("None")?,
+        }
+
+        f.write_str(" }")
+    }
 }
 
 pub trait VerificationTarget {
@@ -179,7 +197,7 @@ where
 
                 if result_shanten_dp != result_xiangting {
                     return Some(format!(
-                        "API: {}\nHand: {hand:?}\nshanten-dp: {result_shanten_dp:?}\nxiangting: {result_xiangting:?}\n",
+                        "API: {}\nHand: {hand:?}\nshanten-dp: {result_shanten_dp}\nxiangting:  {result_xiangting}\n",
                         T::NAME
                     ));
                 }
