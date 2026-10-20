@@ -143,9 +143,23 @@ fn main() {
 
 ## Build tables and maps (For developers only)
 
+The generated tables are embedded in the published Rust sources. Users do not
+need to run a generator or download data when building this crate.
+
 ```sh
 xiangting$ scripts/build_table.sh && scripts/build_map.sh
 ```
+
+To regenerate only the composition LUT from the existing suit dictionaries:
+
+```sh
+cargo run --release -p xtask -- build-lut \
+    src/standard/shupai_map.rs src/standard/zipai_map.rs \
+    src/standard/wanzi_19_map.rs src/standard/lut.rs
+```
+
+See [the algorithm notes](docs/algorithm.md) for the forward/backward design,
+validation, benchmarks, and distribution size budget.
 
 ## License
 

@@ -74,6 +74,16 @@ jobs:
       - name: Test
         run: cargo test --verbose
 
+      - name: Verify composition LUT is reproducible
+        run: |
+          cargo run -p xtask -- build-lut src/standard/shupai_map.rs src/standard/zipai_map.rs src/standard/wanzi_19_map.rs src/standard/lut.rs
+          git diff --exit-code -- src/standard/lut.rs
+
+      - name: Verify packaged build and distribution size
+        run: |
+          cargo package --locked
+          python3 scripts/check_package_size.py target/package/xiangting-*.crate
+
   msrv:
     name: MSRV
     runs-on: ubuntu-latest

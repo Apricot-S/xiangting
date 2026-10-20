@@ -1,206 +1,38 @@
-// SPDX-FileCopyrightText: 2025 Apricot S.
+// SPDX-FileCopyrightText: 2026 Apricot S.
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::common::{Entry, update_min};
-use super::hash::{hash_19m, hash_shupai, hash_zipai};
-use super::shupai_map::{SHUPAI_REPLACEMENT_NUMBER_MAP, SHUPAI_UNNECESSARY_TILES_MAP};
-use super::unpack::{unpack_replacement_number, unpack_unnecessary_tiles};
-use super::wanzi_19_map::{WANZI_19_REPLACEMENT_NUMBER_MAP, WANZI_19_UNNECESSARY_TILES_MAP};
-use super::zipai_map::{ZIPAI_REPLACEMENT_NUMBER_MAP, ZIPAI_UNNECESSARY_TILES_MAP};
+use super::forward::{Forward, union_masks};
+use super::shupai_map::SHUPAI_UNNECESSARY_TILES_MAP;
+use super::unpack::unpack_unnecessary_tiles;
+use super::wanzi_19_map::WANZI_19_UNNECESSARY_TILES_MAP;
+use super::zipai_map::ZIPAI_UNNECESSARY_TILES_MAP;
 use crate::bingpai::{Bingpai, PlayerRule};
 use crate::tile::TileFlags;
-
-fn update_dp(lhs: &mut Entry, rhs: &Entry) {
-    for i in (5..10).rev() {
-        // The original expression is
-        // ```
-        // let mut number = lhs.numbers[i] + rhs.numbers[0];
-        // let mut tiles = lhs.tiles[i] | rhs.tiles[0];
-        // update_min(
-        //     &mut number,
-        //     &mut tiles,
-        //     lhs.numbers[0] + rhs.numbers[i],
-        //     lhs.tiles[0] | rhs.tiles[i],
-        // );
-        // ```
-        // However, since lhs.numbers[0] and rhs.numbers[0] are always 0,
-        // the calculation can be omitted.
-        let mut number = lhs.numbers[i];
-        let mut tiles = lhs.tiles[i] | rhs.tiles[0];
-        update_min(
-            &mut number,
-            &mut tiles,
-            rhs.numbers[i],
-            lhs.tiles[0] | rhs.tiles[i],
-        );
-
-        for j in 5..i {
-            update_min(
-                &mut number,
-                &mut tiles,
-                lhs.numbers[j] + rhs.numbers[i - j],
-                lhs.tiles[j] | rhs.tiles[i - j],
-            );
-            update_min(
-                &mut number,
-                &mut tiles,
-                lhs.numbers[i - j] + rhs.numbers[j],
-                lhs.tiles[i - j] | rhs.tiles[j],
-            );
-        }
-
-        lhs.numbers[i] = number;
-        lhs.tiles[i] = tiles;
-    }
-
-    for i in (0..5).rev() {
-        // The original expression is
-        // ```
-        // let mut number = lhs.numbers[i] + rhs.numbers[0];
-        // let mut tiles = lhs.tiles[i] | rhs.tiles[0];
-        // update_min(
-        //     &mut number,
-        //     &mut tiles,
-        //     lhs.numbers[0] + rhs.numbers[i],
-        //     lhs.tiles[0] | rhs.tiles[i],
-        // );
-        // ```
-        // However, since lhs.numbers[0] and rhs.numbers[0] are always 0,
-        // the calculation can be omitted.
-        let mut number = lhs.numbers[i];
-        let mut tiles = lhs.tiles[i] | rhs.tiles[0];
-        update_min(
-            &mut number,
-            &mut tiles,
-            rhs.numbers[i],
-            lhs.tiles[0] | rhs.tiles[i],
-        );
-
-        for j in 1..i {
-            update_min(
-                &mut number,
-                &mut tiles,
-                lhs.numbers[j] + rhs.numbers[i - j],
-                lhs.tiles[j] | rhs.tiles[i - j],
-            );
-        }
-
-        lhs.numbers[i] = number;
-        lhs.tiles[i] = tiles;
-    }
-}
-
-fn update_dp_final(lhs: &mut Entry, rhs: &Entry) {
-    for i in (5..10).rev() {
-        // The original expression is
-        // ```
-        // let mut number = lhs.numbers[i] + rhs.numbers[0];
-        // let mut tiles = lhs.tiles[i] | rhs.tiles[0];
-        // update_min(
-        //     &mut number,
-        //     &mut tiles,
-        //     lhs.numbers[0] + rhs.numbers[i],
-        //     lhs.tiles[0] | rhs.tiles[i],
-        // );
-        // ```
-        // However, since lhs.numbers[0] and rhs.numbers[0] are always 0,
-        // the calculation can be omitted.
-        let mut number = lhs.numbers[i];
-        let mut tiles = lhs.tiles[i] | rhs.tiles[0];
-        update_min(
-            &mut number,
-            &mut tiles,
-            rhs.numbers[i],
-            lhs.tiles[0] | rhs.tiles[i],
-        );
-
-        for j in 5..i {
-            update_min(
-                &mut number,
-                &mut tiles,
-                lhs.numbers[j] + rhs.numbers[i - j],
-                lhs.tiles[j] | rhs.tiles[i - j],
-            );
-            update_min(
-                &mut number,
-                &mut tiles,
-                lhs.numbers[i - j] + rhs.numbers[j],
-                lhs.tiles[i - j] | rhs.tiles[j],
-            );
-        }
-
-        lhs.numbers[i] = number;
-        lhs.tiles[i] = tiles;
-    }
-}
 
 pub(in super::super) fn calculate_unnecessary_tiles<R: PlayerRule>(
     bingpai: &Bingpai<R>,
 ) -> (u8, TileFlags) {
-    let (replacement_number_m, unnecessary_tiles_m) = if R::IS_THREE_PLAYER {
-        let hash_m = hash_19m(&bingpai.tile_counts()[0..9]);
-        let packed_rn_m = &WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m];
-        let packed_ut_m = &WANZI_19_UNNECESSARY_TILES_MAP[hash_m];
-        (
-            unpack_replacement_number(*packed_rn_m),
-            unpack_unnecessary_tiles(packed_ut_m),
-        )
+    let forward = Forward::new(bingpai);
+    let needed = forward.needed::<R>();
+    let [m, p, s, z] = forward.hashes;
+    let man = if R::IS_THREE_PLAYER {
+        &WANZI_19_UNNECESSARY_TILES_MAP[m]
     } else {
-        let hash_m = hash_shupai(&bingpai.tile_counts()[0..9]);
-        let packed_rn_m = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_m];
-        let packed_ut_m = &SHUPAI_UNNECESSARY_TILES_MAP[hash_m];
-        (
-            unpack_replacement_number(*packed_rn_m),
-            unpack_unnecessary_tiles(packed_ut_m),
-        )
+        &SHUPAI_UNNECESSARY_TILES_MAP[m]
     };
-
-    let hash_p = hash_shupai(&bingpai.tile_counts()[9..18]);
-    let hash_s = hash_shupai(&bingpai.tile_counts()[18..27]);
-    let hash_z = hash_zipai(&bingpai.tile_counts()[27..34]);
-
-    let packed_rn_p = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_p];
-    let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
-    let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
-    let packed_ut_p = &SHUPAI_UNNECESSARY_TILES_MAP[hash_p];
-    let packed_ut_s = &SHUPAI_UNNECESSARY_TILES_MAP[hash_s];
-    let packed_ut_z = &ZIPAI_UNNECESSARY_TILES_MAP[hash_z];
-
-    let replacement_number_p = unpack_replacement_number(*packed_rn_p);
-    let replacement_number_s = unpack_replacement_number(*packed_rn_s);
-    let replacement_number_z = unpack_replacement_number(*packed_rn_z);
-    let unnecessary_tiles_p = unpack_unnecessary_tiles(packed_ut_p);
-    let unnecessary_tiles_s = unpack_unnecessary_tiles(packed_ut_s);
-    let unnecessary_tiles_z = unpack_unnecessary_tiles(packed_ut_z);
-
-    let (mut entry0, entry1, entry2, entry3) = (
-        Entry {
-            numbers: replacement_number_m,
-            tiles: unnecessary_tiles_m.map(TileFlags::from),
-        },
-        Entry {
-            numbers: replacement_number_p,
-            tiles: unnecessary_tiles_p.map(|t| TileFlags::from(t) << 9),
-        },
-        Entry {
-            numbers: replacement_number_s,
-            tiles: unnecessary_tiles_s.map(|t| TileFlags::from(t) << 18),
-        },
-        Entry {
-            numbers: replacement_number_z,
-            tiles: unnecessary_tiles_z.map(|t| TileFlags::from(t) << 27),
-        },
-    );
-
-    update_dp(&mut entry0, &entry1);
-    update_dp(&mut entry0, &entry2);
-    update_dp_final(&mut entry0, &entry3);
-
-    let n = 5 + bingpai.num_required_bingpai_mianzi() as usize;
-    #[allow(clippy::cast_possible_truncation)]
-    let replacement_number = entry0.numbers[n] as u8;
-    (replacement_number, entry0.tiles[n])
+    let masks = [
+        man,
+        &SHUPAI_UNNECESSARY_TILES_MAP[p],
+        &SHUPAI_UNNECESSARY_TILES_MAP[s],
+        &ZIPAI_UNNECESSARY_TILES_MAP[z],
+    ];
+    let mut tiles = 0;
+    for (i, mask) in masks.into_iter().enumerate() {
+        tiles |=
+            TileFlags::from(union_masks(&unpack_unnecessary_tiles(mask), needed[i])) << (i * 9);
+    }
+    (forward.number, tiles)
 }
 
 #[cfg(test)]

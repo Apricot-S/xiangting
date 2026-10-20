@@ -3,11 +3,13 @@
 // This file is part of https://github.com/Apricot-S/xiangting
 
 #[cfg(not(feature = "build-map"))]
-mod common;
-#[cfg(not(feature = "build-map"))]
 mod core;
 #[cfg(not(feature = "build-map"))]
+mod forward;
+#[cfg(not(feature = "build-map"))]
 mod hash;
+#[cfg(not(feature = "build-map"))]
+mod lut;
 #[cfg(not(feature = "build-map"))]
 mod necessary_tiles;
 #[cfg(not(feature = "build-map"))]

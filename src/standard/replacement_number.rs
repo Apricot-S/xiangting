@@ -1,88 +1,12 @@
-// SPDX-FileCopyrightText: 2024 Apricot S.
+// SPDX-FileCopyrightText: 2026 Apricot S.
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::hash::{hash_19m, hash_shupai, hash_zipai};
-use super::shupai_map::SHUPAI_REPLACEMENT_NUMBER_MAP;
-use super::unpack::{UnpackedNumbers, unpack_replacement_number};
-use super::wanzi_19_map::WANZI_19_REPLACEMENT_NUMBER_MAP;
-use super::zipai_map::ZIPAI_REPLACEMENT_NUMBER_MAP;
+use super::forward::Forward;
 use crate::bingpai::{Bingpai, PlayerRule};
 
-fn update_dp(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
-    for i in (5..10).rev() {
-        // The original expression is
-        // ```
-        // let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
-        // ```
-        // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
-        let mut r = lhs[i].min(rhs[i]);
-        for j in 5..i {
-            r = r.min(lhs[j] + rhs[i - j]).min(lhs[i - j] + rhs[j]);
-        }
-        lhs[i] = r;
-    }
-
-    // Skip the case when i = 0, as the inner loop would not run, leading to redundant assignments.
-    for i in (1..5).rev() {
-        // The original expression is
-        // ```
-        // let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
-        // ```
-        // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
-        let mut r = lhs[i].min(rhs[i]);
-        for j in 1..i {
-            r = r.min(lhs[j] + rhs[i - j]);
-        }
-        lhs[i] = r;
-    }
-}
-
-fn update_dp_final(lhs: &mut UnpackedNumbers, rhs: &UnpackedNumbers) {
-    for i in (5..10).rev() {
-        // The original expression is
-        // ```
-        // let mut r = min(lhs[i] + rhs[0], lhs[0] + rhs[i]);
-        // ```
-        // However, since lhs[0] and rhs[0] are always 0, the calculation can be omitted.
-        let mut r = lhs[i].min(rhs[i]);
-        for j in 5..i {
-            r = r.min(lhs[j] + rhs[i - j]).min(lhs[i - j] + rhs[j]);
-        }
-        lhs[i] = r;
-    }
-}
-
 pub(in super::super) fn calculate_replacement_number<R: PlayerRule>(bingpai: &Bingpai<R>) -> u8 {
-    let packed_rn_m = if R::IS_THREE_PLAYER {
-        let hash_m = hash_19m(&bingpai.tile_counts()[0..9]);
-        &WANZI_19_REPLACEMENT_NUMBER_MAP[hash_m]
-    } else {
-        let hash_m = hash_shupai(&bingpai.tile_counts()[0..9]);
-        &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_m]
-    };
-
-    let hash_p = hash_shupai(&bingpai.tile_counts()[9..18]);
-    let hash_s = hash_shupai(&bingpai.tile_counts()[18..27]);
-    let hash_z = hash_zipai(&bingpai.tile_counts()[27..34]);
-
-    let packed_rn_p = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_p];
-    let packed_rn_s = &SHUPAI_REPLACEMENT_NUMBER_MAP[hash_s];
-    let packed_rn_z = &ZIPAI_REPLACEMENT_NUMBER_MAP[hash_z];
-
-    let mut entry0 = unpack_replacement_number(*packed_rn_m);
-    let entry1 = unpack_replacement_number(*packed_rn_p);
-    let entry2 = unpack_replacement_number(*packed_rn_s);
-    let entry3 = unpack_replacement_number(*packed_rn_z);
-
-    update_dp(&mut entry0, &entry1);
-    update_dp(&mut entry0, &entry2);
-    update_dp_final(&mut entry0, &entry3);
-
-    let n = 5 + bingpai.num_required_bingpai_mianzi() as usize;
-    #[allow(clippy::cast_possible_truncation)]
-    let replacement_number = entry0[n] as u8;
-    replacement_number
+    Forward::new(bingpai).number
 }
 
 #[cfg(test)]

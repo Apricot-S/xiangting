@@ -23,6 +23,11 @@ jobs:
       - name: Test
         run: cargo test --verbose
 
+      - name: Verify packaged build and distribution size
+        run: |
+          cargo package --locked
+          python3 scripts/check_package_size.py target/package/xiangting-*.crate
+
       - name: Publish
         run: cargo publish
         env:

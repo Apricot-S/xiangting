@@ -196,7 +196,7 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     writeln!(w)?;
     writeln!(
         w,
-        "use super::core::{{NecessaryTilesMapValue, ReplacementNumberMapValue, UnnecessaryTilesMapValue}};"
+        "use super::core::{{NecessaryTilesMapValue, UnnecessaryTilesMapValue}};"
     )?;
 
     match N {
@@ -207,31 +207,14 @@ fn dump_map<const N: usize>(map: &Map, map_path: &Path) -> io::Result<()> {
     }
 
     writeln!(w)?;
-    writeln!(w, "#[rustfmt::skip]")?;
-
-    match N {
-        9 => write!(
-            w,
-            "pub(super) static SHUPAI_REPLACEMENT_NUMBER_MAP: [ReplacementNumberMapValue; SHUPAI_SIZE] = ["
-        )?,
-        7 => write!(
-            w,
-            "pub(super) static ZIPAI_REPLACEMENT_NUMBER_MAP: [ReplacementNumberMapValue; ZIPAI_SIZE] = ["
-        )?,
-        2 => write!(
-            w,
-            "pub(super) static WANZI_19_REPLACEMENT_NUMBER_MAP: [ReplacementNumberMapValue; WANZI_19_SIZE] = ["
-        )?,
+    let name = match N {
+        9 => "SHUPAI",
+        7 => "ZIPAI",
+        2 => "WANZI_19",
         _ => unreachable!(),
-    }
+    };
+    crate::build_lut::write_number_map(&mut w, name, map.iter().map(|e| e.replacement_number))?;
 
-    for entry in map {
-        write!(w, "{},", entry.replacement_number)?;
-    }
-
-    writeln!(w, "];")?;
-
-    writeln!(w)?;
     writeln!(w, "#[rustfmt::skip]")?;
 
     match N {

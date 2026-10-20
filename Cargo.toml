@@ -44,3 +44,7 @@ correctness = []
 [[bench]]
 name = "bench"
 harness = false
+
+[[bench]]
+name = "algorithm"
+harness = false

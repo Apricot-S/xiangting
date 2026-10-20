@@ -23,6 +23,7 @@ pub type Wanzi19Table = Table<2>;
 // 18-21 Bits: Replacement number of 1 pair 2 melds
 // 22-25 Bits: Replacement number of 1 pair 3 melds
 // 26-29 Bits: Replacement number of 1 pair 4 melds
+#[cfg(feature = "build-map")]
 pub type ReplacementNumberMapValue = u32;
 
 // Each element contains the following structure:

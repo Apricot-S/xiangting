@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 // This file is part of https://github.com/Apricot-S/xiangting
 
-use super::core::{NecessaryTilesMapValue, ReplacementNumberMapValue, UnnecessaryTilesMapValue};
+use super::core::{NecessaryTilesMapValue, UnnecessaryTilesMapValue};
 
 // Index:
 // [0] : 0 pair, 0 melds
@@ -15,11 +15,13 @@ use super::core::{NecessaryTilesMapValue, ReplacementNumberMapValue, Unnecessary
 // [7] : 1 pair, 2 melds
 // [8] : 1 pair, 3 melds
 // [9] : 1 pair, 4 melds
+#[cfg(test)]
 pub(super) type UnpackedNumbers = [u32; 10];
 pub(super) type UnpackedTiles = [u16; 10];
 
+#[cfg(test)]
 #[inline]
-pub(super) fn unpack_replacement_number(pack: ReplacementNumberMapValue) -> UnpackedNumbers {
+pub(super) fn unpack_replacement_number(pack: u32) -> UnpackedNumbers {
     [
         0u32,
         pack & 0b11,
@@ -75,7 +77,7 @@ mod tests {
     #[test]
     fn test_unpack_replacement_number() {
         // 23489x : [0, 1, 1, 1, 0, 0, 0, 1, 1]
-        let pack: ReplacementNumberMapValue = /* 0u32 | 0 | */ (1 << 2)
+        let pack: u32 = /* 0u32 | 0 | */ (1 << 2)
             | (4 << 5)
             | (7 << 9)
             | (1 << 13)
